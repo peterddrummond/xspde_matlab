@@ -1,0 +1,61 @@
+
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=6em, text centered, rounded corners, minimum height=2em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=green!20, node distance=5cm,
+    minimum height=2em]
+    \tikzstyle{cloud2} = [draw, ellipse,fill=red!20, node distance=6cm,
+    minimum height=2em]
+    
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [block] (init1) {{\bf Lattice}  function};
+    \node [cloud, left of=init1] (inputs1) {lattice  input};
+    \node [cloud, right of=init1] (struct1) {lattice };
+    
+       \node [block, below of=init1] (loop) {loop over ensemble};
+     \node [block, below of=loop] (initialize) {{\bf Initialize} a };
+    \node [block, below of=initialize] (integrate1) {{\bf Integrate} a over lattice };
+     \node [cloud, right of=integrate1] (data1) {data };
+         \node [block, left of=integrate1, node distance=3cm] (update) {update ensemble count};
+    \node [decision, below of=integrate1] (decide) {is ensemble finished?};
+    \node [block, below of=decide, node distance=3cm] (graph1) {{\bf Graphics} for data, lattice};
+  
+    % Draw edges
+ 
+    
+    \path [line] (init1) -- (loop);
+    \path [line] (loop) -- (initialize);
+     \path [line] (initialize) -- (integrate1);
+ 
+    \path [line] (integrate1) -- (decide);
+    \path [line] (decide) -| node [near start] {no} (update);
+    \path [line] (update) |- (loop);
+    \path [line] (decide) -- node {yes}(graph1);
+   
+     \path [line,dotted] (integrate1) -- (data1);
+     
+    \path [line,dotted] (inputs1) -- (init1);
+        \path [line,dotted] (init1) -- (struct1);
+        \path [line,dotted] (struct1) -- (initialize);
+       \path [line,dotted] (struct1) -- (integrate1);
+        \path [line,dotted] (struct1) -- (graph1);
+         \path [line,dotted] (data1) -- (graph1);
+   
+
+    \end{tikzpicture}
+
+\end{document}

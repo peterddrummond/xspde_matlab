@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.0"
+   width="344.77643"
+   height="298"
+   viewBox="0 4 344.77643 298"
+   id="svg2">
+  <metadata
+     id="metadata18">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs16" />
+  <g
+     transform="matrix(0.94574701,0,0,0.94574701,-113.2092,-99.123212)"
+     id="g4522">
+    <polygon
+       points="13.643,515.71 302.063,449.102 590.479,515.71 388.587,299.234 302.063,16.152 215.539,299.234 "
+       transform="matrix(0.6,0,0,0.6,121.24375,106.04144)"
+       id="polygon4"
+       style="fill:#a00000;fill-opacity:1" />
+    <g
+       transform="matrix(0.597,0,0,0.597,121.73022,107.25972)"
+       id="g6"
+       style="fill:#c91b27">
+      <path
+         d="M 306.54142,351.97249 305.14244,447.49502 589.933,515.294 305.97544,352.69525 z"
+         id="polygon8"
+         style="fill-opacity:1" />
+      <path
+         d="M 305.99012,341.31235 306.55746,27.507262 389.28942,294.31996 z"
+         id="polygon10"
+         style="fill-opacity:1" />
+      <path
+         d="M 300.038,352.81109 30.342329,512.2198 299.02495,449.56861 z"
+         id="polygon10-8"
+         style="fill:#e7283f;fill-opacity:1" />
+      <path
+         d="M 309.92336,346.61963 582.66692,505.00578 390.52003,300.0199 z"
+         id="polygon10-82"
+         style="fill:#e7283f;fill-opacity:1" />
+      <path
+         d="M 298.59399,348.45516 215.94371,299.31702 16.660837,516.67243 296.76443,347.75614 z"
+         id="polygon8-45"
+         style="fill:#c91b27;fill-opacity:1" />
+    </g>
+    <path
+       d="m 299.7366,310.89141 2.12286,-190.99732 -49.34523,163.78857 z"
+       id="polygon10-4"
+       style="fill:#e7283f;fill-opacity:1" />
+    <g
+       transform="matrix(0.597,0,0,0.597,122.51121,107.14879)"
+       id="g6-7"
+       style="fill:#c91b27;stroke:#000000;stroke-opacity:1">
+      <path
+         d="m 301.645,448.894 288.288,66.4 -201.75923,-216.67956"
+         id="polygon8-4"
+         style="fill:none;stroke:#782100;stroke-width:6.70016766;stroke-miterlimit:4;stroke-dasharray:none" />
+      <path
+         d="m 301.723,16.461 86.864,282.773"
+         id="polygon10-0"
+         style="fill:none;stroke:#782100;stroke-width:6.70016766;stroke-miterlimit:4;stroke-dasharray:none" />
+      <path
+         d="M 301.90615,449.27284 13.945,516.152 215.471,299.859 301.20373,18.686688"
+         id="polygon12-9"
+         style="fill:none;stroke:#782100;stroke-width:6.70016766;stroke-miterlimit:4;stroke-dasharray:none" />
+    </g>
+    <path
+       d="m 295.00207,303.02832 3.2904,-157.97149 -39.80748,136.70526 z"
+       id="polygon10-4-5"
+       style="fill:#f6374e;fill-opacity:1" />
+    <path
+       d="M 316.24342,314.74372 451.86043,394.79332 352.4467,292.94756 z"
+       id="polygon10-4-5-1"
+       style="fill:#f6374e;fill-opacity:1" />
+    <path
+       d="M 296.09321,327.32948 159.23856,405.24427 297.01928,369.57748 z"
+       id="polygon10-4-5-1-7"
+       style="fill:#f6374e;fill-opacity:1" />
+    <path
+       d="M 287.76883,315.34234 153.21792,397.17123 251.28159,294.0249 z"
+       id="polygon10-4-5-1-7-1"
+       style="fill:#d82b36;fill-opacity:1" />
+    <path
+       d="m 309.09223,302.35065 -2.37172,-157.47117 39.75415,137.76568 z"
+       id="polygon10-4-5-1-7-1-1"
+       style="fill:#d82b36;fill-opacity:1" />
+    <path
+       d="M 309.58276,326.99372 447.22859,403.50215 309.08964,369.249 z"
+       id="polygon10-4-5-1-7-1-5"
+       style="fill:#d82b36;fill-opacity:1" />
+  </g>
+</svg>
