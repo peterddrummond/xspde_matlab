@@ -1,4 +1,9 @@
-%%BATCHTEST script for XSPDE1.0
+%   BATCHTEST is a Matlab script to test the operation of an xSPDE toolbox 
+%   There are currently 18 projects tested, each with graphical output 
+%   Matlab Parallel toolbox is required for a complete test
+%   Total runtime should be less than 60s, depending on CPU speed.
+%   To see the 89 generated graphs, add '%' before the  'close all' command
+%   Expected final answer:  Batch test error score = 6.482868 
 e(1) = Wiener;
 e(2) = SHO;
 e(3) = Kubo;
@@ -19,5 +24,5 @@ e(17) = GaussianAv2D;
 e(18) = GaussianAv3D;
 close all;         %%Deletes all figures if not wanted
 fprintf('Batch test error score = %f \n',prod(e)*10^40);
-%%Expected answer:  Batch test error score = 6.482868 
+
 
