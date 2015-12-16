@@ -8,6 +8,7 @@ input = xinpreferences(input);                   %%check input
 sequence = length(input);
 for s = 1:sequence                               %%loop over sequence length
   in = input{s};                                 %%get input structure
+  in.gversion =   xprefer(in,'gversion','1.04');
   in.minbar =     xcprefer(in,'minbar',in.graphs,{0.01});
   in.font =       xcprefer(in,'font',in.graphs,{18});
   in.headers =    xcprefer(in,'headers',in.graphs,{1});

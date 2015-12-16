@@ -35,11 +35,8 @@ for np = 1:r.points(1);                        %%loop until time tmax
   o(1,np,:,:) = xdata(a,o(1,np,:,:),0,r);      %%store time-domain data
 end;                                           %%end time loop
 if r.transformw                                %%if frequency domain
-    astore = zeros(r.d.raw);                   %%initialize storage
-    for np = 1:r.points(1)                     %%loop until wmax
-      astore(:,:,np) = raw(:,:,np)*r.wtph(np); %%store fields*factors 
-    end                                        %%end if frequency transform 
-    astore = ifft(astore,[],3);                %%take Fourier transform
+    astore = ifft(raw,[],3)*r.kfact(1);        %%take Fourier transform
+    astore = fftshift(astore,3);               %%shift for graphics
     for np = 1:r.points(1)                     %%loop until wmax
       r.w = r.gk{1}(np);                       %%get current frequency
       o(1,np,:,:) = xdata(astore(:,:,np),o(1,np,:,:),1,r); %%store data
@@ -90,9 +87,7 @@ a =reshape(a, r.d.ft);                          %%reshape to lattice
 dmax = ndims(a);                                %%get a dimension
 for nd = 3:dmax                                 %%loop over dimension
     if tr(nd-2) >0                              %%if FFT required
-        a = a.*r.pre{nd-1};                     %%FFT x-space normalization
-        a = fft(a,[],nd);                       %%take Fourier transform
-        a = a.*r.post{nd-1};                    %%FFT k-space normalization
+        a = fft(a,[],nd)*r.kfact(nd-1);         %%take Fourier transform
     end                                         %%end if FFT required
 end                                             %%end loop over dimension
 a =reshape(a, r.d.a);                           %%reshape to flat array

@@ -7,24 +7,25 @@ function ec =  xgraph(input,cdata)
 
 ec = 0;                                        %%Initialize max errors
 if nargin == 2 && ischar(cdata)                %%If data is character
-  input = cdata;                               %%Set input to filename
+  [hflag,~,cdata,raw] = xread(cdata);          %%get data from a file
+  if hflag < 0                                 %%check if file errors
+    return                                     %%return
+  end                                          %%end check if error
 end                                            %%End if data is character
-if ~iscell(input) && ~ischar(input)            %%if 'input' not cell
-   input = {input};                            %%change data to cell
-end                                            %%end if 'input' not cell
 if nargin == 1 || ischar(input)                %%If no input data
   [hflag,input,cdata,raw] = xread(input);      %%get data from a file
   if hflag < 0                                 %%check if file errors
     return                                     %%return
   end                                          %%end check if error
 end                                            %%end check if nargin
-if ~iscell(cdata)                              %%check if data is not cell
-  cdata = {cdata};                             %%change data to cell
-end                                            %%end check if 
+input = xmakecell(input);                      %%change data to cell
+cdata = xmakecell(cdata);                      %%change data to cell
 input = xgrpreferences(input);                 %%get 'input' defaults
 sequence = length(cdata);                      %%get sequence length
+
 for s = 1:sequence                             %%Loop over sequence  
   in = input{s};                               %%inputs for sequence s
+  fprintf ('\nxGRAPH%s: %s, sequence %d\n',in.gversion,in.name,s);%%version
   nxplot = in.points(1);                       %%time points
   nx = in.points(1:in.dimension);              %%index ranges
   mx = 1+floor(nx/2);                          %%index midpoint for plots
@@ -39,22 +40,25 @@ for s = 1:sequence                             %%Loop over sequence
     lab = in.xlabels;                          %%get x labels
     olab = in.olabels{n};                      %%get o labels
     x = in.xc;                                 %%get x coords
-    for d = 1:in.pdimension{n}                 %%Loop over dimension
+    if in.headers{n}                           %%if header wanted 
+        head = strcat(in.name,head);           %%set graph name
+    end                                        %%end if headers
+    datan = reshape(data(:,:,n),[3,nx]);       %%extract n-th data   
+    for d = 1:in.dimension                     %%Loop over dimension
         if in.transforms{n}(d)                 %%If transform switch
             lab{d} = in.klabels{d};            %%get k label
              x{d} = in.gk{d};                  %%get k coords
-        end                                    %%End if transform switch
-    end                                        %%End dimension loop
-    t=x{1};
+             if d > 1                          %%if space transform
+                 datan = fftshift(datan,d+1);  %%shift k coords
+             end                               %%end if space transform           
+        end                                    %%end if transform switch
+    end                                        %%end dimension loop
+    t=x{1};                                    %%initialize time/frequency
     compares=0;                                %%comparisons switch
     if ~isempty(in.compare{n})                 %%If comparisons
         compares=1;                            %%If comparisons required
         da_x = in.compare{n}(t,in);            %%get comparison results
     end                                        %%End if comparisons    
-    if in.headers{n}                           %%if header wanted 
-        head = strcat(in.name,head);           %%set graph name
-    end                                        %%end if headers
-    datan = reshape(data(:,:,n),[3,nx]);       %%extract n-th data      
     if in.dimension  > 3                       %%Check if dimension > 3
         datan = datan(:,:,:,:,mx(4));          %%Central point plotted
     end                                        %%End if  dimension > 3

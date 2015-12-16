@@ -170,7 +170,7 @@ This graph is of a single stochastic realisation. Generation of averages is also
 Stochastic partial differential equations
 =========================================
 
-More generally, xSPDE solves [Werner1997]_ a stochastic partial differential equation for a complex vector field defined in space-time dimension :math:`d=1-4`, written in differential form as
+More generally, xSPDE solves [Werner1997]_ a stochastic partial differential equation for a complex vector field defined in space-time dimension :math:`d=1-4`. Equations of this type occur in many disciplines, including biology, chemistry, engineering and physics. They are in differential form as
 
 .. math::
 

@@ -21,8 +21,9 @@ The high-level xSPDE functions process the input parameters, producing simulatio
 
 .. function:: xgraph(input,data)
 
-    This is the xSPDE graphics function. It takes computed simulation  ``input`` and ``data``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions. The ``data`` should have as many cells as ``input`` cells, for sequences. However, the ``data`` input is optional. 
-    If no ``data`` is included, then a data file will be read using the file-name specified in the ``input`` structure or cell array. In this case, any stored ``input`` is ignored, allowing graphs to be modified with new labels. If ``input = 'filename.h5'`` or ``input= 'filename.mat'``, the specified file is read both for ``input`` and ``data``. Here ``.h5`` indicates an HDF5 file, and ``.mat`` indicates a Matlab file.
+    This is the xSPDE graphics function. It takes computed simulation  ``input`` and ``data``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions. The ``data`` should have as many cells as ``input`` cells, for sequences. The ``data`` input can be given as a filename, in which case input details are replaced by the new  ``input``.
+    If the ``data`` input is not present at all, then a data file will be read using the file-name specified in the ``input`` structure or cell array. As described above, any stored ``input`` is ignored, allowing graphs to be modified with new labels. 
+    If ``input = 'filename.h5'`` or ``input= 'filename.mat'``, the specified file is read both for ``input`` and ``data``. Here ``.h5`` indicates an HDF5 file, and ``.mat`` indicates a Matlab file.
 
 
 
@@ -49,8 +50,8 @@ Next, include anywhere on your Matlab path, the function definition, for example
 
 ::
 
-    function a = Mystep(a,xi,dt,r)
-        % a = Mystep(a,xi,dt,r) propagates a step my way.
+    function a = Mystep(a,z,dt,r)
+        % a = Mystep(a,z,dt,r) propagates a step my way.
         ...
         a = ...;
     end
@@ -850,7 +851,7 @@ These functions are used as defaults for simulations and can be overridden by th
 
 .. function:: xobserve(a, ~)
 
-    Returns the real part of ``a``.
+    Returns the real part of ``a(1,:)``.
 
 .. function:: xrfilter(r)
 
@@ -866,11 +867,11 @@ These functions are used as defaults for simulations and can be overridden by th
 
 .. function:: xnoisegen(r)
 
-    Generates random noise matrix :math:`\xi`.
+    Generates random noise matrix :math:`z`.
 
 .. function:: xrandomgen(r)
 
-    Generates random field matrix :math:`w`.
+    Generates random field matrix :math:`v`.
 
 .. function:: xpropfactor(nc, r)
 
@@ -908,7 +909,7 @@ Answers to some frequent questions, and reminders of points in this chapter are:
 
 -  Why are there two lines in the graphs sometimes?
 
-   -  These are the one standard deviation sampling error limits, generated when ``in.ensembles(2,3) > 1``.
+   -  These are one standard deviation sampling error limits, generated when ``in.ensembles(2,3) > 1``.
 
 -  Why is there just one line in some graphs, with no sampling errors indicated?
 

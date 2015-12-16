@@ -16,8 +16,7 @@ latt = xlattice(input);                          %%initialise lattice
 r = latt{1};                                     %%first sequence input
 s = RandStream('CombRecursive','Seed',1);        %%define RNG type
 RandStream.setGlobalStream(s);                   %%set RNG type
-fprintf ('\n \n %s  %s \n',r.version,r.name);    %%integration number
-fprintf (' xsim starting\n');                    %%integration start
+fprintf ('\nxSIM%s: %s\n',r.version,r.name);       %%integration name
 if r.print >1                                    %%if print switch is verbose
     r                                            %%display lattice data
 end;                                             %%end if print switch

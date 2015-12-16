@@ -28,6 +28,6 @@ The code supports parallelism at both the vector instruction level and at the th
 
 .. rubric:: Source code
 
-The source code for xSPDE is available at `github.com/peterddrummond/xspde <https://github.com/peterddrummond/xspde>`_.
+The source code for xSPDE is available at `github.com/peterddrummond/xspde_matlab <https://github.com/peterddrummond/xspde_matlab>`_.
 
 *Note: xSPDE is distributed without guarantee, under the MIT open-source license. Please test it yourself before use.*

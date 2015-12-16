@@ -61,11 +61,18 @@ The momentum range is therefore
 
     K_{j}=\left(N_{j}-1\right)dk_{j},
 
-while the momentum lattice starts at :math:`-k_{j}/2` and ends at :math:`k_{j}/2` , so that:
+while the momentum lattice starts at :math:`-k_{j}/2` and ends at :math:`k_{j}/2` , so that when graphing the data:
 
 .. math::
 
-    k_{j}\left(n\right)=-K_{j}/2+(n-1)dk_{j}.
+    k_{j}\left(n\right)=-K_{j}/2+(N_{j}-1)dk_{j}.
+    
+    However, due to the standard definitions of discrete Fourier transforms, the order used during computation and stored in the data arrays is different, namely:
+
+.. math::
+
+    k_{j}\left(n\right)=0..(N_{j}-1)/2)dk_{j},-(N_{j}-1)/2)dk_{j},.-dk_{j}
+    
 
 
 Computational Fourier transforms
@@ -124,62 +131,15 @@ Note that the dot in the notation of ``.^`` is needed to take the square of each
 Graphics transforms
 ===================
 
+All transforms defined in the observables are obtained from a vector called :attr:`in.transforms`, which determines if a given coordinate axis is transformed prior to a given observable being measured. This can be turned on and off independently for each observable.
+
 The index ordering and normalization used in the standard discrete FFT approach is efficient for interaction picture propagation, but not useful for graphing, since graphics routines prefer the momenta to be monotonic, i.e. in the order:
 
 .. math::
 
     k_{j}\left(n\right)=-K_{j}/2+(n-1)dk_{j}.
 
-All transforms defined in the observables are obtained from a vector called :attr:`in.transforms`, which determines if a given coordinate axis is transformed prior to a given observable being measured. This can be turned on and off independently for each observable. The space and time transforms are defined in the next sub-sections.
-
-Time transforms
----------------
-
-We define a Fourier transform in time as:
-
-.. math::
-
-   \tilde{\boldsymbol{a}}\left(\omega\right) = \int_{0}^{T}\frac{dt}{\left(2\pi\right)^{1/2}}\boldsymbol{a}\left(t\right)\exp\left[i\omega t\right]
-
-To achieve this in one dimension, note that:
-
-.. math::
-
-    dtd\omega=\frac{2\pi}{N}.
-
-Defining :math:`\kappa=\omega^{\max}/2`:
-
-.. math::
-
-   \begin{aligned}
-   \tilde{\boldsymbol{a}}\left(\omega_{\tilde{n}}\right) & = \frac{dt}{\sqrt{2\pi}}\sum_{\tilde{m}=0}^{N-1}\exp\left[i\left(\tilde{n}d\omega-\kappa\right)\left(\tilde{m}dt\right)\right]a_{\tilde{m}} \\
-    & = \frac{dt}{\sqrt{2\pi}}\sum_{\tilde{m}=0}^{N-1}\exp\left[i\left(\tilde{n}\tilde{m}dtd\omega-\kappa\tilde{m}dt\right)\right]a_{\tilde{m}} \\
-    & = \frac{dt}{\sqrt{2\pi}}\sum_{\tilde{m}=0}^{N-1}\exp\left[2\pi i\tilde{m}\tilde{n}/N\right]e^{-i\kappa\tilde{m}dt}a_{\tilde{m}} \\
-    & = \frac{\sqrt{2\pi}}{d\omega}\times\frac{1}{N}\sum_{\tilde{m}=0}^{N-1}\exp\left[2\pi i\tilde{m}\tilde{n}/N\right]e^{-i\kappa t}a_{\tilde{m}}\end{aligned}
-
-Hence to get an ordered Fourier transform for graphing data, with the usual physics and mathematics definitions, we must **premultiply** by :math:`e^{-i\kappa t}Ndt/\sqrt{2\pi}`, then take a discrete IFFT. This is taken care of internally in the xSPDE transform routines.
-
-Space transforms
-----------------
-
-We define a Fourier transform in space as:
-
-.. math::
-
-   \tilde{\boldsymbol{a}}\left(\boldsymbol{k}\right) = \int\frac{dV}{\left(2\pi\right)^{d/2}}\boldsymbol{a}\left(\boldsymbol{x}\right)\exp\left[-i\boldsymbol{k}\cdot\boldsymbol{x}\right]
-
-To achieve this with an FFT in one dimension, let :math:`\kappa=K/2`,
-and :math:`\rho=R/2`, and define:
-
-.. math::
-
-   \begin{aligned}
-   \tilde{\boldsymbol{a}}\left(k_{\tilde{n}}\right) & = \frac{dx}{\sqrt{2\pi}}\sum_{\tilde{m}=0}^{N-1}\exp\left[-i\left(\tilde{n}dk-K/2\right)\left(\tilde{m}dx-R/2\right)\right]a_{\tilde{m}} \\
-    & = \frac{dx}{\sqrt{2\pi}}\sum_{\tilde{m}=0}^{N-1}\exp\left[-i\left(\tilde{n}\tilde{m}dxdk-K\tilde{m}dx/2-R\tilde{n}dk/2+KR/4\right)\right]a_{\tilde{m}} \\
-    & = e^{-iR\left(K/2-\tilde{n}dk\right)/2}\frac{dx}{\sqrt{2\pi}}\sum_{\tilde{m}=0}^{N-1}\exp\left[-2\pi i\tilde{m}\tilde{n}/N\right]e^{iK\tilde{m}dx/2}a_{\tilde{m}} \\
-    & = e^{-iRk/2}\frac{dx}{\sqrt{2\pi}}\sum_{\tilde{m}=0}^{N-1}\exp\left[-2\pi i\tilde{m}\tilde{n}/N\right]e^{iKx/2+iKR/4}a_{\tilde{m}}\end{aligned}
-
-Hence to get an ordered Fourier transform for graphing data, with the usual mathematical definitions, we must **premultiply** by a phase factor, take a discrete FFT, then **post-multiply** by *another* phase factor. This is taken care of internally in the xSPDE transform routines.
+Accordingly, all momentum indices for observable data and axes are re-ordered when graphing, although they are initially stored in the computational order.
 
 
 Fields

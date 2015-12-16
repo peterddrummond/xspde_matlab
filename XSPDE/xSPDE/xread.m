@@ -14,7 +14,7 @@ if ischar(gr_input)                            %%if input is character
         fname=gr_input;                        %%store label
         saved = 1;                             %%saved  = 1 for saved input 
 else                                           %%end check if data is label
-        input = gr_input;
+        input = xmakecell(gr_input);
         fname = input{1}.file;                 %%store label
 end                                            %%end if data is character
 hflag = xreadname(fname);                      %%check filename is OK

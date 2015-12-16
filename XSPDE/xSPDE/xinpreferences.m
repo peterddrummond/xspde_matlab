@@ -15,7 +15,7 @@ for s = 1:sequence                                 %%loop over sequence length
     
 %%Unconditional  preference list - can be changed if required
 
-    in.version =    xprefer(in,'version','xSPDE');
+    in.version =    xprefer(in,'version','1.04');
     in.name =       xprefer(in,'name','');
     in.dimension =  xprefer(in,'dimension',1);
     in.fields =     xprefer(in,'fields',1);
@@ -88,11 +88,11 @@ for s = 1:sequence                                 %%loop over sequence length
       ind = (0:in.points(n)-1);              %% index vector
       in.xc{n} = ind*in.dx(n);               %%n-th x-axis
 	  in.kr(n) = in.dk(n)*(in.points(n)-1);  %%n-th k range
-      in.gk{n} = ind*in.dk(n)-in.kr(n)/2.;   %%n-th graphics k-vector
       ind = mod(ind+in.points(n)/2,in.points(n)); %%n-th cyclic k-index
       ind = ind - in.points(n)/2;            %%n-th shifted k-index
       in.kc{n} = ind*in.dk(n);               %%n-th propagation k-coords
       in.xc{n} = in.origin(n) + in.xc{n};    %%n-th shifted x-coords
+      in.gk{n} = fftshift(in.kc{n});         %%n-th graphics k-coords
     end;                                     %%end loop over dimension 
    input{s}=in;                              %%store input structure
 end
