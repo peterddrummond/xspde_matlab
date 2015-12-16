@@ -18,7 +18,7 @@ in.images  =  {2};
 in.imagetype   = {2}; 
 in.olabels = {'|a|^2'};
 in.file =       'GPE.h5';
-e = xsim(in);                               %%sim program
-xgraph('GPE.h5');                           %%graph program
+[e,in] = xsim(in);                         %%sim program
+xgraph(in);                                %%graph program
 e = max(e);
-end                                          %%end of function
+end                                        %%end of function

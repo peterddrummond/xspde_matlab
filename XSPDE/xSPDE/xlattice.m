@@ -14,12 +14,10 @@ for s = 1:sequence                                  %%loop over sequence
   for i=1:r.graphs
         r.transformw = max(r.transformw,r.transforms{i}(1));
   end 
-  
   kph={1};                                          %%k phase-factors  FFT
   xph={1};                                          %%x phase-factors  FFT
   s2pi = sqrt(2*pi);                                %%square root 2 pi
   if r.transformw
-    r.w = r.gk{1};                                   %%set frequency data
     r.wtph=s2pi*exp(-1i*0.5*r.kr(1)*r.xc{1})/r.dk(1);%%wt phase-factors
   end
   for n= 2:r.dimension                              %%loop over  dimension

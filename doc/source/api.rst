@@ -5,18 +5,39 @@ Public API
 **********
 
 
+High-level xSPDE functions
+==========================
+
+The high-level xSPDE functions process the input parameters, producing simulation data and graphs. Function parameters are in the order of ``input``, which specifies the simulation, then ``data``, which is needed for graphics output.
+
+.. function:: xspde(input)
+
+    This is the combined xSPDE function. It accepts a simulation sequence, ``input``. This can be a single structure, ``in``, or else a cell array of structures, ``{in1,in2,..}``, for  sequences. Output graphs are displayed, and it returns the output ``[maxerror, input, data]``, where ``maxerror`` is the maximum error or difference found. If a filename is specified, it generates an output data file. It calls the functions :func:`xsim` and :func:`xgraph`.
+
+
+.. function:: xsim(input)
+
+    This is the xSPDE simulation function. Like :func:`xspde', it accepts input parameters in ``input``. It returns ``[error, input, data, raw]``, where: ``error = [error(1),error(2)]`` is a vector of maximum step-size and sampling errors, ``input`` is the full input structure or cell array for sequences, including default values, and ``data`` is a cell array of average observables. If the ``in.raw`` option is used, data for the actual trajectories is output in ``raw``. This can be run as a stand-alone function if no graphs are required.
+
+.. function:: xgraph(input,data)
+
+    This is the xSPDE graphics function. It takes computed simulation  ``input`` and ``data``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions. The ``data`` should have as many cells as ``input`` cells, for sequences. However, the ``data`` input is optional. 
+    If no ``data`` is included, then a data file will be read using the file-name specified in the ``input`` structure or cell array. In this case, any stored ``input`` is ignored, allowing graphs to be modified with new labels. If ``input = 'filename.h5'`` or ``input= 'filename.mat'``, the specified file is read both for ``input`` and ``data``. Here ``.h5`` indicates an HDF5 file, and ``.mat`` indicates a Matlab file.
+
+
+
 Open object-oriented architecture
 =================================
 
-As well as extensibility through sequences, which was described in :ref:`chap-projects`, in the section :ref:`sec-sequential-integration`, the open architecture of xSPDE allows functional extensions.
+As well as extensibility through sequences, which was described in :ref:`chap-projects`, in the section :ref:`sec-sequential-integration`, the architecture of xSPDE allows functional extensions.
 
-This further type of extensibility permits user definable functions to be specified in the ``in`` metadata structures. These functions have default values in xSPDE, and can simply be used as is. It is also possible to have user defined functions that satisfy the interface definitions instead. This is achieved simply by including the relevant function handles and parameters in the input metadata.
+This extensibility permits user definable functions to be specified in the ``in`` structures. All functions and parameters have default values in xSPDE. It is also possible to include user defined functions, provided they satisfy the API definitions given below. This is achieved simply by including the relevant function handles and parameters in the input metadata.
 
-This input metadata includes both data and methods acting on the data, in the tradition of object-oriented programs. Yet there is no strict class typing. Users are encouraged to adapt the xSPDE program by adding more input parameters and methods to the input structures. Internal parameters and function handles stored in the :ref:`lattice structure <sec-lattice-structure>` ``r`` are available to all user-defined simulation functions. Note that use of pre-existing reserved names is not advisable.
+This input metadata includes both data and methods acting on the data, in the tradition of object-oriented programs. Yet there is no strict class typing. Users are encouraged to adapt the xSPDE program by adding input parameters and methods to the input structures. Internal parameters and function handles stored in the :ref:`lattice structure <sec-lattice-structure>` ``r`` are available to all user-defined functions. Use of pre-existing reserved names is not advisable.
 
 *Such unorthodox object orientation is deliberate*.
 
-The xSPDE software architecture is intended to be easily extended, and users are encouraged to develop their own libraries. Because this may require new functions and parameters, the internal data architecture is as open as possible.
+The xSPDE software architecture is intended to be easily extended, and users are strongly encouraged to develop their own libraries and contribute to the xSPDE function pool. Because this generally requires new functions and parameters, the internal data architecture is as open as possible.
 
 For example, to define your own integration function, include in the xSPDE input the line:
 
@@ -33,6 +54,7 @@ Next, include anywhere on your Matlab path, the function definition, for example
         ...
         a = ...;
     end
+    
 
 
 Lattice, coordinates and time
@@ -57,23 +79,25 @@ Time is advanced in basic integration steps that are equal to or smaller than ``
 
 Here, :attr:`in.steps` is the minimum number of steps used per plotted point, and ``nc = 1, 2`` is the check number. If ``nc = 1``, the run uses coarse time-divisions. If ``nc = 2`` the steps are halved in size for error-checking. Error-checking can be turned off if not required.
 
-Functions
----------
+Low-level functions
+-------------------
 
-The xSPDE program is function oriented: user specified functions define initial conditions, equations and observables, amongst other things.
+The xSPDE program is function oriented: low-level functions are used to define initial conditions, equations and observables, amongst many other things described below.
 
-Function arguments are always in the following order:
+Functions of a single lattice have arguments in the following order:
 
 -  the field ``a`` or initial random variable ``v``;
 -  the stochastic noise ``z`` or other fields;
 -  non-field arguments;
--  the grid structure ``r`` and any previous grid structure needed.
+-  the grid structure ``r``.
 
 The first argument, ``a``, is a real or complex vector field. This is a matrix whose first dimension is the field index. The second dimension is the lattice index.
 
 The second argument, ``z``, if needed, is a real random noise, corresponding to :math:`\zeta` in the mathematical notation. This is a matrix whose first dimension is the noise index. The second dimension is the lattice index.
 
-The last function argument is the current :ref:`lattice structure <sec-lattice-structure>`, ``r``. This contains data about the current integration lattice. The most important constants are :attr:`r.t`, the current time, and the space coordinates, :attr:`r.x`, :attr:`r.y`, :attr:`r.z`. Other data stored in the lattice structure is explained in later chapters.
+The last function argument is the  :ref:`lattice structure <sec-lattice-structure>`, ``r``. This contains data about the integration lattice. The most important constants are :attr:`r.t`, the current time, and the space coordinates, :attr:`r.x`, :attr:`r.y`, :attr:`r.z`. Other data stored in the lattice structure is explained in later chapters.
+
+Functions of multiple lattice sequences take current arguments first, and the oldest arguments last. 
 
 Arrays
 ------
@@ -89,23 +113,6 @@ For reference, the field dimensions are:
 - ``o = [1, r.n.lattice]``.
 
 Each observable is defined by a function in a cell array with length :attr:`in.graphs`.
-
-
-xSPDE functions
-===============
-
-.. function:: xspde(input)
-
-    This is the combined xSPDE function. It accepts a simulation sequence, ``input``. As well as generating graphs, it returns an array ``[e, data]``, where ``e`` are error estimates. It calls the functions :func:`xsim` and :func:`xgraph`.
-
-
-.. function:: xsim(input)
-
-    This is the xSPDE simulation function. It accepts a simulation sequence in the ``input`` cell array and returns ``[e, data]``, where ``e`` are error estimates, together with a cell array of simulated ``data``. The data are: mean values of functions, error bars and sampling errors. This can be run as a stand-alone function.
-
-.. function:: xgraph(data,input)
-
-    This is the xSPDE graphics function. It takes computed simulation ``data`` and ``input`` parameter specifications. It plots graphs, and returns the maximum difference ``ec`` from comparisons. The ``data`` should have as many cells as ``input`` cells, for sequences. If ``data = ''``, then an HDF5 data file will be read using the file-name specified in ``input``. If ``data = 'filename.h5'`` or ``data = 'filename.mat'`` then the specified file is read as data. Note that ``.h5`` indicates an HDF5 file format, and ``.mat`` indicates a Matlab internal file format.
 
 
 Simulation parameters
@@ -125,13 +132,19 @@ Input parameters and user functions
 
 A sequence of simulations is obtained from inputs in a cell array, as ``input = {in1, in2, ...}``. The input parameters of each simulation in the sequence are specified in a Matlab structure. If there is one simulation, just one structure can be input, without the braces. This data is also passed to the :func:`xgraph` function. The inputs are numbers, vectors, strings, functions and cell arrays. All xSPDE metadata has preferred values, so only changes from the preferences need to be input. The resulting data is stored internally as a sequence of structures in a cell array, to describe the simulation sequence.
 
-The standard form of each parameter value is:
+The standard way to input each parameter value is:
 
 ::
 
     in.label = parameter
+    
+The standard way to input each function is:
 
-The inputs are scalar or vector parameters or function handles. Quantities relating to graphed averages are cell arrays, indexed by the graph number. The available inputs, with their default values in brackets, are as follows.
+::
+
+    in.label = @function-name
+
+The inputs are scalar or vector parameters or function handles. Quantities relating to graphed averages are cell arrays, indexed by the graph number. The available inputs, with their default values in brackets, are given below.
 
 Simulation metadata, including all preferred default values that were used in a particular simulation, is also stored for reference in any xSPDE output files. This is done in both the ``.mat`` and the ``.h5`` output files, so the entire simulation can be easily reconstructed or changed.
 
@@ -142,7 +155,7 @@ Note that inputs can be numbers, vectors, strings or cells arrays. To simplify t
 - Where multiple inputs of strings, functions or vectors are needed they should be enclosed in curly brackets, ``{...}``, to create a cell array.
 - Vector or cell array inputs with only one member don’t require brackets.
 - Incomplete or partial vector or cell array inputs are filled in with the last applicable default value.
-- New function definitions can be just handles pointing elsewhere.
+- New function definitions can be just handles pointing elsewhere, or else defined inline.
 
 
 Parameters
@@ -293,31 +306,31 @@ Input functions
 
 A stochastic equation solver requires the definition of an initial distribution and a time derivative. In xSPDE, the time derivatives is divided up into a linear term including space derivatives, used to define an interaction picture, and the remaining derivatives. In addition, one must define quantities to be averaged over during the simulation, called graphs in xSPDE. These are all defined as functions, specified below.
 
-.. attribute:: in.initial
+.. attribute:: in.initial(v,r)
 
     *Default:* :func:`xinitial`
 
-    Initializes the fields :math:`a` for the first simulation in a sequence. The initial Gaussian random field variable, ``v``, has unit variance if :attr:`in.dimension` is ``1`` or else is delta-correlated in space, with variance ``1/r.dV`` (:math:`\equiv 1/(dx_2...dx_d)`) for :math:`d` space-time dimensions. If specified in the input, ``ra`` has a first dimension of :attr:`r.n.random`, otherwise the default is :attr:`in.fields`. The default set by :func:`xinitial` is ``a = 0``.
+    Initializes the fields :math:`a` for the first simulation in a sequence. The initial Gaussian random field variable, ``v``, has unit variance if :attr:`in.dimension` is ``1`` or else is delta-correlated in space, with variance ``1/r.dV`` (:math:`\equiv 1/(dx_2...dx_d)`) for :math:`d` space-time dimensions. If :attr:`in.randoms` is specified in the input, ``v`` has a first dimension of :attr:`r.n.random=in.randoms(1)+in.randoms(2)`, otherwise the default is :attr:`in.fields`. The default set by :func:`xinitial` is ``a = 0``.
 
-.. attribute:: in.transfer
+.. attribute:: in.transfer(v,r,a0,r0)
 
     *Default:* :func:`xtransfer`
 
     Initializes the fields :math:`a` for subsequent calculations in a sequence. Otherwise, this function behaves in a similar way to :attr:`in.initial`. The function includes the previous field ``a0`` and lattice ``r0``. The default set by :func:`xtransfer` is ``a = a0``.
 
-.. attribute:: in.da
+.. attribute:: in.da(a,z,r)
 
     *Default:* :func:`xda`
 
-    Calculates derivatives :math:`da` of the equation. The noise vector, ``z``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension of :attr:`r.n.noise` whose default value is :attr:`in.fields`. If specified by the two elements of the :attr:`in.noises` vector, ``z`` can have a different first dimension from :attr:`in.fields`. This can also include noise correlated in momentum space.
+    Calculates derivatives :math:`da` of the equation. The noise vector, ``z``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension of :attr:`r.n.noise` whose default value is :attr:`in.fields` if :attr:`in.noises' are not given. Otherwise, it has a first dimension of :attr:`r.n.noise=in.noises(1)+in.noises(2)`. The second type of input noise allows for spatially correlated and filtered noise specified in momentum space.
 
-.. attribute:: in.linear
+.. attribute:: in.linear(D,r)
 
     *Default:* :func:`xlinear`
 
-    A user-definable function which returns the linear coefficients :math:`L` in Fourier space. This is a function of the differential operator ``D``. The default is zero. Here ``D`` is a structure with components ``D.x``, ``D.y``, ``D.z``. Each component has an array dimension the same as the coordinate lattice.
+    A user-definable function which returns the linear coefficients :math:`L` in Fourier space. This is a function of the differential operator ``D``. The default is zero. Here ``D`` is a structure with components ``D.x``, ``D.y``, ``D.z``, which correspond to :math:`\partial / \partial x`, :math:`\partial / \partial y`, :math:`\partial / \partial z` respectively. Each component has an array dimension the same as the coordinate lattice.
 
-.. attribute:: in.observe
+.. attribute:: in.observe(a,r)
 
     *Default:* cell array of :func:`xobserve`
 
@@ -405,7 +418,7 @@ More advanced input parameters, which don’t usually need to be changed from de
 
     *Default:* ``0``
 
-    Flag for storing raw trajectory data. If this flag is turned on, raw trajectories are stored in memory and written to a file on completion. To make use of these, a file-name should be included!
+    Flag for storing raw trajectory data. If this flag is turned on, raw trajectories are stored in memory. The raw data is returned in function calls and also written to a file on completion, if a file-name is included.
 
     ::
 
@@ -429,17 +442,17 @@ More advanced input parameters, which don’t usually need to be changed from de
 
     ::
 
-        in.ipsteps = 1, 2, 3
+        in.ipsteps = 1, 2, 3, ..
 
 .. attribute:: in.file
 
     *Default:* ``''``
 
-    Matlab or *HDF5* file name for output data. Includes all data and parameter values, including raw trajectories if ``in.raw = 1``. If not needed just omit this. A Matlab filename should end in ``.mat``, while an HDF5 file requires the filename to end in ``.h5``.
+    Matlab or *HDF5* file name for output data. Includes all data and parameter values, including raw trajectories if ``in.raw = 1``. If not needed just omit this. A Matlab filename should end in ``.mat``, while an HDF5 file requires the filename to end in ``.h5``. For a sequence of inputs, the filename should be given in the first structure of the sequence, and the entire sequence is stored.
 
     ::
 
-        in.file = [origin(1), ..., origin(4)]
+        in.file = 'file-name'
 
 Advanced input functions
 ------------------------
@@ -452,35 +465,35 @@ Advanced input functions are user-definable functions which don’t usually need
 
     Initializes the grid of coordinates in space.
 
-.. attribute:: in.noisegen
+.. attribute:: in.noisegen(r)
 
     *Default:* :func:`xnoisegen`
 
     Generates arrays of noise terms ``xi`` for each point in time.
 
-.. attribute:: in.randomgen
+.. attribute:: in.randomgen(r)
 
     *Default:* :func:`xrandomgen`
 
-    Generates a set of random fields ``rf`` to initialize the fields simulated.
+    Generates a set of initial random fields ``v`` to initialize the fields simulated.
 
-.. attribute:: in.step
+.. attribute:: in.step(a,z,dt,r)
 
     *Default:* :func:`xMP`
 
-    Specifies the stochastic integration routine for a step in time ``dt`` and noise ``xi``. It returns the new field ``a`` at space-time location ``r``, given the old field as input, and interaction-picture propagator :attr:`r.propagator` which is part of the lattice structure. This can be set to any of the predefined stochastic integration routines provided with xSPDE, described in the :ref:`chap-algorithms` chapter. User-written functions can also be used. The standard method, :func:`xMP`, is a midpoint integrator.
+    Specifies the stochastic integration routine for the field ``a``, given a step in time ``dt`` and noise ``z``, together with the interaction-picture propagator :attr:`r.propagator` which is part of the lattice structure. It returns the new field ``a``. This function can be set to any of the predefined stochastic integration routines provided with xSPDE, described in the :ref:`chap-algorithms` chapter. User-written functions can also be used. The standard method, :func:`xMP`, is a midpoint integrator.
 
-.. attribute:: in.prop
+.. attribute:: in.prop(a,r)
 
     *Default:* :func:`xprop`
 
-    Returns the fields propagated in the interaction picture, depending on the propagator array :attr:`r.propagator`.
+    Returns the fields propagated for one step in the interaction picture, depending on the initial field ``a``, and the propagator array :attr:`r.propagator`. Note that the time-step used in :attr:`r.propagator` depends on the input time-step, the error-checking and the algorithm.
 
-.. attribute:: in.propfactor
+.. attribute:: in.propfactor(nc,r)
 
     *Default:* :func:`xpropfactor`
 
-    Returns the transfer array :attr:`r.propagator`, used by the :attr:`in.prop` function. The time propagated is a fraction of the integration time-step, :attr:`r.dt`. It is equal to ``1 / in.ipsteps`` of the integration time-step.
+    Returns the transfer array :attr:`r.propagator`, used by the :attr:`in.prop` function. The time propagated is a fraction of the current integration time-step, :attr:`r.dt`. It is equal to ``1 / in.ipsteps`` of the integration time-step.
 
 
 Graphics inputs and functions

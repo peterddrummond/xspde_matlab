@@ -1,5 +1,6 @@
+
 function [a,o,raw] = xpath(a,nc,r)
-%   [a,data,astore] = XPATH(a,nc,r) solves stochastic equation trajectory.
+%   [a,data,astore] = XPATH(a,nc,r) solves stochastic equation trajectories.
 %   Initial condition is the 'a' field, returned value 'a' is the final field.
 %   Input parameters in the 'r' structure including equation function handles.
 %   Input 'nc' indicates the check index.
@@ -9,8 +10,8 @@ function [a,o,raw] = xpath(a,nc,r)
 
 dt=r.dt/nc;                                    %%reduced step-size
 raw =0;
-o = zeros(1,r.points(1),r.n.space,r.graphs);
-if r.raw|r.transformw                          %%if store fields                                     
+o = zeros(1,r.points(1),r.n.space,r.graphs);   %%initialize storage
+if r.raw||r.transformw                         %%if store fields                                     
     raw = zeros(r.d.raw);                      %%initialize storage
 end                                            %%end if field stored                                                                 
 for np = 1:r.points(1);                        %%loop until time tmax
@@ -28,52 +29,54 @@ for np = 1:r.points(1);                        %%loop until time tmax
       end                                      %%End if low res  & odd
     end                                        %%End for steps
   end                                          %%End if NOT first point
-  if r.raw|r.transformw                        %%if store fields 
+  if r.raw||r.transformw                       %%do fields need storing?
         raw(:,:,np) = a;                       %%store fields 
   end                                          %%end if store data         
-  o(1,np,:,:) = xdata(a,0,r);                  %%store time-domain 
+  o(1,np,:,:) = xdata(a,o(1,np,:,:),0,r);      %%store time-domain data
 end;                                           %%end time loop
 if r.transformw                                %%if frequency domain
     astore = zeros(r.d.raw);                   %%initialize storage
     for np = 1:r.points(1)                     %%loop until wmax
-      astore(:,:,np) = raw(:,:,np)*r.wtph(np); %%store fields 
+      astore(:,:,np) = raw(:,:,np)*r.wtph(np); %%store fields*factors 
     end                                        %%end if frequency transform 
     astore = ifft(astore,[],3);                %%take Fourier transform
     for np = 1:r.points(1)                     %%loop until wmax
-      o(1,np,:,:) = xdata(astore(:,:,np),1,r); %%store data
+      r.w = r.gk{1}(np);                       %%get current frequency
+      o(1,np,:,:) = xdata(astore(:,:,np),o(1,np,:,:),1,r); %%store data
     end                                        %%end loop at wmax
 end                                            %%exit frequency domain
 end                                            %%end trajectory function
 
 
-function o = xdata(a,f,r)  
-%   o = XDATA(a,f,r) stores data in an equation trajectory.
-%   Input is the 'a' field, returned array 'o' is the observable.
-%   Input parameters in the 'r' structure including observe function handles.
+function o = xdata(a,o,f,r)  
+%   o = XDATA(a,o,f,r) stores data averages from an equation trajectory.
+%   Input is the 'a' field, current observable array 'o'.
+%   Returned array 'o' is the updated observable array.
 %   Input switch 'f' = 0 for time domain, = 1 for frequency domain averages.
+%   Input parameters in the 'r' structure include observe function handles.
 %   All xSPDE functions are licensed by Peter D. Drummond, (2015) - see License.txt
  
 tr1 = [0,0,0];                                 %%initial transform switch
-o = zeros(r.n.lattice,r.graphs);               %%initialize storage
 for g = 1:r.graphs                             %%loop over graphs
-  if r.transforms{g}(1) == f                   %%if frequency transform
+  if r.transforms{g}(1) == f                   %%if frequency switch match
     tr = r.transforms{g}(2:4);                 %%space transform switch
     if sum(tr)>0                               %%if transform needed
       if sum(tr ~= tr1)                        %%if new space transform
          ak = xgraphicsfft(a,r,tr);            %%Fourier transform
          tr1 = tr;                             %%store transform switch
        end                                     %%end if space transform
-       o(:,g) = r.observe{g}(ak,r);            %%Get k observable
+       o_raw = r.observe{g}(ak,r);             %%Get k observable
     else                                       %%no transform needed
-       o(:,g) = r.observe{g}(a,r);             %%Get x observable    
-    end                                        %%end if transform 
-  end                                          %%end if transform
-end                                            %%end for loop
-o = reshape(real(o),r.d.obs);                  %%Reshape observable
-if r.ensembles(1) > 1                          %%If multiple samples
-   o=mean(o,1);                                %%Take the mean
-end                                            %%End if multiple
-o = reshape(o,r.n.space,r.graphs);            %%Reshape observable
+       o_raw = r.observe{g}(a,r);              %%Get x observable    
+    end                                        %%end if space transform
+    o_raw = reshape(o_raw,[r.ensembles(1),r.n.space]); %%Reshape
+    if r.ensembles(1) > 1                      %%If multiple samples
+           o_raw=mean(o_raw,1);                %%Take the mean
+    end                                        %%End if multiple
+    o_raw = reshape(o_raw,[r.n.space,1]);      %%Return observable
+    o(1,1,:,g) = real(o_raw(:,1));             %%Return observable
+  end                                          %%end if switches match
+end                                            %%end graphs loop
 end                                            %%end function
 
 function a  =  xgraphicsfft(a,r,tr)            
@@ -92,6 +95,6 @@ for nd = 3:dmax                                 %%loop over dimension
         a = a.*r.post{nd-1};                    %%FFT k-space normalization
     end                                         %%end if FFT required
 end                                             %%end loop over dimension
-a =reshape(a, r.d.a);                           %%reshape to flat
-end                                             %%end check if propagation
+a =reshape(a, r.d.a);                           %%reshape to flat array
+end                                             %%end function
                 

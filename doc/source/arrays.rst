@@ -226,23 +226,17 @@ There are :attr:`in.graphs` real observables, which are determined by the number
 
 When step-size checking is turned on using the :attr:`in.errorchecks` flag set to ``2``, a low resolution field is stored for comparison with a high-resolution field of half the step-size, to obtain the time-step error.
 
-The observable ``data`` which is stored therefore involves three arrays which are all included in the data array. These are the high resolution means, together with error-bars due to time-steps, and estimates of high-resolution standard deviations due to sampling statistics.
+The observable ``data`` which is stored has three arrays which are all included in the data array. These are the high resolution means, together with error-bars due to time-steps, and estimates of high-resolution standard deviations due to sampling statistics.
 
-The observable ``data`` which is plotted therefore includes step-size error bars and plotted lines for the two estimated upper and lower standard deviations, obtained from the statistical moments.
+The observable ``data`` which is plotted includes step-size error bars and plotted lines for the two estimated upper and lower standard deviations, obtained from the statistical moments.
 
-In summary, data from each simulation is stored internally in an array of size
-
-::
-
-    errors * in.points(1) * n.space * in.graphs.
-
-This is a flattened version of the full data dimension, which is logically
+Data from each simulation is stored  in an array of size
 
 ::
 
-    errors * in.points(1) * ... * in.points(dimension) * in.graphs
+    3 * in.points(1) * ... * in.points(dimension) * in.graphs
 
-This is necessary in order to generate outputs at each of the ``in.points(1)`` time slices. Here ``errors = 1, 2, 3`` is used to index over the
+This is necessary in order to generate outputs at each of the ``in.points(1)`` time slices. Here the first index is ``errors = 1, 2, 3``, which is used to index over the
 
 #. mean value,
 

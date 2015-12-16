@@ -15,12 +15,12 @@ for ns = 1:r.ensembles(2)                         %%loop over ensembles
   nsp = (npar-1)*r.ensembles(2) + ns;             %%unique ensemble index 
   for  nc  = 1:r.errorchecks                      %%loop over errorchecks 
     rng(r.seed+nsp);                              %%Set unique random seed
-    for seq = 1:sequence                          %%Loop over sequence
-      if r.print                                  %%If print switch
+    if r.print                                    %%If print switch
         fprintf('Check %d, Ensemble %d\n',nc,nsp);%%indices
-        if seq > 1                                %%If sequence
-          fprintf('Sequence %d\n',seq);           %%print sequence number
-        end;                                      %%end if sequence
+    end;                                          %%end if print switch
+    for seq = 1:sequence                          %%Loop over sequence
+      if r.print > 1                              %%If print switch
+          fprintf('Sequence %d\n',seq);           %%indices
       end;                                        %%end if print switch
       r = latt{seq};                              %%calculate grid 
       r.propagator = r.propfactor (nc,r);         %%calculate propagator   
@@ -44,3 +44,5 @@ for ns = 1:r.ensembles(2)                         %%loop over ensembles
   end                                             %%end errorchecks loop 
 end;                                              %%end ensemble loop
 end                                               %%end function
+
+%   Version 1.03 - improved ensemble and sequence progress printout

@@ -16,14 +16,21 @@ function inlabel = xcprefer (in,label,max,default)
     end                                      %% End if label data not cell
     lc = length (in.(label));                %% Get length of cell array
     for nc =1:lc                             %% For cells present
-        nd = min(nc,length(default));        %% Index for default cell data
-        while length(in.(label){nc}) < length(default{nd}) %% While short
-          ns=length(in.(label){nc});                       %% Get length
-          in.(label){nc}(ns+1) = default{nd}(ns+1);        %% Add default
-        end                                                %% End while
+        cdata = in.(label){nc};              %% Get cell data
+        while iscell(cdata)                  %% While data is nested cell 
+            cdata = cdata{1};                %% Un-nest nested cell 
+        end                                  %% End if data is nested cell 
+        nd = min(nc,length(default));        %% Cell index for default data
+        while length(cdata) < length(default{nd}) %% While too short
+          ns=length(cdata);                  %% Get length
+          cdata(ns+1) = default{nd}(ns+1);   %% Add default
+        end                                  %% End while
+        in.(label){nc} = cdata;              %% Store cell
     end                                      %% End for cells present
     for nc =lc+1:max                         %% For missing cells   
        in.(label){nc} = default{min(nc,length(default))};  %% Set default
     end                                      %% End for missing cells
     inlabel=in.(label);                      %% Return modified inlabel
 end                                          %% End function
+
+%   Version 1.03 - removes nested cells if present in the input data

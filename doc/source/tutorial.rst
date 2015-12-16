@@ -20,7 +20,9 @@ There are preset preferences for all the input parameters except the derivative 
 Wiener process
 ==============
 
-Try increasing the time resolution and adding a heading to the random walk example in Chapter 3. This requires specifying the number of points using :attr:`in.points`. To name the simulation, use :attr:`in.name`, which is stored with your simulation data. The default option is to add this heading to each graph. If no header is wanted, type ``in.headers = 0``.
+Try increasing the time resolution and adding a heading to the random walk example in :ref:`chap-interactive`. 
+
+This requires specifying the number of points using :attr:`in.points`. To name the simulation, use :attr:`in.name`, which is stored with your simulation data. The default option is to add this heading to each graph. If no header is wanted, type ``in.headers = 0``.
 
 To run the xSPDE program after adding these inputs, just press the *Run* icon on the Matlab editor bar. This will run the xSPDE program, with default parameters where they are not specified in the inputs. You will see the following figure:
 
@@ -40,19 +42,19 @@ The next example is the stochastic harmonic oscillator with the initial conditio
 
 .. math::
 
-    a(0) = 1+w,
+    a(0) = 1+v,
 
 where
 
 .. math::
 
-    \left\langle w^{2}\right\rangle = 1
+    \left\langle v^{2}\right\rangle = 1
 
 and the differential equation:
 
 .. math::
 
-    \dot{a}=ia+\zeta.
+    \dot{a}=ia+\zeta(t).
 
 Initial conditions and derivative
 ---------------------------------
@@ -129,11 +131,13 @@ Add a linear decay of :math:`-a` to the differential equation, and modify the ex
 Kubo oscillator
 ===============
 
-The next example is more interesting. It is the Kubo oscillator, an oscillator with a random frequency. In Stratonovich stochastic calculus, its equation is:
+The next example is more interesting. It is the Kubo oscillator, an oscillator with a random frequency. It is a case of multiplicative noise, but with a complex variable. 
+
+In Stratonovich stochastic calculus, its equation is:
 
 .. math::
 
-    da=ia \circ dw
+   \dot{a}=ia\zeta(t)
 
 Given the initial condition that :math:`a(0)=1`, each trajectory has the solution:
 
@@ -145,7 +149,7 @@ where
 
 .. math::
 
-    w(t)=\int_{0}^{t}dw
+    w(t)=\int_{0}^{t}\zeta(\tau)d\tau
 
 The corresponding mean value is different to the instantaneous trajectory, owing to dephasing:
 

@@ -23,6 +23,7 @@ e(16) = GaussianAv1D;
 e(17) = GaussianAv2D;
 e(18) = GaussianAv3D;
 close all;         %%Deletes all figures if not wanted
-fprintf('Batch test error score = %f \n',prod(e)*10^40);
+fprintf('xSPDE batch test error score = %f \n',prod(e)*10^40);
+fprintf('Expected total error score   = 6.482868 \n' );
 
 
