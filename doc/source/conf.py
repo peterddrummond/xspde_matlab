@@ -222,7 +222,10 @@ latex_elements = {
 #'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
-#'preamble': '',
+'preamble': """
+\\definecolor{VerbatimColor}{rgb}{0.9375,0.9375,0.9375}
+\\definecolor{VerbatimBorderColor}{rgb}{1,1,1}
+""",
 
 # Latex figure (float) alignment
 #'figure_align': 'htbp',
