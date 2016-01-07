@@ -725,9 +725,11 @@ A parameter structure contains information about the space-time grid and is pass
 
 .. attribute:: r.z
 
-.. attribute:: r.x5..
+    Coordinate grids of :math:`x`, :math:`y`, :math:`z`.
 
-    Coordinate grids of :math:`x`, :math:`y`, :math:`z`. Higher dimensions are labeled numerically as :math:`x_5`,  :math:`x_6`, and so on.
+.. attribute:: r.x5
+
+    Higher dimensions are labeled numerically as :math:`x_5`,  :math:`x_6`, and so on.
 
 .. attribute:: r.kx
 
@@ -735,9 +737,11 @@ A parameter structure contains information about the space-time grid and is pass
 
 .. attribute:: r.kz
 
-.. attribute:: r.k5..
+    Grids in momentum space: :math:`k_x`, :math:`k_y`, :math:`k_z`.
 
-    Grids in momentum space: :math:`k_x`, :math:`k_y`, :math:`k_z`. Higher dimensions are labeled numerically as :math:`k_5`,  :math:`k_6`, and so on.
+.. attribute:: r.k5
+
+    Higher dimensions are labeled numerically as :math:`k_5`,  :math:`k_6`, and so on.
 
 .. attribute:: r.dt
 
