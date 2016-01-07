@@ -4,17 +4,6 @@
 %   Total runtime should be around 60s, depending on CPU speed.
 %   To see the generated graphs, add '%' before the  'close all' commands
 
-e(1) = Wiener;
-e(2) = SHO;
-e(3) = Kubo;
-e(4) = Soliton;
-e(5) = Gaussian;
-e(6) = Planar;
-e(7) = Gain;
-e(8) = Characteristic;
-e(9) = Equilibrium;
-e(10) = GainTransfer;
-close all;         %%Deletes all figures if not wanted
 e(11) = GPE;
 e(12) = GPE2;
 e(13) = Kubotest;
@@ -25,6 +14,8 @@ e(17) = GaussianAv4D;
 e(18) = GaussianAv6D;
 e(19) = GaussianKinetic;
 e(20) = SolitonDeriv;
-close all;         %%Deletes all figures if not wanted
-fprintf('xSPDE batch test error score = %f \n',prod(e)*10^40);
-fprintf('Expected total error score   = 0.024169 \n' );
+%close all;         %%Deletes all figures if not wanted
+fprintf('xSPDE batch test error score = %f \n',prod(e)*10^45);
+fprintf('Expected total error score   = 19.354908 \n' );
+
+

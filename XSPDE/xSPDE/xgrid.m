@@ -1,33 +1,33 @@
-function r = xgrid (r)                       
+function r = xgrid(r)                       
 %   r = XGRID (r)  sets grid points in lattice from coordinate vectors.
 %   Input:  struct r with coordinates.
-%   Output: struct r including all grid points. 
-%   All xSPDE functions are licensed by Peter D. Drummond, (2015) - see License.txt 
+%   Output: struct r including all grid points in space and momentum. 
+%   Note, for derivatives,  D{d} = 1i*k{d}.
+%   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-e = ones(1,r.ensembles(1));                     %%vector length = sample
-r.ky =0;
-r.kz =0;
-switch r.dimension
-  case 2
-    [~,~,r.x] = ndgrid(1,e,r.xc{2});                           %%X grid
-    r.x = reshape (r.x,r.d.r);
-    [~,~,r.kx] = ndgrid(1,e,r.kc{2});                          %%K grid
-    r.kx = reshape (r.kx,r.d.r);
-  case 3
-    [~,~,r.x,r.y] = ndgrid(1,e,r.xc{2},r.xc{3});               %%X grid
-    r.x = reshape (r.x,r.d.r);
-    r.y = reshape (r.y,r.d.r);
-    [~,~,r.kx,r.ky] = ndgrid(1,e,r.kc{2},r.kc{3});             %%K grid
-    r.kx = reshape (r.kx,r.d.r);
-    r.ky = reshape (r.ky,r.d.r);
-  case 4
-    [~,~,r.x,r.y,r.z] = ndgrid(1,e,r.xc{2},r.xc{3},r.xc{4});   %%X grid      
-    r.x = reshape (r.x,r.d.r);
-    r.y = reshape (r.y,r.d.r);
-    r.z = reshape (r.z,r.d.r);
-    [~,~,r.kx,r.ky,r.kz] = ndgrid(1,e,r.kc{2},r.kc{3},r.kc{4});%%K grid
-    r.kx = reshape (r.kx,r.d.r);
-    r.ky = reshape (r.ky,r.d.r);
-    r.kz = reshape (r.kz,r.d.r);
+e = ones(1,r.ensembles(1));                         %%length = samples
+d = r.dimension;
+if r.numberaxis||d>4
+    r.x = cell(1,d-1);                                %%cell of x-grids
+    r.k = cell(1,d-1);                                %%cell of k-grids
+    [~,~,r.x{1:d-1}] = ndgrid(1,e,r.xc{2:d});         %%make x-grids
+    [~,~,r.k{1:d-1}] = ndgrid(1,e,r.kc{2:d});         %%make k-grids
+    for id = 1:d-1                                    %%loop over dimension
+        r.x{id} = reshape (r.x{id},r.d.r);
+        r.k{id} = reshape (r.k{id},r.d.r);
+    end 
+else
+  if d > 1
+    x = cell(2,4);                                  %%cell of x-grids
+    k = cell(2,4);                                  %%cell of k-grids
+    [~,~,x{2:d}] = ndgrid(1,e,r.xc{2:d});           %%make x-grids
+    [~,~,k{2:d}] = ndgrid(1,e,r.kc{2:d});           %%make k-grids
+    for id = 2:d                                    %%loop over dimension
+        x{id} = reshape (x{id},r.d.r);
+        k{id} = reshape (k{id},r.d.r);
+    end
+    [r.x,r.y,r.z] =    deal(x{2:4});
+    [r.kx,r.ky,r.kz] = deal(k{2:4});
+  end
 end
 end

@@ -1,46 +1,76 @@
-******
-Arrays
-******
+***************
+Data and arrays
+***************
 
-The two important internal types of data that are user accessible are: ``a`` and ``r``.
+The xSPDE data and arrays that are user accessible are the fields ``a``, the parameters``r``,  the average observables ``o``, and the raw trajectories ``raw``.
 
-The fields ``a`` are complex arrays defined on spatial or momentum grids. Internally, the fields ``a`` are just matrices stored on a flattened space lattice, except for temporary transformations to the Fourier domain for calculating interaction picture propagation [Caradoc-Davies2000]_. Two different types of Fourier representations are used, depending on whether the transformations are for propagation, which requires the fastest possible methods, or whether the transformation is for graphing, which uses a conventional index ordering.
+The fields ``a`` are complex arrays stored discretely on spatial or momentum grids. Internally, the fields are matrices stored on the flattened xSPDE internal lattice. This combines a local ensemble and a spatial grid. Temporary transformations to the Fourier domain are used for calculating interaction picture propagation [Caradoc-Davies2000]_ and averages over Fourier space. 
+
+Two different types of Fourier representations are used. In xsim, Fourier transformations are for propagation, which requires the fastest possible methods, and uses :math:`k=0` as the first or lowest index. In xgraph, Fourier transformations are for graphical representations. Hence, the  indices are re-ordered to a conventional index ordering, with negative momentum values in the first index position.
+
+
+The :ref:`parameters <sec-parameters>` are stored in a structure called, simply, ``r``. It is available to all user-definable routines. The label ``r`` is chosen because the parameters include the grid coordinates in space and time. These structures reside in a static internal cell array that combines both input and lattice parameters, including the interaction picture transformations, called :data:`latt`. The data in :data:`latt` is different for each simulation in a sequence.
+
+Averaged results are called observables in xSPDE. For each sequence, these are stored in either space or Fourier domains, in the array ``data``, as determined by the :attr:`in.transforms` vector for each observable. This is a vector of switches for each of the space-time coordinates. The ``data`` arrays obtained in the program as calculations progress are stored in cell arrays, ``cdata``, indexed by a sequence index.
 
 If required, ``raw`` ensemble data consisting of all the trajectories ``a`` developing in time can be stored and output. This is memory intensive, and is only done if the :attr:`in.raw` option is set to ``1``.
 
-The :ref:`lattice data <sec-lattice-structure>` is a structure called, simply, ``r``. It is available to all user-definable routines. The label ``r`` is chosen because the lattice parameters have the important function of storing the grid coordinates in space and time. These structures reside in a static internal cell array of inputs and lattice parameters, including the interaction picture transformations, called :data:`latt`. The data in :data:`latt` is different for each simulation in a sequence.
+More details of ensembles, grids and the internal lattice are given below. Note that the term ``lattice`` is used to refer to the total internal field storage. This combines the local ensemble and the spatial grid together. 
 
-Averaged results for each sequence are stored in either space or Fourier domains, in the array ``data``, as determined by the :attr:`in.transforms` vector for the observable. The ``data`` arrays obtained in the program as calculations progress are stored in cell arrays, ``cdata``, indexed by a sequence index.
+Ensembles
+================
 
-The internal spatial grid definitions are as follows:
+Ensembles are used for averaging over stochastic trajectories. They come in three layers: local, serial and parallel, in order to optimize simulations for memory and for parallel operations. The ``in.ensembles(1)`` local  trajectories are used for array-based parallel ensemble averaging. These trajectories are stored in one array, to allow fast on-chip parallel processing. Distinct stochastic trajectories are also organized at a higher level into a set of ``in.ensembles(2)`` serial ensembles for statistical purposes, which allows a more precise estimate of sampling error bars. For greater speed, these can  be integrated using ``in.ensembles(3)`` parallel threads.
+
+This hierarchical organization allows allows flexibility in allocating memory and optimizing parallel processing. It is usually faster to have larger values of ``in.ensembles(1)``, but more memory intensive. Using larger values of ``in.ensembles(2)`` is slower, but requires less memory.  Using larger values of ``in.ensembles(3)`` is fast, but requires the Matlab parallel toolbox, and uses both threads and memory resources. It is generally not effective to increase ``in.ensembles(3)`` above the maximum number of available computational cores.
+
+In summary, the ensembles are defined as follows:
+
+Local ensemble
+--------------
+
+The first or local ensemble contains ``ensembles(1)`` trajectories stored on the xSPDE internal lattice and processed using vector or matrix operations. 
+
+Serial ensemble
+--------------
+
+The second or serial ensemble contains ``ensembles(2)`` of the local ensembles, processed in a sequence to conserve memory. 
+
+Parallel ensemble
+--------------
+ 
+The third or parallel ensemble contains ``ensembles(3)`` of the serial ensembles processed in parallel using different threads to allow multi-core and multi-CPU parallel operations.
+
 
 Grids in x and k
 ================
 
-The algorithms all use a sequence of interaction pictures. Each successive interaction picture is referenced to :math:`t=t_{n}`, for the n-th step starting at :math:`t=t_{n}`, so :math:`\boldsymbol{a}_{I}(t_{n})=\boldsymbol{a}(t_{n})\equiv\boldsymbol{a}_{n}`. To understand the interaction picture, we first must understand the xSPDE lattice.
+The xSPDE algorithms all use a sequence of interaction pictures. Each successive interaction picture is referenced to :math:`t=t_{n}`, for the n-th step starting at :math:`t=t_{n}`, so :math:`\boldsymbol{a}_{I}(t_{n})=\boldsymbol{a}(t_{n})\equiv\boldsymbol{a}_{n}`. It is possible to solve stochastic partial differential equations in xSPDE using explicit derivatives, but this is generally less efficient. To understand spatial discretization and the interaction picture, we first must understand the xSPDE spatial grids.
 
-Space lattice
+The space grid can have any dimension, provided there is enough memory.
+
+Space grid
 -------------
 
-We define the lattice cell size :math:`dx_{j}` in the :math:`j`-th dimension in terms of maximum range :math:`R_{j}` and the number of points :math:`N_{j}:`
+We define the grid cell size :math:`dx_{j}` in the :math:`j`-th dimension in terms of maximum range :math:`R_{j}` and the number of points :math:`N_{j}:`
 
 .. math::
 
     dx_{j}=\frac{R_{j}}{N_{j}-1}.
 
-Each lattice starts at a value defined by the vector :attr:`in.origin`. Using the default values, the time lattice starts at :math:`t=0` and ends at :math:`t=T=r_{1}`, for :math:`n=1,\ldots N_{j}`:
+Each grid starts at a value defined by the vector :attr:`in.origin`. Using the default values, the time grid starts at :math:`t=0` and ends at :math:`t=T=r_{1}`, for :math:`n=1,\ldots N_{j}`:
 
 .. math::
 
     t\left(n\right)=(n-1)dt.
 
-The :math:`j`-th coordinate lattice starts at :math:`-r_{j}/2` and ends at :math:`r_{j}/2` , so that, for :math:`n=1,\ldots N_{j}`:
+The :math:`j`-th coordinate grid starts at :math:`-r_{j}/2` and ends at :math:`r_{j}/2` , so that, for :math:`n=1,\ldots N_{j}`:
 
 .. math::
 
     x_{j}\left(n\right)=-R_{j}/2+(n-1)dx_{j}.
 
-Momentum lattice
+Momentum grid
 ----------------
 
 The momentum space graphs use a Fourier transform definition so that, for :math:`d` dimensions:
@@ -67,7 +97,7 @@ while the momentum lattice starts at :math:`-k_{j}/2` and ends at :math:`k_{j}/2
 
     k_{j}\left(n\right)=-K_{j}/2+(N_{j}-1)dk_{j}.
     
-    However, due to the standard definitions of discrete Fourier transforms, the order used during computation and stored in the data arrays is different, namely:
+However, due to the standard definitions of discrete Fourier transforms, the order used during computation and stored in the data arrays is different, namely:
 
 .. math::
 
@@ -84,13 +114,13 @@ A conventional fast Fourier transform (FFT) is used for the interaction picture 
 
     \tilde{a}_{\tilde{n}}=\mathcal{F}\left(a\right)=\sum_{\tilde{m}=0}^{N-1}a_{\tilde{m}}\exp\left[-2\pi i\tilde{m}\tilde{n}/N\right]
 
-Suppose the lattice spacing is :math:`dx`, and the number of lattice points is :math:`N`, then the maximum range from the first to last point is:
+Suppose the spatial grid spacing is :math:`dx`, and the number of grid points is :math:`N`, then the maximum range from the first to last point is:
 
 .. math::
 
     R=(N-1)dx
 
-We note that the momentum lattice spacing is
+We note that the momentum grid spacing is
 
 .. math::
 
@@ -131,7 +161,7 @@ Note that the dot in the notation of ``.^`` is needed to take the square of each
 Graphics transforms
 ===================
 
-All transforms defined in the observables are obtained from a vector called :attr:`in.transforms`, which determines if a given coordinate axis is transformed prior to a given observable being measured. This can be turned on and off independently for each observable.
+All transforms defined in the observables are obtained from a vector called :attr:`in.transforms`, which determines if a given coordinate axis is transformed prior to a given observable being measured. This can be turned on and off independently for each observable. The coordinate axes are specified in the order of ``t,x,y,z``.
 
 The index ordering and normalization used in the standard discrete FFT approach is efficient for interaction picture propagation, but not useful for graphing, since graphics routines prefer the momenta to be monotonic, i.e. in the order:
 
@@ -149,19 +179,17 @@ In the xSPDE code, the complex vector field ``a`` is stored as a complex matrix 
 
 ::
 
-    lattice = in.ensembles(1) * r.n.space
+    lattice = in.ensembles(1) * r.nspace
 
-The total number of space points ``r.n.space`` is given by:
+The total number of space points ``r.nspace`` is given by:
 
 ::
 
-    r.n.space = in.points(2) * ... * in.points(in.dimension)
+    r.nspace = in.points(2) * ... * in.points(in.dimension)
 
 The use of a matrix for the fields is convenient in that fast matrix operations are possible in a high-level language.
 
-The ``in.ensembles(1)`` trajectories are used for array-based parallel ensemble averaging. These trajectories are stored in parallel in one array, to allow fast on-chip parallel processing. Distinct stochastic trajectories are also organized at a higher level into a set of ``in.ensembles(2)`` ensembles for statistical purposes, which allows a more precise estimate of sampling error bars. These can also be integrated in parallel using ``in.ensembles(3)`` parallel threads.
 
-This hierarchical organization allows allows flexibility in allocating memory and optimizing parallel processing. It is usually faster to have larger values of ``in.ensembles(1)``, but more memory intensive. Using larger values of ``in.ensembles(2)`` is slower, but requires less memory.
 
 In different subroutines it maybe necessary to expand out this array to more easily reference the array structure. The expanded structure is as follows
 

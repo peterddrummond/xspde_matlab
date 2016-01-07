@@ -16,8 +16,8 @@ Thanks for much valuable feedback and many useful suggestions from: Bogdan Opanc
    interactive
    projects
    tutorial
-   logic_and_data
-   arrays
+   logic_and_sequences
+   data_and_arrays
    algorithms
    api
    references

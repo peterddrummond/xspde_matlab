@@ -11,11 +11,11 @@ else                                               %%else if input is not a cell
     input = {input};                               %%change input to cell
 end;                                               %%end check type of input
 for s = 1:sequence                                 %%loop over sequence length
-    in = input{s};                                 %%get input structure, sequence s
+    in = input{s};                                 %%get input, sequence s
     
 %%Unconditional  preference list - can be changed if required
 
-    in.version =    xprefer(in,'version','1.04');
+    in.version =    xprefer(in,'version','xSIM1.05');
     in.name =       xprefer(in,'name','');
     in.dimension =  xprefer(in,'dimension',1);
     in.fields =     xprefer(in,'fields',1);
@@ -33,7 +33,6 @@ for s = 1:sequence                                 %%loop over sequence length
     in.file =       xprefer(in,'file','');
     in.print =      xprefer(in,'print',1);
     in.raw   =      xprefer(in,'raw',0);
-
     
 %%Function  preference list - can be changed if required
 
@@ -48,28 +47,31 @@ for s = 1:sequence                                 %%loop over sequence length
     in.grid =       xprefer(in,'grid',@xgrid);
     in.prop =       xprefer(in,'prop',@xprop);
     in.da   =       xprefer(in,'da',@xda);
-    in.propfactor = xprefer(in,'propfactor',@xpropfactor); 
+    in.propfactor = xprefer(in,'propfactor',@xpropfactor);
+    in.numberaxis = xprefer(in,'numberaxis',0);
        
 %%Conditional preference list - these preferences depend on other choices
 
-    if ~isfield(in,'observe')      %%check if input has observe functions
-        in.olabels =xcprefer(in,'olabels',1,{'a_1'});
-    else
+
+    if ~isfield(in,'observe')                %%does input have no observe?
+        in.olabels = xcprefer(in,'olabels',1,{'a_1'});
+    else                                     %%else input does have observe
         lc = length (in.observe);
-        in.olabels =xcprefer(in,'olabels',lc,{' '});
+        in.olabels = xcprefer(in,'olabels',lc,{' '});
     end
+
     in.observe =    xcprefer(in,'observe',1,{@(a,~) real(a(1,:))});
     in.graphs =     xprefer(in,'graphs',length(in.observe));
-    in.transforms = xcprefer(in,'transforms',in.graphs,{[0,0,0,0]});
-    if s > 1                        %%check if sequence > 1, invariant inputs
-        in.ensembles = input{s-1}.ensembles;
+    in.transforms = xcprefer(in,'transforms',in.graphs,{[0,0,0,0,0,0,0]});
+    if s > 1                                 %%check if sequence > 1, 
+        in.ensembles = input{s-1}.ensembles; %%set the invariant inputs
         in.order = input{s-1}.order;
     end
     
-    switch func2str(in.step)
-      case {'xEuler','xRK2'}
+    switch func2str(in.step)                 %%set ipsteps for given method
+      case {'xEuler','xRK2'}                 %%single transform methods
        in.ipsteps = xprefer(in,'ipsteps',1);
-      otherwise
+      otherwise                              %%double transform methods
        in.ipsteps = xprefer(in,'ipsteps',2);
     end
     
@@ -79,20 +81,15 @@ for s = 1:sequence                                 %%loop over sequence length
     in.dk =  2.0*pi./(in.points.*in.dx);     %%n-th step-size in k
     in.dV  = prod(in.dx(2:in.dimension));    %%lattice cell volume
     in.dK  = prod(in.dk(2:in.dimension));    %%k-space volume
-    in.nspace = prod(in.points(2:in.dimension));%%Transverse lattice 
+    in.nspace = prod(in.points(2:in.dimension));%%Transverse lattice size
     in.V =   in.dV*in.nspace;                %%lattice volume
     in.K  =  in.dK*in.nspace;                %%k-space volume
-    in.xc =  {0,0,0,0};                      %%initialize x coordinates
-    in.kc =  {0,0,0,0};                      %%initialize k coordinates
-    for n= 1:in.dimension                    %%loop over  dimension 
-      ind = (0:in.points(n)-1);              %% index vector
-      in.xc{n} = ind*in.dx(n);               %%n-th x-axis
-	  in.kr(n) = in.dk(n)*(in.points(n)-1);  %%n-th k range
-      ind = mod(ind+in.points(n)/2,in.points(n)); %%n-th cyclic k-index
-      ind = ind - in.points(n)/2;            %%n-th shifted k-index
-      in.kc{n} = ind*in.dk(n);               %%n-th propagation k-coords
-      in.xc{n} = in.origin(n) + in.xc{n};    %%n-th shifted x-coords
-      in.gk{n} = fftshift(in.kc{n});         %%n-th graphics k-coords
+    for n = 1:in.dimension                   %%loop over  dimension 
+      p = (0:in.points(n)-1);                %% index vector
+      in.xc{n} = in.origin(n) + p*in.dx(n);  %%n-th x-axis
+      p = mod(p+in.points(n)/2,in.points(n));%%n-th cyclic k-index
+      p = p - in.points(n)/2;                %%n-th shifted k-index
+      in.kc{n} = p*in.dk(n);                 %%n-th propagation k-coords
     end;                                     %%end loop over dimension 
    input{s}=in;                              %%store input structure
 end

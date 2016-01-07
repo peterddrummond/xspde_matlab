@@ -1,0 +1,14 @@
+Changes that are included in xSPDE1.05
+
+
+(1) wtph  is deleted, all Fourier transforms now done without phase factors
+
+(2) r.kg is  deleted, as momentum axes are computed only when needed.
+
+(3) A bug on reading .h5 files for multi-dimensional data is fixed.
+
+(4) Any number of dimensions are supported, with corresponding documentation
+
+(5) The xint, xd, and xave functions are improved so they behave more consistently
+
+(6) Number attributes are labeled as r.nspace (etc) for compatibility with .h5 files.

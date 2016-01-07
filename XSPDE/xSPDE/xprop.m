@@ -2,6 +2,7 @@ function a  =  xprop(a,r)
 %   a = XPROP(a,r) propagates a step in time using linear couplings. 
 %   Input: field a, lattice r.
 %   Output: new field a. 
+%   Note, first two dimensions of a are components and ensembles.
 %   All xSPDE functions are licensed by Peter D. Drummond, (2015) - see License.txt 
                                                             
     a =reshape(a,r.d.ft);                         %%reshape to array

@@ -1,19 +1,19 @@
 function ec =  xgraph(input,cdata) 
 %   ec = XGRAPH(input,cdata) graphs multidimensional data files.
 %   Input:  input cells 'input', data cells 'cdata'.
-%   Output: graphs and max comparison difference, `ec'.
+%   Output: graphs and sum of comparison differences, `ec'.
 %   If no numeric 'cdata' present, reads data from a file
 %   MIT licensed by Peter D. Drummond, (2015) - see License.txt 
 
-ec = 0;                                        %%Initialize max errors
+ec = 0;                                        %%Initial comparison errors
 if nargin == 2 && ischar(cdata)                %%If data is character
-  [hflag,~,cdata,raw] = xread(cdata);          %%get data from a file
+  [hflag,~,cdata] = xread(cdata);              %%get data from a file
   if hflag < 0                                 %%check if file errors
     return                                     %%return
   end                                          %%end check if error
 end                                            %%End if data is character
 if nargin == 1 || ischar(input)                %%If no input data
-  [hflag,input,cdata,raw] = xread(input);      %%get data from a file
+  [hflag,input,cdata] = xread(input);          %%get data from a file
   if hflag < 0                                 %%check if file errors
     return                                     %%return
   end                                          %%end check if error
@@ -22,10 +22,12 @@ input = xmakecell(input);                      %%change data to cell
 cdata = xmakecell(cdata);                      %%change data to cell
 input = xgrpreferences(input);                 %%get 'input' defaults
 sequence = length(cdata);                      %%get sequence length
-
 for s = 1:sequence                             %%Loop over sequence  
   in = input{s};                               %%inputs for sequence s
-  fprintf ('\nxGRAPH%s: %s, sequence %d\n',in.gversion,in.name,s);%%version
+  fprintf ('\n%s: %s, sequence %d\n',in.gversion,in.name,s);%%version
+  if in.print >1                               %%if print switch is verbose
+    display(in,'current input data');          %%display lattice data
+  end;                                         %%end if print switch
   nxplot = in.points(1);                       %%time points
   nx = in.points(1:in.dimension);              %%index ranges
   mx = 1+floor(nx/2);                          %%index midpoint for plots
@@ -34,7 +36,8 @@ for s = 1:sequence                             %%Loop over sequence
     set (groot,'defaultAxesFontSize',in.font{n}); %%graphics font-size
     in.images{n} = min(nxplot,in.images{n});   %%image numbers
     in.transverse{n} = min(nxplot,in.transverse{n});
-    in.pdimension{n} = min(in.dimension,in.pdimension{n});%%plot dimension
+    plotd = min(in.dimension,in.pdimension{n});%%plot dimension
+    plotd = min(3,plotd);
     head= ' ';                                 %%make graph header blank
     imhead= ' ';                               %%make image header blank
     lab = in.xlabels;                          %%get x labels
@@ -47,10 +50,8 @@ for s = 1:sequence                             %%Loop over sequence
     for d = 1:in.dimension                     %%Loop over dimension
         if in.transforms{n}(d)                 %%If transform switch
             lab{d} = in.klabels{d};            %%get k label
-             x{d} = in.gk{d};                  %%get k coords
-             if d > 1                          %%if space transform
-                 datan = fftshift(datan,d+1);  %%shift k coords
-             end                               %%end if space transform           
+            x{d} =  fftshift(in.kc{d});        %%get graphics k coords
+            datan = fftshift(datan,d+1);       %%shift data k coords        
         end                                    %%end if transform switch
     end                                        %%end dimension loop
     t=x{1};                                    %%initialize time/frequency
@@ -58,18 +59,20 @@ for s = 1:sequence                             %%Loop over sequence
     if ~isempty(in.compare{n})                 %%If comparisons
         compares=1;                            %%If comparisons required
         da_x = in.compare{n}(t,in);            %%get comparison results
-    end                                        %%End if comparisons    
-    if in.dimension  > 3                       %%Check if dimension > 3
-        datan = datan(:,:,:,:,mx(4));          %%Central point plotted
-    end                                        %%End if  dimension > 3
-    if in.dimension  > 2                       %%Check data dimension > 2
-        if in.pdimension{n} > 2                %%Check THIS plot  dimension
-            ximage_plot()                      %%Image plot 
-        end                                    %%End if g.pdimension > 2
+    end                                        %%End if comparisons
+    for d = in.dimension:-1:4                  %%Loop over dimension
+        nsize = prod(nx(3:d-1));
+        datan = reshape(datan,[3,nx(1),nx(2),nsize,nx(d)]);
+        datan = datan(:,:,:,:,mx(d));          %%reduce to lower dimension
+    end                                        %%end dimension loop
+    if in.dimension > 2                        %%Check dimension
+        if plotd > 2                           %%Check THIS plot  dimension
+            ximage_plot()                      %%Image plot
+        end                                    %%End if plotd > 2
         datan=datan(:,:,:,mx(3));              %%Central point plotted
     end                                        %%End check if dimension > 2
     if in.dimension  > 1                       %%Check if dimension > 1
-      if in.pdimension{n} > 1                  %%Check plot dimension
+      if plotd  > 1                            %%Check plot dimension
         xtransverse_plot()                     %%Transverse plot 
         figure;                                %%Start new graphics figure
         im = reshape(datan(1,:,:),nx(1),nx(2));%%Image vs t,x
@@ -88,7 +91,7 @@ for s = 1:sequence                             %%Loop over sequence
       da_n = da_n -  da_x;                     %%Store difference
       err= max(abs(da_n));                     %%Diff vs compare result (n)
       fprintf('Max difference in %d = %e\n',n,err);%%Print errors
-      ec = max(err,ec);                        %%Diff vs compared results
+      ec = err+ec;                             %%Diff vs compared results
       ylabel = strcat('\Delta', olab);         %%2D error plot label
       xplot(t,da_n,eb_n,se_n,in.errorchecks,t(1),t(nx(1)),in.minbar{n});
       plot(t,0.0*t,'--');                      %%2D plot, compare, dashed
@@ -96,7 +99,7 @@ for s = 1:sequence                             %%Loop over sequence
     end                                        %%End if compare results
   end                                          %%End loop over graphs
 end                                            %%End loop over sequence
-fprintf('Maximum comparison differences = %e\n',ec); %%Print max diff
+fprintf('Sum of maximum comparison differences = %e\n',ec);%%Print max diff
 
 function [] =  ximage_plot()
 %   XIMAGE_PLOT() makes 3d transverse images at fixed time

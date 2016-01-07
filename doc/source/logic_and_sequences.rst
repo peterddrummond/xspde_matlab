@@ -1,6 +1,6 @@
-**************
-Logic and data
-**************
+*******************
+Logic and sequences
+*******************
 
 The simulation program logic is straightforward. It is a very compact function called :func:`xspde`. This calls :func:`xsim`, for the simulation, then :func:`xgraph` for the graphics. Most of the work is done by other specialized functions. Input parameters come from an input array, output is saved either in a ``data`` array, or else in a specified file. When completed, timing and error results are printed.
 
@@ -15,6 +15,13 @@ To summarize the previous chapters, xSPDE will solve stochastic partial differen
     \frac{\partial}{\partial t}\boldsymbol{a}(t,\boldsymbol{x})=\mathbf{A}\left[\boldsymbol{a}\right]+\underline{\mathbf{B}}\left[\boldsymbol{a}\right]\cdot\boldsymbol{\zeta}(t,\boldsymbol{x})+\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]\cdot\boldsymbol{a}
 
 It can also solve ordinary stochastic equations, or partial differential equations without noise. Extensive error checking outputs are available. Both initial stochastic conditions and noise can have nonlocal spatial filters applied. All inputs are entered as part of an object-oriented structure. This includes the functions used to specify the equations and the quantities to average. The outputs can be either stored, or graphed interactively. xSPDE includes built-in multidimensional graphics tools.
+
+Sequences
+---------
+
+In many types of application, a sequence of stochastic equations requires simulation. In these cases the final field value after integration of one equation becomes the initial value of the next equation in the sequence. 
+
+Sequences therefore are the basic concept used in both the input of parameters to xSPDE, and the storage of data generated.
 
 Input and data arrays
 ---------------------

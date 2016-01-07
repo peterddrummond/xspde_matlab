@@ -138,7 +138,7 @@ To simulate this, one can use a file, :download:`Kubo.m <Kubo/Kubo.m>`, which al
         in.name = 'Kubo oscillator';
         in.ensembles = [400,16];
         in.initial = @(v,~) 1+0*v;
-        in.da = @(a,z,r) i*a.*xi;
+        in.da = @(a,z,r) i*a.*z;
         in.olabels = {'<a_1>'};
         e = xspde(in);
     end

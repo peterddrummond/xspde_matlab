@@ -429,37 +429,34 @@ Planar inputs
         in.ranges = [1,5,5];
         in.steps = 2;
         in.noises = [2,2];
-        in.ensembles = [10,4,4];
+        in.ensembles = [10,2,2];
         in.initial = @Initial;
-        in.da = @Da;
+        in.da = @D_planar;
         in.linear = @Linear;
-        in.observe{1} = @(a,~) a(1,:).*conj(a(1,:));
-        in.observe{2} = @(a,~) xave(a(1,:).*conj(a(1,:)));
-        in.observe{3} = @(a,~) xave(a(2,:).*conj(a(2,:)));
-        in.observe{4} = @(a,~) xave(a(1,:).*conj(a(2,:)));
-        in.transforms = {[0,0,0],[0,0,0],[0,1,1],[0,1,1]};
-        in.olabels{1} = '<|a_1(x)|^2>';
-        in.olabels{2} = '<‌<|a_1(x)|^2>‌>';
-        in.olabels{3} = '<‌<|a_2(k)|^2>‌>';
-        in.olabels{4} = '<‌<a_1(k)a^*_2(k)>‌>';
-        in.compare{1} = @(t,in) [1+t]/in.dV;
-        in.compare{2} = @(t,in) [1+t]/in.dV;
-        in.compare{3} = @(t,in) [1+t]/in.dK;
-        in.compare{4} = @(t,in) 0;
-        in.images = [4,2,0,0];
-        in.transverse = [2,2,0,0];
-        in.pdimension = [4,1,1,1];
+        in.observe{1} = @(a,r) xint(a(1,:).*conj(a(1,:)),r);
+        in.observe{2} = @(a,r) xint(a(2,:).*conj(a(2,:)),r.dk,r);
+        in.observe{3} = @(a,r) xave(a(1,:).*conj(a(2,:)));
+        in.transforms = {[0,0,0],[0,1,1],[0,1,1]};
+        in.olabels{1} = '<\int|a_1(x)|^2 d^2x>';
+        in.olabels{2} = '<\int|a_2(k)|^2 d^2k>';
+        in.olabels{3} = '<‌<a_1(k)a^*_2(k)>‌>';
+        in.compare{1} = @(t,in) [1+t]*in.nspace;
+        in.compare{2} = @(t,in) [1+t]*in.nspace;
+        in.compare{3} = @(t,in) 0;
+        in.images = [4,2,0];
+        in.transverse = [2,2,0];
+        in.pdimension = [4,1,1];
         e = xspde(in);
-        end
-        function a0 = Initial(v,r)
+    end
+    function a0 = Initial(v,r)
         a0(1,:)  = (v(1,:)+1i*v(2,:))/sqrt(2);
         a0(2,:)  = (v(3,:)+1i*v(4,:))/sqrt(2);
-        end
-        function da = Da(a,z,r)
+    end
+    function da = D_planar(a,z,r)
         da(1,:)  = (xi(1,:)+1i*xi(2,:))/sqrt(2);
         da(2,:)  = (xi(3,:)+1i*xi(4,:))/sqrt(2);
         end
-        function L = Linear(D,r)
+    function L = Linear(D,r)
         lap = D.x.^2+D.y.^2;
         L(1,:)  = 1i*0.5*lap(:);
         L(2,:)  = 1i*0.5*lap(:);

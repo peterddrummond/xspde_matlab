@@ -5,8 +5,8 @@ Public API
 **********
 
 
-High-level xSPDE functions
-==========================
+High-level xSPDE functions and objects
+======================================
 
 The high-level xSPDE functions process the input parameters, producing simulation data and graphs. Function parameters are in the order of ``input``, which specifies the simulation, then ``data``, which is needed for graphics output.
 
@@ -24,19 +24,21 @@ The high-level xSPDE functions process the input parameters, producing simulatio
     This is the xSPDE graphics function. It takes computed simulation  ``input`` and ``data``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions. The ``data`` should have as many cells as ``input`` cells, for sequences. The ``data`` input can be given as a filename, in which case input details are replaced by the new  ``input``.
     If the ``data`` input is not present at all, then a data file will be read using the file-name specified in the ``input`` structure or cell array. As described above, any stored ``input`` is ignored, allowing graphs to be modified with new labels. 
     If ``input = 'filename.h5'`` or ``input= 'filename.mat'``, the specified file is read both for ``input`` and ``data``. Here ``.h5`` indicates an HDF5 file, and ``.mat`` indicates a Matlab file.
-
-
+    
+    
 
 Open object-oriented architecture
-=================================
+----------------------------------
 
 As well as extensibility through sequences, which was described in :ref:`chap-projects`, in the section :ref:`sec-sequential-integration`, the architecture of xSPDE allows functional extensions.
 
-This extensibility permits user definable functions to be specified in the ``in`` structures. All functions and parameters have default values in xSPDE. It is also possible to include user defined functions, provided they satisfy the API definitions given below. This is achieved simply by including the relevant function handles and parameters in the input metadata.
-
-This input metadata includes both data and methods acting on the data, in the tradition of object-oriented programs. Yet there is no strict class typing. Users are encouraged to adapt the xSPDE program by adding input parameters and methods to the input structures. Internal parameters and function handles stored in the :ref:`lattice structure <sec-lattice-structure>` ``r`` are available to all user-defined functions. Use of pre-existing reserved names is not advisable.
+The input metadata includes both data and methods acting on the data, in the tradition of object-oriented programs. Yet there is no strict class typing. Users are encouraged to adapt the xSPDE program by adding input parameters and methods to the input structures. 
 
 *Such unorthodox object orientation is deliberate*.
+
+This open extensibility permits arbitrary functions to be specified in the ``in`` structures. All functions and parameters have default values in xSPDE. It is also possible to include user defined functions, provided they satisfy the API definitions given below. This is achieved simply by including the relevant function handles and parameters in the input metadata.
+
+Internal parameters and function handles from the ``in`` structures, together with any computed and default parameters and functions,  are stored in the :ref:`lattice structure <sec-lattice-structure>` ``r``. These are available to all user-defined functions. Use of pre-existing reserved names is not advisable, and the structure ``r.c`` is always reserved for user constants, parameters and functions if required.
 
 The xSPDE software architecture is intended to be easily extended, and users are strongly encouraged to develop their own libraries and contribute to the xSPDE function pool. Because this generally requires new functions and parameters, the internal data architecture is as open as possible.
 
@@ -57,14 +59,78 @@ Next, include anywhere on your Matlab path, the function definition, for example
     end
     
 
+    
+    
 
-Lattice, coordinates and time
+Averages, integrals and derivatives
+===================================
+
+There are functions available in xSPDE for averages, integrals and derivatives. These can be used to calculate observables for plotting, but are also available for calculating stochastic derivatives as part of the stochastic equation. They operate in parallel over the local ensemble and lattice dimensions. They take a scalar quantity, for example a single field component, and return an average, a space integral, and a spatial derivative respectively. In each case the first argument is the field, the second argument is a vector defining the type of operation, and the last argument is the parameter structure, ``r``. If there are only two arguments, the operation vector is replaced by its default value.
+
+Averages
+--------
+
+This function allows one to extract local ensemble averages which may be needed as part of an overall calculation involving a ratio or product of averages. In addition, spatial grid averages can be used to obtain stochastic results with reduced sampling errors if the overall grid is homogeneous. 
+
+An average is carried out using the :func:`xave` function, which is defined as follows:
+
+.. function:: xave(o, [av, ] r)
+
+    This function takes a scalar field or observable ``o = [1, n.lattice]``, defined on the xSPDE local lattice, and returns an average with dimension ``[1, n.lattice]``. The input is a field or observable ``o``, and an optional averaging switch ``av``. If ``av(j) > 0``, an average is taken over dimension ``j``. Dimensions are labelled from ``j = 1 ... 4`` as elsewhere. The first index indicates a local ensemble average, while subsequent indices indicate averages over the spatial grid. If the ``av`` vector is omitted, the average is only taken over the local ensemble. Averages are returned at all lattice locations. To average over both the local ensemble and all space dimensions, just use ``xave(o)``.
+
+Higher dimensional graphs of grid averages are generally not useful, as they are simply flat. The xSPDE program allows the user to remove unwanted higher dimensional graphs of average variables. This is achieved by setting the corresponding element of :attr:`in.pdimension` to the highest dimension required, which depends on which dimensions are averaged.
+
+For example, to average over the entire ensemble plus space lattice and indicate that only time-dependent graphs are required, set ``av = in.dx`` and:
+
+::
+
+    in.pdimension = 1
+
+Note that :func:`xave` on its own gives identical results to those calculated in the :attr:`in.observe` functions. Its utility comes when more complex combinations or functions of ensemble averages are required.
+
+Integrals
+---------
+
+Integrals over the spatial grid allow calculation of conserved or other global quantities. To take an integral over the spatial grid,  use the xSPDE :func:`xint` function:
+
+.. attribute:: xint(o, [dx, ] r)
+
+    This function takes a scalar ``o``, and returns a space integral over selected dimensions with vector measure ``dx``. If ``dx(j) > 0`` an integral is taken over dimension ``j``. Dimensions are labelled from ``j = 1, ...`` as in all xspde standards. Time integrals are ignored at present. Integrals are returned at all lattice locations. To integrate over an entire lattice, set ``dx = r.dx``, otherwise set ``dx(j) = r.dx(j)`` for selected dimensions ``j``.
+
+As with averages, the xSPDE program allows the user to remove unwanted higher dimensional graphs when the integrated variable is used as an observable. For example, in a four dimensional simulation with integrals taken over the :math:`y` and :math:`z` coordinates, only :math:`t`- and :math:`x`-dependent graphs are required. Hence, set ``dx`` to ``[0, 0, r.dx(3), r.dx(4)]``, and:
+
+::
+
+    in.pdimension = 2
+
+If momentum-space integrals are needed, use the transform switch to make sure that the field is Fourier transformed, and input :attr:`r.dk` instead of :attr:`r.dx`. Note that :func:`xint` returns a lattice observable, as required when used in the :attr:`in.observe` function. If the integral is used in another function, note that it returns a matrix of dimension ``[1, lattice]``.
+
+
+Derivatives
+-----------
+
+The code to take a spatial derivative is carried out using the xSPDE :func:`xd` function:
+
+.. attribute:: xd(o, [D, ] r)
+
+This function takes a scalar ``o``, and returns a derivative over selected dimensions with a derivative ``D``.  Set ``D = r.D.x`` for a first order x-derivative, ``D = r.D.y`` for a first order y-derivative, and similarly ``D = r.D.x.*r.D.y`` for a cross-derivative in ``x`` and ``y``. Higher derivatives require powers of these. Time derivatives are ignored at present. Derivatives are returned at all lattice locations. 
+
+If the derivative ``D`` is omitted, a first order x-derivative is returned.     
+Note that :func:`xd` returns a lattice observable, as required when used in the :attr:`in.observe` function. If the integral is used in another function, note that it returns a matrix of dimension ``[1, lattice]``.
+
+.. _sec-lattice-structure:
+
+
+
+
+Grid coordinates and time
 =============================
 
 Time and space
 --------------
 
-The default lattice for plotted output data is rectangular, with periodic boundary conditions in space, and
+The default spatial grid
+ for plotted output data is rectangular, with periodic boundary conditions in space, and
 
 ::
 
@@ -107,11 +173,11 @@ In all function calls, the variables used are matrices. The most important first
 
 For reference, the field dimensions are:
 
-- ``a, da, L = [in.fields, r.n.lattice]``;
-- ``v = [r.n.random, r.n.lattice]``;
-- ``z = [r.n.noise, r.n.lattice]``;
-- ``D.x, r.x, r.kx = [1, r.n.lattice]``;
-- ``o = [1, r.n.lattice]``.
+- ``a, da, L = [r.fields, r.nlattice]``;
+- ``v = [r.randoms(1)+r.randoms(2), r.nlattice]``;
+- ``z = [r.noises(1)+r.noises(2), r.nlattice]``;
+- ``D.x, r.x, r.kx = [1, r.nlattice]``;
+- ``o = [1, r.nlattice]``.
 
 Each observable is defined by a function in a cell array with length :attr:`in.graphs`.
 
@@ -119,7 +185,7 @@ Each observable is defined by a function in a cell array with length :attr:`in.g
 Simulation parameters
 ---------------------
 
-For each simulation in the ``input`` sequence, the input and functions are specified as a data structure, ``in``. These can be entered either interactively or as part of a simulation function file. The function file approach allows recycling and editing, so it is better for a large project.
+For each simulation in the ``input`` sequence, the input parameters and functions are specified as a data structure, ``in``. These can be entered either interactively or as part of a simulation function file. The function file approach allows recycling and editing, so it is better for a large project.
 
 There are extensive default preferences to simplify the inputs. If any inputs are omitted, there are default values which are set by inpreferences in all cases. These defaults are changed by editing the inpreferences function. The :func:`xgrpreferences` function is used to supply graphics default values.
 
@@ -159,8 +225,8 @@ Note that inputs can be numbers, vectors, strings or cells arrays. To simplify t
 - New function definitions can be just handles pointing elsewhere, or else defined inline.
 
 
-Parameters
-----------
+Input parameters
+----------------
 
 .. attribute:: in.name
 
@@ -192,25 +258,28 @@ Parameters
 
         in.fields = 1, 2, ...
 
-.. attribute:: in.randoms
 
-    *Default:* :attr:`in.fields`
-
-    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be correlated either in ordinary or momentum spaces. The second input is the dimension of random fields in momentum space. It can be left out if zero. Note that ``in.randoms = in.randoms(1) + in.randoms(2)``:
-
-    ::
-
-        in.randoms = [in.randoms(1), in.randoms(2)] >= 0
 
 .. attribute:: in.noises
 
     *Default:* :attr:`in.fields`
 
-    This gives the number of stochastic noises generated per lattice point for both the initial noise and the integration noise, in coordinate and momentum space. Set to zero (``in.noises = 0``) for no noises. This is the number of *rows* in the noise-vector. Noises can be correlated either in ordinary or momentum spaces. The second input is the dimension of noises in k-space. It can be left out if zero. Note that ``in.noise = noises(1) + noises(2)``:
+    This gives the number of stochastic noises generated per lattice point, in coordinate and momentum space respectively. Set to zero (``in.noises = 0``) for no noises. This is the number of *rows* in the noise-vector. Noises can be correlated either in ordinary or momentum spaces. The second input is the dimension of noises in k-space. It can be left out if zero.
 
     ::
 
         in.noises = [in.noises(1), in.noises(2)] >= 0.
+        
+        
+.. attribute:: in.randoms
+
+    *Default:* :attr:`in.noises`
+
+    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be correlated either in ordinary or momentum spaces. The second input is the dimension of random fields in momentum space. It can be left out if zero. 
+
+    ::
+
+        in.randoms = [in.randoms(1), in.randoms(2)] >= 0
 
 .. attribute:: in.ranges
 
@@ -268,7 +337,7 @@ Parameters
 
         in.transforms{n} = [t(1), ..., t(4)] >= 0
 
-    There is one transform vector per observable. The ``j``-th index, ``t(j)``, indicates a Fourier transform on the ``j``-th axis. The normalization of the Fourier transform is such that the :math:`k=0` value in momentum space corresponds to the integral over space, with an additional factor of :math:`1/\sqrt{2\pi}`. This gives a Fourier integral which is symmetrically normalized in ordinary and momentum space. The Fourier transform is such that
+    There is one transform vector per observable. The ``j``-th index, ``t(j)``, indicates a Fourier transform on the ``j``-th axis. The normalization of the Fourier transform is such that the :math:`k=0` value in momentum space corresponds to the integral over space, with an additional factor of :math:`1/\sqrt{2\pi}`. This gives a Fourier integral which is symmetrically normalized in ordinary and momentum space. The Fourier transform that is graphed is such that
     :math:`k=0` is the *central* value.
 
 .. attribute:: in.olabels
@@ -283,7 +352,7 @@ Parameters
 
 .. attribute:: in.c
 
-    This starting letter is always reserved to store user-specified constants and parameters. All inputs --- including ``c`` data --- are copied into the data files and also the lattice structure ``r``. It is passed to user functions, and can be any data.
+    This starting letter is always reserved to store user-specified constants and parameters.  It is passed to user functions, and can be any data. All inputs --- including ``c`` data --- are copied into the data files and also the lattice structure ``r``.
 
     ::
 
@@ -301,6 +370,8 @@ The following can’t be changed during a sequence in the current xSPDE version 
 
 #. The number of ensembles (3)
 
+#. The output file-name
+
 
 Input functions
 ---------------
@@ -311,7 +382,7 @@ A stochastic equation solver requires the definition of an initial distribution 
 
     *Default:* :func:`xinitial`
 
-    Initializes the fields :math:`a` for the first simulation in a sequence. The initial Gaussian random field variable, ``v``, has unit variance if :attr:`in.dimension` is ``1`` or else is delta-correlated in space, with variance ``1/r.dV`` (:math:`\equiv 1/(dx_2...dx_d)`) for :math:`d` space-time dimensions. If :attr:`in.randoms` is specified in the input, ``v`` has a first dimension of :attr:`r.n.random=in.randoms(1)+in.randoms(2)`, otherwise the default is :attr:`in.fields`. The default set by :func:`xinitial` is ``a = 0``.
+    Initializes the fields :math:`a` for the first simulation in a sequence. The initial Gaussian random field variable, ``v``, has unit variance if :attr:`in.dimension` is ``1`` or else is delta-correlated in space, with variance ``1/r.dV`` (:math:`\equiv 1/(dx_2...dx_d)`) for :math:`d` space-time dimensions. If :attr:`in.randoms` is specified in the input, ``v`` has a first dimension of :attr:`in.randoms(1)+in.randoms(2)`. If not specified, the default for ``in.randoms`` is  ``in.noises``. If not specified, the default of :func:`in.initial` is ``a = 0``.
 
 .. attribute:: in.transfer(v,r,a0,r0)
 
@@ -323,7 +394,7 @@ A stochastic equation solver requires the definition of an initial distribution 
 
     *Default:* :func:`xda`
 
-    Calculates derivatives :math:`da` of the equation. The noise vector, ``z``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension of :attr:`r.n.noise` whose default value is :attr:`in.fields` if :attr:`in.noises' are not given. Otherwise, it has a first dimension of :attr:`r.n.noise=in.noises(1)+in.noises(2)`. The second type of input noise allows for spatially correlated and filtered noise specified in momentum space.
+    Calculates derivatives :math:`da` of the equation. The noise vector, ``z``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension  whose default value is :attr:`in.fields` if :attr:`in.noises' are not given. Otherwise, it has a first dimension of :attr:`in.noises(1)+in.noises(2)`. The second type of input noise allows for spatially correlated and filtered noise specified in momentum space.
 
 .. attribute:: in.linear(D,r)
 
@@ -341,13 +412,13 @@ A stochastic equation solver requires the definition of an initial distribution 
 
     *Default:* :func:`xrfilter`
 
-    Returns the momentum-space filters for the input random terms. Each component has an array dimension the same as the coordinate lattice, that is, the return dimension is ``[r.randoms(2), r.n.lattice]``.
+    Returns the momentum-space filters for the input random terms. Each component has an array dimension the same as the input random fields in momentum space, that is, the return dimension is ``[r.randoms(2), r.nlattice]``.
 
 .. attribute:: in.nfilter(r)
 
     *Default:* :func:`xnfilter`
 
-    Returns the momentum-space filters for the propagation noise terms. Each component has an array dimension the same as the coordinate lattice, that is, the return dimension is ``[r.noises(2), r.n.lattice]``.
+    Returns the momentum-space filters for the propagation noise terms. Each component has an array dimension the same as the random noises in momentum space, that is, the return dimension is ``[r.noises(2), r.nlattice]``.
 
 
 Advanced input parameters
@@ -619,11 +690,11 @@ Together with default values, they are:
 Graphics projections
 ~~~~~~~~~~~~~~~~~~~~
 
-If there is a spatial lattice, the graphics program automatically generates several graphs for each observable, depending on space dimension. The maximum dimension that is plotted as set by :attr:`in.pdimension`. In the plots, the lattice is projected down to successively lower dimensions.
+If there is a spatial grid, the graphics program automatically generates several graphs for each observable, depending on space dimension. The maximum dimension that is plotted as set by :attr:`in.pdimension`. In the plots, the lattice is projected down to successively lower dimensions.
 
 For each observable, the projection sequence is as follows:
 
--  If :attr:`in.dimension` is ``4``, a central :math:`z` point ``nz = 1 + floor(in.points(4)/2)`` is picked. For example, with 35 points, this gives the central point, ``nz = 18``.
+-  If :attr:`in.dimension` is ``4`` or greater, a central :math:`z` point ``nz = 1 + floor(in.points(4)/2)`` is picked. For example, with 35 points, the central point is ``nz = 18``.
 
 -  This gives a three dimensional space-time lattice, which is treated the same as if :attr:`in.dimension` is ``3``.
 
@@ -635,57 +706,14 @@ For each observable, the projection sequence is as follows:
 
 -  Plots of observable vs time are obtained, including sampling errors and error bars. If comparison graphs are specified using :func:`in.compare` functions, they are plotted also, using a dotted line. A difference graph is also plotted when there is a comparison.
 
+Parameter structure
+===================
 
-Averages and integrals
-======================
-
-Averages
---------
-
-Lattice averages can allow one to extract stochastic results with reduced sampling errors. An average over the lattice is carried out using the :func:`xave` function, which is defined as follows:
-
-.. function:: xave(o, [dx, r])
-
-    This function takes a scalar observable ``o = [1, lattice]``, defined on the xSPDE lattice, and returns a space average with dimension ``[1, lattice]``. The input is an observable ``o``, and an optional lattices structure and vector switch ``dx``. If ``dx(j) > 0``, an average is taken over dimension ``j``. Dimensions are labelled from ``j = 1 ... 4`` as elsewhere. Time averages are ignored at present. Averages are returned at all lattice locations. To average over samples and all space dimensions, just use ``xave(o)``.
-
-Higher dimensional graphs of lattice averages are generally not useful, as they are simply flat. The xSPDE program allows the user to remove unwanted higher dimensional graphs of average variables. This is achieved by setting the corresponding element of :attr:`in.pdimension` to the highest dimension required, which of course depends on which dimensions are averaged.
-
-For example, to average over the entire space lattice and indicate that only time-dependent graphs are required, set ``dx = in.dx`` and:
-
-::
-
-    in.pdimension = 1
-
-Note that :func:`xave` does not perform any average over ensembles, although this is done elsewhere for results calculated in any of the :attr:`in.observe` functions.
-
-Integrals
----------
-
-Integrals over the spatial lattice allow calculation of conserved or other global quantities. The code to take an integral over the lattice is carried out using the xSPDE :func:`xint` function:
-
-.. attribute:: xint(o, dx, r)
-
-    This function takes a scalar ``o``, and returns a space integral over selected dimensions with vector measure ``dx``. If ``dx(j) > 0`` an integral is taken over dimension ``j``. Dimensions are labelled from ``j = 1, ..., 4`` as in all xspde standards. Time integrals are ignored at present. Integrals are returned at all lattice locations. To integrate over an entire lattice, set ``dx = r.dx``, otherwise set ``dx(j) = r.dx(j)`` for selected dimensions ``j``.
-
-As with averages, the xSPDE program allows the user to remove unwanted higher dimensional graphs when the integrated variable is used as an observable. For example, in a four dimensional simulation with integrals taken over the :math:`y` and :math:`z` coordinates, only :math:`t`- and :math:`x`-dependent graphs are required. Hence, set ``dx`` to ``[0, 0, r.dx(3), r.dx(4)]``, and:
-
-::
-
-    in.pdimension = 2
-
-If momentum-space integrals are needed, use the transform switch to make sure that the field is Fourier transformed, and input :attr:`r.dk` instead of :attr:`r.dx`. Note that :func:`xint` returns a lattice observable, as required when used in the :attr:`in.observe` function. If the integral is used in another function, note that it returns a matrix of dimension ``[1, lattice]``.
-
-
-.. _sec-lattice-structure:
-
-Lattice structure
-=================
-
-Internally, xSPDE data is stored in a cell array, ``latt``, of structures ``r``, which is passed to functions. This includes all the data given above inside the ``in`` structure. In adition, it includes the table of computed parameters given below.
+Internally, xSPDE parameters are stored in a cell array, ``latt``, of structures ``r``, which is passed to functions. This includes all the data given above inside the ``in`` structure. In addition, it includes the table of computed parameters given below.
 
 User application constants and parameters should not be reserved names; :attr:`in.c` and all names starting with ``in.c`` will always be available in all versions of xSPDE.
 
-A lattice structure contains information about space-time grid and is passed to various functions, for instance :attr:`in.da` or :attr:`in.step`. The corresponding parameter is commonly marked as `r`.
+A parameter structure contains information about the space-time grid and is passed to various functions, for instance :attr:`in.da` or :attr:`in.step`. The corresponding parameter is commonly marked as `r`.
 
 .. attribute:: r.t
 
@@ -697,7 +725,9 @@ A lattice structure contains information about space-time grid and is passed to 
 
 .. attribute:: r.z
 
-    Coordinate grids of :math:`x`, :math:`y`, :math:`z`.
+.. attribute:: r.x5..
+
+    Coordinate grids of :math:`x`, :math:`y`, :math:`z`. Higher dimensions are labeled numerically as :math:`x_5`,  :math:`x_6`, and so on.
 
 .. attribute:: r.kx
 
@@ -705,7 +735,9 @@ A lattice structure contains information about space-time grid and is passed to 
 
 .. attribute:: r.kz
 
-    Grids in momentum space: :math:`k_x`, :math:`k_y`, :math:`k_z`.
+.. attribute:: r.k5..
+
+    Grids in momentum space: :math:`k_x`, :math:`k_y`, :math:`k_z`. Higher dimensions are labeled numerically as :math:`k_5`,  :math:`k_6`, and so on.
 
 .. attribute:: r.dt
 
@@ -713,11 +745,11 @@ A lattice structure contains information about space-time grid and is passed to 
 
 .. attribute:: r.dx
 
-    Steps in coordinate space: :math:`[t,x,y,z]`.
+    Steps in coordinate space: :math:`[t,x,y,z,x_5,..]`.
 
 .. attribute:: r.dk
 
-    Steps in momentum space: :math:`[\omega,k_{x},k_{y},k_{z}]`.
+    Steps in momentum space: :math:`[\omega,k_{x},k_{y},k_{z},k_{5},..]`.
 
 .. attribute:: r.propagator
 
@@ -745,19 +777,15 @@ A lattice structure contains information about space-time grid and is passed to 
 
 .. attribute:: r.kc
 
-    Computational axes in :math:`[\omega,k_{x},k_{y},k_{z}]` (vector cells).
+    Computational Fourier transform axes in :math:`[\omega,k_{x},k_{y},k_{z},k_{5},.. ]` (vector cells).
 
-.. attribute:: r.gk
+.. attribute:: r.kg
 
-    Graphics axes in :math:`[\omega,k_{x},k_{y},k_{z}]` (vector cells).
+    Graphics  Fourier transform axes in :math:`[\omega,k_{x},k_{y},k_{z},k_{5},..]` (vector cells).
 
-.. attribute:: r.kr
+.. attribute:: r.kranges
 
-    Range in :math:`[\omega,k_{x},k_{y},k_{z}]` (vector).
-
-.. attribute:: wtph
-
-    Frequency phase-factors (vector).
+    Range in :math:`[\omega,k_{x},k_{y},k_{z},k_{5},..]` (vector).
 
 .. attribute:: r.s.dx
 
@@ -775,25 +803,17 @@ A lattice structure contains information about space-time grid and is passed to 
 
     Propagating :math:`k` stochastic normalization.
 
-.. attribute:: r.n.space
+.. attribute:: r.nspace
 
-    Number of spatial lattice points.
+    Number of spatial lattice points: ``in.points(2) *..*in.points(in.dimension) ``.
 
-.. attribute:: r.n.lattice
+.. attribute:: r.nlattice
 
-    Total lattice: ``in.ensembles(1) * r.n.space``.
+    Total lattice: ``in.ensembles(1) * r.nspace``.
 
-.. attribute:: r.n.ensemble
+.. attribute:: r.ncopies
 
-    ``in.ensembles(2) * in.ensembles(3)``.
-
-.. attribute:: r.n.random
-
-    Number of initial random fields.
-
-.. attribute:: r.n.noise
-
-    Number of noise fields.
+    Total copies of stochastic integrations: ``in.ensembles(2) * in.ensembles(3)``.
 
 .. attribute:: r.d.int
 
@@ -871,7 +891,7 @@ These functions are used as defaults for simulations and can be overridden by th
 
 .. function:: xrandomgen(r)
 
-    Generates random field matrix :math:`v`.
+    Generates initial random field matrix :math:`v`.
 
 .. function:: xpropfactor(nc, r)
 
@@ -885,19 +905,19 @@ Answers to some frequent questions, and reminders of points in this chapter are:
 
 -  Can you average other stochastic quantities apart from the field?
 
-   -  Yes: just specify this using the user function :attr:`in.observe`.
+   -  Yes: just specify the functions that need to be averaged using the user function :attr:`in.observe`.
 
 -  Can you have functions of the current time and space coordinate?
 
-   -  Yes: xSPDE functions support this using the structure ``r``, as :attr:`r.t`, :attr:`r.x`, :attr:`r.y`, :attr:`r.z`.
+   -  Yes: xSPDE functions support this using the structure ``r``, as :attr:`r.t`, :attr:`r.x`, :attr:`r.y`, :attr:`r.z`, :attr:`r.x5` and so on, up to the current dimension.
 
--  Can you have several variables?
+-  Can you have several independent stochastic variables?
 
    -  Yes, input this using ``in.fields > 1``.
 
 -  Are higher dimensional differential equations possible?
 
-   -  Yes, this requires setting ``in.dimension > 1``.
+   -  Yes, this requires setting ``in.dimension > 1``. This is essentially unlimited in xSPDE except for memory requirements. However, two of the functions, namely xgrid and xgraph, need minor changes for seven or more space dimensions, i.e. if ``in.dimension > 7`` is input, in the current version.
 
 -  Can you have spatial partial derivatives?
 

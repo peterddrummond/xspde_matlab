@@ -4,7 +4,10 @@
 Interactive xSPDE
 *****************
 
-All xSPDE simulations require parameters stored in an input structure used by the xSPDE toolbox. Inputs have default values, which can be changed by creating fields in the input structure. A complete list of parameters and their uses is given in :ref:`chap-api`.
+All xSPDE simulations require parameters stored in an input structure used by the xSPDE toolbox. Inputs have default values, which can be changed by creating fields in the input structure. A complete list of parameters and their uses is given in :ref:`chap-api`. 
+
+The simplest way to use xSPDE is via the interactive Matlab command window, illustrated in this chapter. In this mode of operation, any required parameters are entered into the input structure ``in``, and then the command ``xspde(in)`` runs and graphs the simulation.
+Note that one must enter ``clear`` first to erase previous data in the Matlab workspace, unless the previous data is being recycled. 
 
 
 Stochastic equations
@@ -24,7 +27,7 @@ Here :math:`\boldsymbol{A}` is a vector function, :math:`\underline{\mathbf{B}}`
 
 To simulate a stochastic equation like this interactively, first make sure Matlab path is pointing to the xSPDE folder and type ``clear`` to clear old data.
 
-Next, enter the xSPDE parameters (see :ref:`chap-api`) into the command window, as follows:
+Next, enter the xspde parameters (see :ref:`chap-api`) into the command window, as follows:
 
 ::
 
@@ -40,7 +43,7 @@ Next, enter the xSPDE parameters (see :ref:`chap-api`) into the command window, 
 - parameters or functions that are omitted are replaced with default values.
 - a sequence of simulations requires an input list: `{in1,in2..}`.
 
-Once the simulation is completed, xSPDE will generate graphs of averages of any required observables or moments. If needed, simulated data is stored in specified files for later use.
+Once the simulation is completed, xSPDE will generate graphs of averages of any required observables or moments. If needed, simulated data is stored in specified files for later use, which requires a file-name to be entered.
 
 
 Interactive examples
@@ -59,10 +62,10 @@ with a complete xSPDE script in Matlab below, and output in :numref:`fig-simples
 
 ::
 
-    in.da = @(a,z,r) z
-    data = xspde(in);
+    in.da = @(a,z,r) z; xspde(in);
 
 - Here :attr:`in.da` defines the derivative function, with ``z`` being the noise.
+- The last argument of xspde user functions is ``r``, containing the parameters required for the simulation.
 
 .. _fig-simplest-case-wiener:
 .. figure:: Figures/Wiener_1.*

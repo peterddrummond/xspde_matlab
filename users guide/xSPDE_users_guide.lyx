@@ -105,10 +105,33 @@ name "chap:Introduction"
 \end_layout
 
 \begin_layout Standard
-This xSPDE user's guide can be used as the basis for a 3-4 hour self-taught
+The xSPDE software is an e
+\series bold
+x
+\series default
+tensible 
+\series bold
+s
+\series default
+tochastic 
+\series bold
+p
+\series default
+artial 
+\series bold
+d
+\series default
+ifferential 
+\series bold
+e
+\series default
+quation solver.
+ It can solve any number of simultaneous stochastic partial differential
+ equations in arbitrary space dimensions, with averaging.
+ This xSPDE user's guide can be used as the basis for a 3-4 hour self-taught
  tutorial in using xSPDE for solving practical stochastic problems.
  It includes exercises for the reader.
- A full-length manual is available online with more details.
+ A full-length manual is available online.
  
 \end_layout
 
@@ -127,14 +150,7 @@ key "Gardiner,Drummond"
 .
  They occur in in many fields of biology, chemistry, engineering, economics,
  physics, meteorology and other disciplines.
- An ordinary stochastic equation, which is readily solved numerically 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "DrummondMortimer,K=00003D00003D000026P"
-
-\end_inset
-
- for a real or complex vector 
+ An ordinary stochastic equation for a real or complex vector 
 \begin_inset Formula $\mathbf{a}$
 \end_inset
 
@@ -144,7 +160,7 @@ key "DrummondMortimer,K=00003D00003D000026P"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\bm{a}}{\partial t}=\dot{\bm{a}}=\mathbf{A}\left(\bm{a}\right)+\underline{\mathbf{B}}\left(\bm{a}\right)\bm{\zeta}(t).
+\frac{\partial\bm{a}}{\partial t}=\dot{\bm{a}}=\mathbf{A}\left(\bm{a}\right)+\underline{\mathbf{B}}\left(\bm{a}\right)\bm{w}(t).
 \end{equation}
 
 \end_inset
@@ -158,13 +174,13 @@ Here,
 \end_inset
 
  a matrix, and 
-\begin_inset Formula $\mathbf{\bm{\zeta}}$
+\begin_inset Formula $\mathbf{w}$
 \end_inset
 
  is a real noise vector, delta-correlated in time: 
 \begin_inset Formula 
 \begin{eqnarray}
-\left\langle \zeta_{i}\left(t\right)\zeta_{j}\left(t\right)\right\rangle  & = & \delta\left(t-t'\right)\delta_{ij}
+\left\langle w_{i}\left(t\right)w_{j}\left(t\right)\right\rangle  & = & \delta\left(t-t'\right)\delta_{ij}
 \end{eqnarray}
 
 \end_inset
@@ -174,7 +190,14 @@ Here,
 
 \begin_layout Standard
 Stochastic partial differential equations including space dependence are
- also soluble with xSPDE.
+ also numerically soluble 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "DrummondMortimer,K=00003D00003D000026P"
+
+\end_inset
+
+ with xSPDE.
  These are described in Chapter 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -193,15 +216,8 @@ xSPDE
 xSPDE is a Matlab based software toolbox.
  It has functions that can numerically solve both ordinary and partial different
 ial stochastic equations, and graph results of correlations and averages.
- The equations can include partial spatial derivatives, like the Maxwell
- or Schrödinger equations.
- They are often found in physics, where they are used to model quantum noise
- and thermal or technical noise, all of which is measurable.
-\end_layout
-
-\begin_layout Standard
-There are many equations of this type, and the xSPDE toolbox can treat a
- wide range.
+ There are many equations of this type, and the xSPDE toolbox can treat
+ a wide range.
  The general structure permits drop-in replacements of the functions provided.
  Different simulations can be carried out sequentially, to simulate the
  various stages in an experiment or other process.
@@ -302,7 +318,7 @@ A typical script is as follows:
 \begin{eqnarray*}
 \mathtt{in.}[label1] & = & [parameter1]\\
 \mathtt{in.}[label2] & = & \ldots\\
-\mathtt{in.da} & = & \mathtt{@(a,z,r)}\,\,[derivative]\\
+\mathtt{in.da} & = & \mathtt{@(a,w,r)}\,\,[derivative]\\
 \mathtt{xspde(in)}
 \end{eqnarray*}
 
@@ -337,7 +353,7 @@ You don't have to save the data if you just want an immediate plot
 
 \begin_layout Itemize
 The notation 
-\begin_inset Formula $\mathtt{@(a,z,r)}\,\,[derivative]$
+\begin_inset Formula $\mathtt{@(a,w,r)}\,\,[derivative]$
 \end_inset
 
  defines an inline function, namely 
@@ -354,7 +370,7 @@ In xSPDE,
 \end_inset
 
  is the stochastic variable, 
-\begin_inset Formula $\mathtt{z}$
+\begin_inset Formula $\mathtt{w}$
 \end_inset
 
  the random noise, and 
@@ -370,11 +386,19 @@ For example,
 \begin_inset Formula $\mathtt{r.t}$
 \end_inset
 
- is the current time, 
-\begin_inset Formula $\mathtt{r.x}$
+ is the current time, and 
+\begin_inset Formula $\mathtt{r.x},$
 \end_inset
 
- the grid of x-coordinates.
+ 
+\begin_inset Formula $\mathtt{r.y},$
+\end_inset
+
+ 
+\begin_inset Formula $\mathtt{r.z},$
+\end_inset
+
+ the grid of coordinates.
  
 \end_layout
 
@@ -1145,8 +1169,9 @@ Matlab formulae often require a 'dot' or a 'colon'.
 \end_layout
 
 \begin_layout Standard
-A formula for a stochastic field may require you to address the first index
- - which is the field component - but treat all the other elements in parallel.
+A formula for a stochastic field usually requires you to address the first
+ index - which is the field component - and treat all the other elements
+ in parallel.
  To do this, use the notation 
 \begin_inset Formula $a(1,:)$
 \end_inset
@@ -1172,7 +1197,7 @@ The random walk
 The first example is the simplest possible stochastic equation: 
 \begin_inset Formula 
 \begin{equation}
-\dot{a}=\zeta(t)\,,
+\dot{a}=w(t)\,,
 \end{equation}
 
 \end_inset
@@ -1236,7 +1261,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-in.da=@(a,z,r) z; xspde(in);
+in.da=@(a,w,r) w; xspde(in);
 \end_layout
 
 \end_inset
@@ -1416,7 +1441,7 @@ What if you add a force that takes the particle back to the origin?
  
 \begin_inset Formula 
 \begin{equation}
-\dot{a}=-a+\zeta(t)\,,
+\dot{a}=-a+w(t)\,,
 \end{equation}
 
 \end_inset
@@ -1442,7 +1467,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-in.da=@(a,z,r) -a+z
+in.da=@(a,w,r) -a+w
 \end_layout
 
 \begin_layout Plain Layout
@@ -1493,19 +1518,19 @@ Next we treat a model for the quantum noise of a single mode laser as it
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\dot{a}=ga+b\zeta(t)
+\dot{a}=ga+bw(t)
 \end{equation}
 
 \end_inset
 
 where the noise is complex, 
-\begin_inset Formula $\zeta=\left(\zeta_{1}+i\zeta_{2}\right)$
+\begin_inset Formula $w=\left(w_{1}+iw_{2}\right)$
 \end_inset
 
 , so that: 
 \begin_inset Formula 
 \begin{equation}
-\left\langle \zeta(t)\zeta^{*}(t')\right\rangle =2\delta\left(t-t'\right)\,.
+\left\langle w(t)w^{*}(t')\right\rangle =2\delta\left(t-t'\right)\,.
 \end{equation}
 
 \end_inset
@@ -1599,7 +1624,7 @@ in.olabels = '|a|^2';
 \begin_layout Plain Layout
 
 \family typewriter
-in.da=@(a,z,r) a+0.01*(z(1)+i*z(2));
+in.da=@(a,w,r) a+0.01*(w(1)+i*w(2));
 \end_layout
 
 \begin_layout Plain Layout
@@ -1620,7 +1645,7 @@ Consider the case where the laser saturates to a steady state:
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\dot{a}=\left(1-\left|a\right|^{2}\right)a+b\zeta(t)
+\dot{a}=\left(1-\left|a\right|^{2}\right)a+bw(t)
 \end{equation}
 
 \end_inset
@@ -1664,7 +1689,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-in.da=@(a,z,r) (1-abs(a)^2)*a+0.01*(z(1)+i*z(2));
+in.da=@(a,w,r) (1-abs(a)^2)*a+0.01*(w(1)+i*w(2));
 \end_layout
 
 \begin_layout Plain Layout
@@ -1748,13 +1773,13 @@ Frequency spectra have many uses, especially for understanding the steady-state
  Take the random walk equation in a complex space, 
 \begin_inset Formula 
 \[
-\frac{da}{dt}=-a+\zeta(t)
+\frac{da}{dt}=-a+w(t)
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $\zeta(t)=\zeta_{1}(t)+i\zeta_{2}(t)$
+\begin_inset Formula $w(t)=w_{1}(t)+iw_{2}(t)$
 \end_inset
 
 .
@@ -1771,11 +1796,15 @@ where
 \end_layout
 
 \begin_layout Standard
-For sufficiently long time-intervals, the solution in frequency space given
- by: 
+For sufficiently long time-intervals, the solution in frequency space -
+ where 
+\begin_inset Formula $\omega=2\pi f$
+\end_inset
+
+ is the angular frequency - is given by: 
 \begin_inset Formula 
 \[
-\tilde{a}\left(\omega\right)=\frac{\tilde{\zeta}(\omega)}{1-i\omega}
+\tilde{a}\left(\omega\right)=\frac{\tilde{\zeta}(\omega)}{1+i\omega}
 \]
 
 \end_inset
@@ -1787,7 +1816,7 @@ The expectation value of the noise spectrum, in the large
  limit, is therefore: 
 \begin_inset Formula 
 \begin{eqnarray*}
-\left\langle \left|\tilde{a}(\omega)\right|^{2}\right\rangle  & = & \frac{1}{2\pi\left(1+\omega^{2}\right)}\int\int e^{i\omega(t-t')}\left\langle \zeta(t)\zeta^{*}(t')\right\rangle dtdt'\,.\\
+\left\langle \left|\tilde{a}(\omega)\right|^{2}\right\rangle  & = & \frac{1}{2\pi\left(1+\omega^{2}\right)}\int\int e^{-i\omega(t-t')}\left\langle \zeta(t)\zeta^{*}(t')\right\rangle dtdt'\,.\\
  & = & \frac{T}{\pi\left(1+\omega^{2}\right)}
 \end{eqnarray*}
 
@@ -1877,7 +1906,7 @@ in.initial = @(v,r) (v(1,:)+1i*v(2,:))/sqrt(2);
 \begin_layout Plain Layout
 
 \family typewriter
-in.da = @(a,z,r) -a + z(1,:)+1i*z(2,:); 
+in.da = @(a,w,r) -a + w(1,:)+1i*w(2,:); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -1895,7 +1924,9 @@ in.transforms =1;
 \begin_layout Plain Layout
 
 \family typewriter
-in.olabels = '|a(w)|^2'; 
+in.olabels = '|a(
+\backslash
+omega)|^2'; 
 \end_layout
 
 \begin_layout Plain Layout
@@ -1920,7 +1951,12 @@ in.transforms =1
 \begin_inset Formula $v$
 \end_inset
 
- of the initial function is a random field.
+ of the 
+\emph on
+initial
+\emph default
+ function is a random field, used optionally to initialize the stochastic
+ variable.
  You can transform any field in any dimension, see Chapter 6 for details.
  
 \end_layout
@@ -1998,7 +2034,8 @@ key "Gardiner"
 \end_layout
 
 \begin_layout Standard
-We can write an Ito equation as a difference equation:
+To emphasize the difference, an Ito equation is often written as a difference
+ equation:
 \end_layout
 
 \begin_layout Standard
@@ -2067,7 +2104,7 @@ where
 The corresponding Stratonovich equation, as used in xSPDE is: 
 \begin_inset Formula 
 \begin{equation}
-\dot{a}=\left(\mu-\sigma^{2}/2\right)a+a\sigma\zeta(t).
+\dot{a}=\left(\mu-\sigma^{2}/2\right)a+a\sigma w(t).
 \end{equation}
 
 \end_inset
@@ -2132,7 +2169,7 @@ in.initial=@(v,r) 1
 \begin_layout Plain Layout
 
 \family typewriter
-in.da=@(a,z,r) -0.4*a+a*z
+in.da=@(a,w,r) -0.4*a+a*w
 \end_layout
 
 \begin_layout Plain Layout
@@ -2368,13 +2405,13 @@ in.ensembles=[ensembles(1),ensembles(2),ensembles(3)]\,.
 
 \end_inset
 
-The first, 
+The local ensemble, 
 \begin_inset Formula $ensembles\left(1\right)$
 \end_inset
 
 , gives within-thread parallelism, allowing vector instruction use for single-co
 re efficiency.
- The second, 
+ The serial ensemble, 
 \begin_inset Formula $ensembles\left(2\right)$
 \end_inset
 
@@ -2383,13 +2420,13 @@ re efficiency.
 \end_layout
 
 \begin_layout Standard
-The third, 
+The parallel ensemble, 
 \begin_inset Formula $ensembles\left(3\right)$
 \end_inset
 
 , gives multi-core parallelism, and requires the Matlab parallel toolbox.
- This improves speed when there are multiple cores, and one should optimally
- put 
+ This improves speed when there are multiple cores.
+ One should optimally put 
 \begin_inset Formula $ensembles\left(3\right)$
 \end_inset
 
@@ -2456,7 +2493,7 @@ A minimal xSPDE project function is as follows:
 \mathtt{function} & = & project.m\\
 \mathtt{in.}[label1] & = & [parameter1]\\
 \mathtt{in.}[label2] & = & \ldots\\
-\mathtt{in.da} & = & \mathtt{@(a,z,r)}\,\,[my\,derivative]\\
+\mathtt{in.da} & = & \mathtt{@(a,w,r)}\,\,[my\,derivative]\\
 \mathtt{xspde(in)}\\
 \mathtt{end}
 \end{eqnarray*}
@@ -2521,7 +2558,9 @@ Change the Matlab directory path to home using
 \begin_layout Itemize
 Run the simulation with
 \series bold
- xsim(in).
+ [e,in]=xsim(in)
+\series default
+, in case the file-name is changed.
 \end_layout
 
 \begin_layout Itemize
@@ -2533,6 +2572,14 @@ xgraph(in)
  
 \end_layout
 
+\begin_layout Itemize
+Note that xSPDE changes the file-name if it already exists.
+\end_layout
+
+\begin_layout Itemize
+You can use either Matlab (.mat) or standard HDF5 (.h5) file-types.
+\end_layout
+
 \begin_layout Section
 Kubo project
 \end_layout
@@ -2542,7 +2589,7 @@ To get started on more complex programs, we next simulate the Kubo oscillator,
  which is an oscillator with a random frequency: 
 \begin_inset Formula 
 \begin{equation}
-\dot{a}=ia\zeta
+\dot{a}=iaw
 \end{equation}
 
 \end_inset
@@ -2561,12 +2608,12 @@ Simulate the Kubo oscillator using a file,
 \begin_inset Formula $Kubo.m$
 \end_inset
 
-, with two layers of ensembles to allow sampling error estimates.
+, with two ensembles to allow sampling error estimates.
  The error vector 
 \begin_inset Formula $error$
 \end_inset
 
- returned by the function gives the time-step, then sampling error estimates.
+ gives the time-step error plus the sampling error.
 \end_layout
 
 \begin_layout Standard
@@ -2611,7 +2658,7 @@ in.initial = @(v,r) 1+0*v;
 \begin_layout Plain Layout
 
 \family typewriter
-in.da = @(a,z,r) i*a.*z;
+in.da = @(a,w,r) i*a.*w;
 \end_layout
 
 \begin_layout Plain Layout
@@ -2629,7 +2676,7 @@ in.file = 'kubo.mat';
 \begin_layout Plain Layout
 
 \family typewriter
-error=xsim(in); 
+[error,in]=xsim(in); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -2650,11 +2697,35 @@ end
 \end_layout
 
 \begin_layout Standard
-If you run this more than once with the same file-name, you will get a warning
- and a new file-name.
- Under these circumstance, xgraph will graph the data in the existing file.
- This is because xSPDE will not overwrite files, to protect your previous
- data.
+The initial value of 1 is modified by adding 
+\begin_inset Formula $0*v$
+\end_inset
+
+.
+ This is necessary, so that it returns an array whose first dimension equals
+ the ensemble size.
+ 
+\end_layout
+
+\begin_layout Standard
+This function is designed to generate a data file, 
+\family typewriter
+kubo.mat
+\family default
+.
+ If you run this more than once without deleting the earlier file, you will
+ get a warning and a new file-name, 
+\family typewriter
+kubo1.mat
+\family default
+, which is stored in the in structure.
+ Under these circumstance, xgraph will graph the data in the most recent
+ file saved, with the new file-name.
+ This occurs because xSPDE will 
+\series bold
+not
+\series default
+ overwrite old files, to protect your previous data.
  
 \end_layout
 
@@ -2717,8 +2788,8 @@ The phase-space Fokker-Planck equation is equivalent to an SDE with the
  following form 
 \begin_inset Formula 
 \begin{eqnarray}
-\frac{d\alpha}{dt} & = & -\tilde{\gamma}\alpha-i\kappa\alpha^{2}\beta+\mathcal{E}+i\sqrt{i\kappa}\alpha\xi_{1}(t),\nonumber \\
-\frac{d\beta}{dt} & = & -\tilde{\gamma}^{\ast}\beta+i\kappa\beta^{2}\alpha+\mathcal{E}^{\ast}+\sqrt{i\kappa}\beta\xi_{2}(t),
+\frac{d\alpha}{dt} & = & -\tilde{\gamma}\alpha-i\kappa\alpha^{2}\beta+\mathcal{E}+i\sqrt{i\kappa}\alpha w_{1}(t),\nonumber \\
+\frac{d\beta}{dt} & = & -\tilde{\gamma}^{\ast}\beta+i\kappa\beta^{2}\alpha+\mathcal{E}^{\ast}+\sqrt{i\kappa}\beta w_{2}(t),
 \end{eqnarray}
 
 \end_inset
@@ -2731,7 +2802,7 @@ where
  nonzero correlations 
 \begin_inset Formula 
 \begin{equation}
-\left\langle \xi_{i}(t)\xi_{j}(t^{\prime})\right\rangle =\delta_{ij}\delta(t-t^{\prime}).
+\left\langle w_{i}(t)w_{j}(t^{\prime})\right\rangle =\delta_{ij}\delta(t-t^{\prime}).
 \end{equation}
 
 \end_inset
@@ -2844,8 +2915,7 @@ Can you observe quantum tunneling of
 \begin_layout Itemize
 
 \series bold
-Do you see evidence of a transient Schroedinger `cat state' with a negative
- n value?
+Do you see transient Schroedinger `cat states' with a negative n value?
 \end_layout
 
 \begin_layout Standard
@@ -2877,19 +2947,52 @@ name "chap:Stochastic-partial-differential"
 \end_layout
 
 \begin_layout Standard
-A stochastic partial differential equation for a complex vector field defined
- in space-time dimension 
-\begin_inset Formula $d=1-4$
+A stochastic partial differential equation for a complex vector field is
+ defined in both time 
+\begin_inset Formula $t$
 \end_inset
 
-, that is, including time and up to three space dimensions, can be written
- in differential form as
+ and space dimensions
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\bm{x}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+.
+ The total dimension 
+\begin_inset Formula $d$
+\end_inset
+
+ in xSPDE is arbitrary, and includes both time and space.
+ The general equation solved can be written in differential form as
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\mathbf{a}}{\partial t}=\mathbf{A}\left[\mathbf{a}\right]+\underline{\mathbf{B}}\left[\mathbf{a}\right]\cdot\bm{\zeta}(t)+\underline{\mathbf{L}}\left[\bm{\nabla}\right]\cdot\mathbf{a}\,.
+\frac{\partial\mathbf{a}}{\partial t}=\mathbf{A}\left[\mathbf{a}\right]+\underline{\mathbf{B}}\left[\mathbf{a}\right]\cdot\bm{w}(t)+\underline{\mathbf{L}}\left[\bm{\nabla}\right]\cdot\mathbf{a}\,.
 \end{equation}
 
 \end_inset
@@ -2918,14 +3021,14 @@ Here
 
  is a matrix of linear terms and derivatives, diagonal in the vector indices,
  and 
-\begin_inset Formula $\mathbf{\bm{\zeta}}=\left[\bm{\zeta}^{x},\bm{\zeta}^{k}\right]$
+\begin_inset Formula $\mathbf{w}=\left[\bm{w}^{x},\bm{w}^{k}\right]$
 \end_inset
 
  are real delta-correlated noise fields such that: 
 \begin_inset Formula 
 \begin{eqnarray}
-\left\langle \zeta_{i}^{x}\left(t,\bm{x}\right)\zeta_{j}^{x}\left(t,\bm{x}'\right)\right\rangle  & = & \delta\left(\bm{x}-\bm{x}'\right)\delta\left(t-t'\right)\delta_{ij}\nonumber \\
-\left\langle \zeta_{i}^{k}\left(t,\bm{k}\right)\zeta_{j}^{k}\left(t,\bm{k}'\right)\right\rangle  & = & f(\mathbf{k})\delta\left(\bm{k}-\bm{k}'\right)\delta\left(t-t'\right)\delta_{ij}.
+\left\langle w_{i}^{x}\left(t,\bm{x}\right)w_{j}^{x}\left(t,\bm{x}'\right)\right\rangle  & = & \delta\left(\bm{x}-\bm{x}'\right)\delta\left(t-t'\right)\delta_{ij}\nonumber \\
+\left\langle w_{i}^{k}\left(t,\bm{k}\right)w_{j}^{k}\left(t,\bm{k}'\right)\right\rangle  & = & f(\mathbf{k})\delta\left(\bm{k}-\bm{k}'\right)\delta\left(t-t'\right)\delta_{ij}.
 \end{eqnarray}
 
 \end_inset
@@ -2955,6 +3058,8 @@ Transverse boundary conditions are assumed periodic.
 
  is input as a separate function in xSPDE, to allow for greatest efficiency
  and use of an interaction picture.
+ Note that it depends on momentum space coordinates, and this involves Fourier
+ transforms.
 \end_layout
 
 \begin_layout Section
@@ -2973,7 +3078,7 @@ Including space-time dimensions with
  superfluidity and even particle physics: 
 \begin_inset Formula 
 \begin{equation}
-\dot{a}=\left(1-\left|a\right|^{2}\right)a+b\zeta(t)+c\nabla^{2}a
+\dot{a}=\left(1-\left|a\right|^{2}\right)a+bw(t)+c\nabla^{2}a
 \end{equation}
 
 \end_inset
@@ -2981,7 +3086,7 @@ Including space-time dimensions with
 where 
 \begin_inset Formula 
 \begin{equation}
-\left\langle \zeta(x)\zeta^{*}(x')\right\rangle =2\delta\left(t-t'\right)\delta\left(x-x'\right).
+\left\langle w(x)w^{*}(x')\right\rangle =2\delta\left(t-t'\right)\delta\left(x-x'\right).
 \end{equation}
 
 \end_inset
@@ -3162,7 +3267,7 @@ in.olabels = '|a|^2';
 \begin_layout Plain Layout
 
 \family typewriter
-in.da=@(a,z,~) (1-abs(a(1,:)).^2).*a+0.001*(z(1,:)+i*z(2,:));
+in.da=@(a,w,~) (1-abs(a(1,:)).^2).*a+0.001*(w(1,:)+i*w(2,:));
 \end_layout
 
 \begin_layout Plain Layout
@@ -3349,7 +3454,7 @@ in.initial = @(v,r) sech(r.x);
 \begin_layout Plain Layout
 
 \family typewriter
-in.da = @(a,z,r) i*a.*(conj(a).*a);
+in.da = @(a,~,r) i*a.*(conj(a).*a);
 \end_layout
 
 \begin_layout Plain Layout
@@ -3391,7 +3496,7 @@ end
 
 \series bold
 Add an additive complex noise of 
-\begin_inset Formula $0.01(dw_{1}+idw_{2}$
+\begin_inset Formula $0.01(w_{1}+iw_{2}$
 \end_inset
 
 ) to the differential equation, then replot with an average over 
@@ -3453,6 +3558,10 @@ Exercises
 Solve the diffraction equation without noise
 \end_layout
 
+\begin_layout Itemize
+Note that the example below stores data in a standardized HDF5 file.
+\end_layout
+
 \begin_layout Standard
 \align center
 \begin_inset Box Doublebox
@@ -3507,7 +3616,7 @@ in.olabels = '|a(x)|^2';
 \begin_layout Plain Layout
 
 \family typewriter
-in.file = 'Gaussian.mat';
+in.file = 'Gaussian.h5';
 \end_layout
 
 \begin_layout Plain Layout
@@ -3519,7 +3628,7 @@ in.images = 4;
 \begin_layout Plain Layout
 
 \family typewriter
-e = xsim(in); 
+[e,in] = xsim(in); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -3545,7 +3654,7 @@ end
 
 \series bold
 Add an additive complex noise of 
-\begin_inset Formula $0.01(dw_{1}+idw_{2}$
+\begin_inset Formula $0.01(w_{1}+iw_{2}$
 \end_inset
 
 ) to the Gaussian differential equation, then replot with an average over
@@ -3558,7 +3667,7 @@ Add an additive complex noise of
 
 \begin_layout Standard
 Note that for this, you'll need to define 
-\begin_inset Formula $in.da=@(a,z,r)0.01*(z(1,:)+i*z(2,:))$
+\begin_inset Formula $in.da=@(a,w,r)0.01*(w(1,:)+i*w(2,:))$
 \end_inset
 
 
@@ -3580,7 +3689,7 @@ The next example is growth of thermal noise of a two-component complex field
  in a plane, given by the equation 
 \begin_inset Formula 
 \[
-\frac{d\bm{a}}{dt}=\frac{i}{2}\nabla^{2}\bm{a}+\bm{\zeta}(t,x)
+\frac{d\bm{a}}{dt}=\frac{i}{2}\nabla^{2}\bm{a}+\bm{w}(t,x)
 \]
 
 \end_inset
@@ -3592,7 +3701,7 @@ where
  is a delta-correlated complex noise vector field: 
 \begin_inset Formula 
 \[
-\zeta_{j}(t,\mathbf{x})=\left[\zeta_{j}^{re}(t,\mathbf{x})+i\zeta_{j}^{im}(t,\mathbf{x})\right]/\sqrt{2},
+w_{j}(t,\mathbf{x})=\left[w_{j}^{re}(t,\mathbf{x})+i\zeta_{j}^{im}(t,\mathbf{x})\right]/\sqrt{2},
 \]
 
 \end_inset
@@ -4070,7 +4179,7 @@ in.compare = @(t,in) sech(2.*(t-2.5));
 \begin_layout Plain Layout
 
 \family typewriter
-xspde(in); 
+e = xspde(in); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -4834,13 +4943,13 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-function a = Mystep(a,xi,dt,r) 
+function a = Mystep(a,w,dt,r) 
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-% a = Mystep(a,xi,dt,r) propagates a step my way.
+% a = Mystep(a,w,dt,r) propagates a step my way.
  
 \end_layout
 
@@ -4915,45 +5024,57 @@ name "chap:Table-of-xSPDE"
 \end_layout
 
 \begin_layout Standard
-The input cell array, 
+The input data, which we label 
 \begin_inset Formula $input$
 \end_inset
 
-, includes input data in structures 
+, is a sequence of data structures that we label 
 \begin_inset Formula $in$
 \end_inset
 
 .
- This data is also passed to the 
+ All of the input data is later passed to the 
 \begin_inset Formula $xgraph$
 \end_inset
 
  function.
- The inputs are numbers, vectors, strings, functions and cell arrays.
+ The input data can be numbers, vectors, strings, functions and cell arrays,
+ which just lists of data enclosed in curly brackets, 
+\begin_inset Formula $\{\}$
+\end_inset
+
+.
  All xSPDE metadata has preferred values, so only changes from the preferences
  need to be input.
- The resulting data is stored internally as a sequence of structures in
- a cell array, to describe the simulation sequence.
+ The resulting combined input including preferred values, is stored internally
+ as a sequence of structures in a cell array to describe the simulation
+ sequence.
 \end_layout
 
 \begin_layout Standard
 Simulation metadata, including all preferred default values that were used
- in a particular simulation, is also stored for reference in any xSPDE output
- files.
- This is done in both the 
+ in a particular simulation, is also stored in the xSPDE output files.
+ This is done in both the Matlab 
 \begin_inset Formula $.mat$
 \end_inset
 
- and the 
+ and the HDF5 
 \begin_inset Formula $.h5$
 \end_inset
 
  output files, so the entire simulation can be easily reconstructed or changed.
+ Note that in the current version of xSPDE, one must use a Matlab formatted
+ 
+\begin_inset Formula $.mat$
+\end_inset
+
+ file to store raw data which includes all stochastic trajectories.
+ Either the Matlab or the HDF5 files can be used to store both input and
+ averaged output data.
 \end_layout
 
 \begin_layout Standard
-Inputs can be numbers, vectors, strings or cells arrays.
- Some conventions are used, as follows: 
+Some conventions are used to simplify inputs, as follows: 
 \end_layout
 
 \begin_layout Itemize
@@ -5035,7 +5156,7 @@ Simulation parameters
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="24" columns="4">
+<lyxtabular version="3" rows="25" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -5108,7 +5229,7 @@ string
 \begin_layout Plain Layout
 
 \emph on
-'xSPDEv1.04'
+'xSPDE1.05'
 \emph default
  
 \end_layout
@@ -6053,7 +6174,49 @@ vector cells
 \begin_inset Text
 
 \begin_layout Plain Layout
-Fourier transforms in [t,x,y,z]
+Fourier transforms in [t,x,y,z,..]
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+raw
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integer 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Raw trajectory switch, 1 for raw output
 \end_layout
 
 \end_inset
@@ -6066,7 +6229,7 @@ Fourier transforms in [t,x,y,z]
 \begin_layout Plain Layout
 
 \emph on
-raw
+numberaxis
 \emph default
  
 \end_layout
@@ -6095,7 +6258,7 @@ integer
 \begin_inset Text
 
 \begin_layout Plain Layout
-Raw trajectory switch, 1 for output
+Numbered axis label switch, 1 for numbered
 \end_layout
 
 \end_inset
@@ -6109,17 +6272,17 @@ Raw trajectory switch, 1 for output
 \end_layout
 
 \begin_layout Subsection
-User defined functions
+Common functions
 \end_layout
 
 \begin_layout Standard
-The user-definable functions, output field dimensions and calling arguments
- are:
+The most common functions, output field dimensions and calling arguments,
+ with user-definable functions marked using an asterisk, are:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="13" columns="4">
+<lyxtabular version="3" rows="16" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -6300,7 +6463,7 @@ Linear interaction picture function
 \begin_layout Plain Layout
 
 \emph on
-rfilter
+*rfilter
 \emph default
  
 \end_layout
@@ -6346,7 +6509,7 @@ Random input filter function in k-space
 \begin_layout Plain Layout
 
 \emph on
-nfilter
+*nfilter
 \emph default
  
 \end_layout
@@ -6388,7 +6551,7 @@ Noise filter function in k-space
 \begin_layout Plain Layout
 
 \emph on
-transfer
+*transfer
 \emph default
  
 \end_layout
@@ -6432,7 +6595,7 @@ Function to initialize fields in sequences
 \begin_layout Plain Layout
 
 \emph on
-step
+*step
 \emph default
  
 \end_layout
@@ -6474,7 +6637,7 @@ Function to calculate one time-step
 \begin_layout Plain Layout
 
 \emph on
-grid
+*grid
 \emph default
  
 \end_layout
@@ -6520,7 +6683,7 @@ Grid calculator for lattice
 \begin_layout Plain Layout
 
 \emph on
-prop
+*prop
 \emph default
  
 \end_layout
@@ -6562,7 +6725,7 @@ Interaction picture (IP) propagation
 \begin_layout Plain Layout
 
 \emph on
-propfactor
+*propfactor
 \emph default
  
 \end_layout
@@ -6604,7 +6767,7 @@ IP propagator array calculation
 \begin_layout Plain Layout
 
 \emph on
-observe
+*observe
 \emph default
  
 \end_layout
@@ -6642,20 +6805,20 @@ Observable function cell array
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \emph on
-compare
+*compare
 \emph default
  
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6664,7 +6827,7 @@ points(1)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6673,11 +6836,131 @@ points(1)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Comparison function cell array
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+xint
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Integrates over a spatial lattice
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+xave
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Averages over a spatial lattice
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+xd
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Takes a spatial derivative
 \end_layout
 
 \end_inset
@@ -6715,13 +6998,69 @@ Internally, xSPDE data is stored in a cell array,
  structures.
  In addition, it includes the computed parameters given below, which includes
  various internal array dimensions.
- These are internally flattened where possible to reduce dimensionality
- and simplify parallel operations.
+ The stochastic variable arrays like 
+\begin_inset Formula $a,v,w$
+\end_inset
+
+ are internally flattened to become two-dimensional matrices where possible,
+ to reduce dimensionality and simplify parallel operations.
+ 
+\end_layout
+
+\begin_layout Standard
+For 
+\begin_inset Formula $d>4$
+\end_inset
+
+ total dimensions, the spatial grid, momentum grid and derivative grid notation
+ of 
+\emph on
+
+\begin_inset Formula $x,y,z$
+\end_inset
+
+, 
+\begin_inset Formula $kx,ky,kz$
+\end_inset
+
+
+\emph default
+ and 
+\emph on
+
+\begin_inset Formula $D.x,D.y,D.z$
+\end_inset
+
+
+\emph default
+ is changed to use numered labels 
+\begin_inset Formula $x\{1\},\dots x\{d-1\}$
+\end_inset
+
+, 
+\begin_inset Formula $k\{1\},\dots k\{d-1\}$
+\end_inset
+
+, 
+\begin_inset Formula $D\{1\},\dots D\{d-1\}$
+\end_inset
+
+.
+ These are simpler to handle with large numbers of space dimensions.
+ This numeric labeling preference can be used even if 
+\begin_inset Formula $d<5$
+\end_inset
+
+, by setting the input switch 
+\begin_inset Formula $numberaxis=1$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="34" columns="4">
+<lyxtabular version="3" rows="33" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -6948,10 +7287,124 @@ array
 
 \begin_layout Plain Layout
 Grid of 
-\begin_inset Formula $[k_{x},k_{y},k_{z}$
+\begin_inset Formula $k_{x},k_{y},k_{z}$
 \end_inset
 
 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+\begin_inset Formula $x\{1\},\ldots x\{d-1\}$
+\end_inset
+
+
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Grid of
+\emph on
+
+\begin_inset Formula $x_{1},\ldots x_{d-1}$
+\end_inset
+
+
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+\begin_inset Formula $k\{1\},\ldots k\{d-1\}$
+\end_inset
+
+
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Grid of
+\emph on
+ 
+\begin_inset Formula $k_{1},\ldots k_{d-1}$
+\end_inset
+
+
+\emph default
+ 
 \end_layout
 
 \end_inset
@@ -7395,149 +7848,6 @@ Computational axes in
 \begin_layout Plain Layout
 
 \emph on
-gk
-\emph default
- 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-vector cells 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
-{[-15,...
- 15]}
-\emph default
- 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Graphics axes in
-\begin_inset Formula $[\omega,k_{x},k_{y},k_{z}]$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
-kr
-\emph default
- 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-vector 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
-30
-\emph default
- 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Range in
-\begin_inset Formula $[\omega,k_{x},k_{y},k_{z}]$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
-wtph
-\emph default
- 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-vector 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-- 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Frequency phase-factors
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
 s.dx
 \emph default
  
@@ -7714,7 +8024,7 @@ Propagating k stochastic normalization
 \begin_layout Plain Layout
 
 \emph on
-n.space
+nspace
 \emph default
  
 \end_layout
@@ -7756,7 +8066,7 @@ Number of spatial lattice points
 \begin_layout Plain Layout
 
 \emph on
-n.lattice
+nlattice
 \emph default
  
 \end_layout
@@ -8313,9 +8623,9 @@ The simulation data of the
 \begin_inset Formula $xgraph$
 \end_inset
 
- program, along with optional graphics parameters to create an extended
- in structure, as follows.
- 
+ program, along with optional graphics parameters for each observable, to
+ create an extended in structure.
+ These are all cell arrays when there is more than one observable:
 \end_layout
 
 \begin_layout Standard
@@ -8573,7 +8883,7 @@ cell
 \begin_inset Text
 
 \begin_layout Plain Layout
-{0,..} 
+{1,..} 
 \end_layout
 
 \end_inset

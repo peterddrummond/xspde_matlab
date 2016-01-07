@@ -1,4 +1,13 @@
-function [e] = SolitonAv()                                
+function [e] = SolitonAv()
+%   e  =  SOLITONAV() tests xSPDE for a nonlinear Schroedinger equation
+%   Tests a two-dimensional partial differential equation for:
+%   (1) Putting print to 0 to minimize output printing
+%   (2) Averaging over the spatial lattice
+%   (3) Setting up the linear response for the interaction picture
+%   (4) Compare functions for a 2D simulation
+%   (5) Graphing results in 1D and 2D
+%   (6) Default values for transverse range and points in x
+%   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
 in.name =          'NLS soliton with integration';
 in.dimension =     2;                                     %%dimension: 1-4  

@@ -8,12 +8,12 @@ function inlabel = xcprefer (in,label,max,default)
 %   If 'default' cell has less fields than 'max', last default cell is used.
 %   All xSPDE functions are licensed by Peter D. Drummond, (2015) - see License.txt 
 
-    if ~isfield(in,label)                    %% If no label data
+    if ~isfield(in,label)                    %% If no label data is input
               in.(label) = default;          %% Set to default
     end                                      %% End if no label data
-    if ~iscell(in.(label))                   %% If label data not cell
+    if ~iscell(in.(label))                   %% If input data is not cell
          in.(label)={in.(label)};            %% Convert to cell
-    end                                      %% End if label data not cell
+    end                                      %% End if data is not cell
     lc = length (in.(label));                %% Get length of cell array
     for nc =1:lc                             %% For cells present
         cdata = in.(label){nc};              %% Get cell data

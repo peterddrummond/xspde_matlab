@@ -18,7 +18,7 @@ case 1                                                %%if HDF5 filename
     graphs = size(data{s},4);                         %%get data length
     for g = 1:graphs                                  %%loop over graphs
         graphname = sprintf('/graph_%d',g);           %%define graph name
-        dsname = [seq graphname];          
+        dsname = [seq graphname];
         h5create(filename, dsname, size(data{s}(:,:,:,g)));
         h5write(filename, dsname, data{s}(:,:,:,g));
     end                                               %%end loop over graphs
