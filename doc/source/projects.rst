@@ -105,7 +105,7 @@ A minimal xSPDE project function is as follows:
 
 ::
 
-    function = project.m
+    function = project()
         in.label1 = parameter1
         in.label2 = parameter2
         ...
@@ -294,7 +294,7 @@ Suppose the project has a sequence of two simulations, with input structures of 
 
 ::
 
-    [e,data]=xspde({in1,in2})
+    [e,data] = xspde({in1,in2})
 
 To change the file headers, at a later stage, type:
 
@@ -309,7 +309,7 @@ Next, simply replot the data using
 
 ::
 
-    xgraph(data, {in1,in2})
+    xgraph(data, {in1, in2})
 
 
 xSPDE hints
