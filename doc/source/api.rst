@@ -17,22 +17,22 @@ The high-level xSPDE functions process the input parameters, producing simulatio
 
 .. function:: xsim(input)
 
-    This is the xSPDE simulation function. Like :func:`xspde', it accepts input parameters in ``input``. It returns ``[error, input, data, raw]``, where: ``error = [error(1),error(2)]`` is a vector of maximum step-size and sampling errors, ``input`` is the full input structure or cell array for sequences, including default values, and ``data`` is a cell array of average observables. If the ``in.raw`` option is used, data for the actual trajectories is output in ``raw``. This can be run as a stand-alone function if no graphs are required.
+    This is the xSPDE simulation function. Like :func:`xspde`, it accepts input parameters in ``input``. It returns ``[error, input, data, raw]``, where: ``error = [error(1),error(2)]`` is a vector of maximum step-size and sampling errors, ``input`` is the full input structure or cell array for sequences, including default values, and ``data`` is a cell array of average observables. If the ``in.raw`` option is used, data for the actual trajectories is output in ``raw``. This can be run as a stand-alone function if no graphs are required.
 
 .. function:: xgraph(input,data)
 
     This is the xSPDE graphics function. It takes computed simulation  ``input`` and ``data``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions. The ``data`` should have as many cells as ``input`` cells, for sequences. The ``data`` input can be given as a filename, in which case input details are replaced by the new  ``input``.
-    If the ``data`` input is not present at all, then a data file will be read using the file-name specified in the ``input`` structure or cell array. As described above, any stored ``input`` is ignored, allowing graphs to be modified with new labels. 
+    If the ``data`` input is not present at all, then a data file will be read using the file-name specified in the ``input`` structure or cell array. As described above, any stored ``input`` is ignored, allowing graphs to be modified with new labels.
     If ``input = 'filename.h5'`` or ``input= 'filename.mat'``, the specified file is read both for ``input`` and ``data``. Here ``.h5`` indicates an HDF5 file, and ``.mat`` indicates a Matlab file.
-    
-    
+
+
 
 Open object-oriented architecture
 ----------------------------------
 
 As well as extensibility through sequences, which was described in :ref:`chap-projects`, in the section :ref:`sec-sequential-integration`, the architecture of xSPDE allows functional extensions.
 
-The input metadata includes both data and methods acting on the data, in the tradition of object-oriented programs. Yet there is no strict class typing. Users are encouraged to adapt the xSPDE program by adding input parameters and methods to the input structures. 
+The input metadata includes both data and methods acting on the data, in the tradition of object-oriented programs. Yet there is no strict class typing. Users are encouraged to adapt the xSPDE program by adding input parameters and methods to the input structures.
 
 *Such unorthodox object orientation is deliberate*.
 
@@ -57,10 +57,10 @@ Next, include anywhere on your Matlab path, the function definition, for example
         ...
         a = ...;
     end
-    
 
-    
-    
+
+
+
 
 Averages, integrals and derivatives
 ===================================
@@ -70,7 +70,7 @@ There are functions available in xSPDE for averages, integrals and derivatives. 
 Averages
 --------
 
-This function allows one to extract local ensemble averages which may be needed as part of an overall calculation involving a ratio or product of averages. In addition, spatial grid averages can be used to obtain stochastic results with reduced sampling errors if the overall grid is homogeneous. 
+This function allows one to extract local ensemble averages which may be needed as part of an overall calculation involving a ratio or product of averages. In addition, spatial grid averages can be used to obtain stochastic results with reduced sampling errors if the overall grid is homogeneous.
 
 An average is carried out using the :func:`xave` function, which is defined as follows:
 
@@ -113,9 +113,9 @@ The code to take a spatial derivative is carried out using the xSPDE :func:`xd` 
 
 .. attribute:: xd(o, [D, ] r)
 
-This function takes a scalar ``o``, and returns a derivative over selected dimensions with a derivative ``D``.  Set ``D = r.D.x`` for a first order x-derivative, ``D = r.D.y`` for a first order y-derivative, and similarly ``D = r.D.x.*r.D.y`` for a cross-derivative in ``x`` and ``y``. Higher derivatives require powers of these. Time derivatives are ignored at present. Derivatives are returned at all lattice locations. 
+This function takes a scalar ``o``, and returns a derivative over selected dimensions with a derivative ``D``.  Set ``D = r.D.x`` for a first order x-derivative, ``D = r.D.y`` for a first order y-derivative, and similarly ``D = r.D.x.*r.D.y`` for a cross-derivative in ``x`` and ``y``. Higher derivatives require powers of these. Time derivatives are ignored at present. Derivatives are returned at all lattice locations.
 
-If the derivative ``D`` is omitted, a first order x-derivative is returned.     
+If the derivative ``D`` is omitted, a first order x-derivative is returned.
 Note that :func:`xd` returns a lattice observable, as required when used in the :attr:`in.observe` function. If the integral is used in another function, note that it returns a matrix of dimension ``[1, lattice]``.
 
 .. _sec-lattice-structure:
@@ -164,7 +164,7 @@ The second argument, ``z``, if needed, is a real random noise, corresponding to 
 
 The last function argument is the  :ref:`lattice structure <sec-lattice-structure>`, ``r``. This contains data about the integration lattice. The most important constants are :attr:`r.t`, the current time, and the space coordinates, :attr:`r.x`, :attr:`r.y`, :attr:`r.z`. Other data stored in the lattice structure is explained in later chapters.
 
-Functions of multiple lattice sequences take current arguments first, and the oldest arguments last. 
+Functions of multiple lattice sequences take current arguments first, and the oldest arguments last.
 
 Arrays
 ------
@@ -204,7 +204,7 @@ The standard way to input each parameter value is:
 ::
 
     in.label = parameter
-    
+
 The standard way to input each function is:
 
 ::
@@ -269,13 +269,13 @@ Input parameters
     ::
 
         in.noises = [in.noises(1), in.noises(2)] >= 0.
-        
-        
+
+
 .. attribute:: in.randoms
 
     *Default:* :attr:`in.noises`
 
-    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be correlated either in ordinary or momentum spaces. The second input is the dimension of random fields in momentum space. It can be left out if zero. 
+    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be correlated either in ordinary or momentum spaces. The second input is the dimension of random fields in momentum space. It can be left out if zero.
 
     ::
 
@@ -382,7 +382,7 @@ A stochastic equation solver requires the definition of an initial distribution 
 
     *Default:* :func:`xinitial`
 
-    Initializes the fields :math:`a` for the first simulation in a sequence. The initial Gaussian random field variable, ``v``, has unit variance if :attr:`in.dimension` is ``1`` or else is delta-correlated in space, with variance ``1/r.dV`` (:math:`\equiv 1/(dx_2...dx_d)`) for :math:`d` space-time dimensions. If :attr:`in.randoms` is specified in the input, ``v`` has a first dimension of :attr:`in.randoms(1)+in.randoms(2)`. If not specified, the default for ``in.randoms`` is  ``in.noises``. If not specified, the default of :func:`in.initial` is ``a = 0``.
+    Initializes the fields :math:`a` for the first simulation in a sequence. The initial Gaussian random field variable, ``v``, has unit variance if :attr:`in.dimension` is ``1`` or else is delta-correlated in space, with variance ``1/r.dV`` (:math:`\equiv 1/(dx_2...dx_d)`) for :math:`d` space-time dimensions. If :attr:`in.randoms` is specified in the input, ``v`` has a first dimension of ``in.randoms(1) + in.randoms(2)``. If not specified, the default for ``in.randoms`` is  ``in.noises``. If not specified, the default of :func:`in.initial` is ``a = 0``.
 
 .. attribute:: in.transfer(v,r,a0,r0)
 
@@ -394,7 +394,7 @@ A stochastic equation solver requires the definition of an initial distribution 
 
     *Default:* :func:`xda`
 
-    Calculates derivatives :math:`da` of the equation. The noise vector, ``z``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension  whose default value is :attr:`in.fields` if :attr:`in.noises' are not given. Otherwise, it has a first dimension of :attr:`in.noises(1)+in.noises(2)`. The second type of input noise allows for spatially correlated and filtered noise specified in momentum space.
+    Calculates derivatives :math:`da` of the equation. The noise vector, ``z``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension  whose default value is :attr:`in.fields` if :attr:`in.noises` are not given. Otherwise, it has a first dimension of ``in.noises(1) + in.noises(2)``. The second type of input noise allows for spatially correlated and filtered noise specified in momentum space.
 
 .. attribute:: in.linear(D,r)
 
@@ -805,7 +805,7 @@ A parameter structure contains information about the space-time grid and is pass
 
 .. attribute:: r.nspace
 
-    Number of spatial lattice points: ``in.points(2) *..*in.points(in.dimension) ``.
+    Number of spatial lattice points: ``in.points(2) * .. * in.points(in.dimension)``.
 
 .. attribute:: r.nlattice
 
