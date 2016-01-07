@@ -909,7 +909,7 @@ Answers to some frequent questions, and reminders of points in this chapter are:
 
 -  Can you have functions of the current time and space coordinate?
 
-   -  Yes: xSPDE functions support this using the structure ``r``, as :attr:`r.t`, :attr:`r.x`, :attr:`r.y`, :attr:`r.z`, :attr:`r.x5` and so on, up to the current dimension.
+   -  Yes: xSPDE functions support this using the structure ``r``, as :attr:`r.t`, :attr:`r.x`, :attr:`r.y`, :attr:`r.z`, or  :attr:`r.t`, ``r.x{1}``, and so on, for more than four space-time dimensions.
 
 -  Can you have several independent stochastic variables?
 
@@ -917,7 +917,7 @@ Answers to some frequent questions, and reminders of points in this chapter are:
 
 -  Are higher dimensional differential equations possible?
 
-   -  Yes, this requires setting ``in.dimension > 1``. This is essentially unlimited in xSPDE except for memory requirements. However, two of the functions, namely xgrid and xgraph, need minor changes for seven or more space dimensions, i.e. if ``in.dimension > 7`` is input, in the current version.
+   -  Yes, this requires setting ``in.dimension > 1``. This is essentially unlimited in xSPDE except for memory requirements.
 
 -  Can you have spatial partial derivatives?
 
