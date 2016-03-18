@@ -29,34 +29,44 @@ case 1                                                %%if HDF5 filename
   h5writeatt(filename, '/', 'Sequence', sequence);
   for s = 1:sequence                                  %%loop over sequence
     seq = sprintf('/data/sequence_%d',s);             %%name for sequence  
-    xh5writecells(filename, [seq '/input'], input{s});%%input for sequence
+    xh5writeattribute(filename, seq, 'input', input{s});%%input for sequence
   end
 end
 end
 
-%Version 1.03   xwrite prints error messages on filename errors
-
-function xh5writecells(filename, path, in)
-%   XH5WRITECELLS(filename, inputname, in) writes HDF5 cell data.
-%   Input:  file 'filename', data 'path', data source 'in'
-%   Output: HDF5 file attributes including cell data
-%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License.txt
- 
-xh5writegroup(filename, path);
-fields = fieldnames(in);
-for i = 1:numel(fields)
-    if iscell(in.(fields{i}))
-        subpath = strcat(path,'/', fields{i});
-        xh5writegroup(filename, subpath);
-        acell = in.(fields{i});
-        for j = 1:max(size(acell)) 
-            xh5writeatt(filename, subpath, [fields{i} '_' int2str(j)], acell{j});
+function xh5writeattribute(filename, path, attname, attvalue)
+    if iscell(attvalue)                              %%is a cell array?
+        subpath = strcat(path, '/', attname);        %%subpath name
+        xh5writegroup(filename, subpath);            %%create subpath
+        h5writeatt(filename, subpath, ...
+            'XSPDE_iscell', '1');                    %%set cellarray flag
+        for i = 1:max(size(attvalue))                %%loop over cells
+           subsubpath = strcat(subpath, '/', ...     %%one sub-subgroup for              
+               int2str(i));                          %%every cell
+           xh5writegroup(filename, subsubpath);      %%create sub-subpath
+           xh5writeattribute(filename, ...           %%recursively write cell
+               subsubpath, 'value', attvalue{i});       
         end
-    else
-        xh5writeatt(filename, path, fields{i}, in.(fields{i}));
+        return;
     end
+    if isstruct(attvalue)                            %%is a struct?
+        subpath = strcat(path, '/', attname);        %%subpath name
+        xh5writegroup(filename, subpath);            %%create subpath
+        fields = fieldnames(attvalue);                   
+        for i = 1:numel(fields)                      %%loop over fieldnames
+            xh5writeattribute(filename, ...          %%recursively write fields
+                subpath, fields{i}, attvalue.(fields{i}));
+        end
+        return;     
+    end
+    if isa(attvalue,'function_handle')               %is a function handle?
+        attvalue= ['function_' func2str(attvalue)];  %store as string
+    end
+    h5writeatt(filename,path,attname,attvalue);      %write attribute here
 end
-end
+
+
+%Version 1.03   xwrite prints error messages on filename errors
 
 function xh5writegroup(filename, path)
 %   XH5WRITEGROUP(filename, inputname, in) creates empty HDF5 group.
@@ -69,19 +79,6 @@ function xh5writegroup(filename, path)
     gid = H5G.create(fid,path,plist,plist,plist);
     H5G.close(gid);
     H5F.close(fid);
-end
-
-function xh5writeatt(filename,location,attname,attvalue)
-%   XH5WRITEATT(filename,location,attname,attvalue) 
-%   Writes HDF5 data attributes produced by xsim.
-%   Allows for functions by string conversion
-%   Output: HDF5 file attribute 
-%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License.txt
- 
-if isa(attvalue,'function_handle')
-    attvalue= ['function_' func2str(attvalue)];
-end
-h5writeatt(filename,location,attname,attvalue);
 end
 
 function [filename,hflag] = xwritename(filename)

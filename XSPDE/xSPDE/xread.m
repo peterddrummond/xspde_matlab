@@ -50,28 +50,59 @@ for s = 1:sequence                             %%loop over sequence
         dsname = [seq graphname]; 
         data{s}(:,:,:,g)= h5read(fname,dsname);
     end                                        %%end loop graphs
-    info = h5info(fname, [seq '/input']);
-    in=xh5attributes(info,in);
-    for i = 1:size(info.Groups, 1)
-        gName_full = info.Groups(i).Name;
-        gName = xcut_off_path(gName_full);
-        info_sgroup = h5info(fname, gName_full); %info field for subgroup,
-        struct_tmp = xh5attributes(info_sgroup,[]);
-        struct_tmp_fnames = fieldnames(struct_tmp);
-        cell_tmp = cell(1, numel(struct_tmp_fnames));        
-        for j = 1:numel(struct_tmp_fnames)
-            fname_tmp = sprintf('%s_%d', gName, j);
-            cell_tmp{j} = struct_tmp.(fname_tmp);
-        end
-        if ~isfield(in,gName)                    %% If no label present
-            in.(gName) = cell_tmp;               %% Load file parameters
-        end
-    end 
+    in=xh5attributes(fname, [seq '/input']);    
     input{s} = in;
 end                                            %%end loop sequence
     if saved == 0                              %% if saved flag = 0
         input = gr_input;                      %%use graphics input 
     end                                        %%end if  saved flag = 0
+end
+
+function [res] = xh5attributes(filename, path)
+    info = h5info(filename, path);
+    num_groups = max(size(info.Groups));            %%number of subgroups
+    num_attributes = max(size(info.Attributes));    %%number of attributes
+    is_cell = 0;                                    %%cell array flag
+    for i=1:num_attributes
+       if strcmp(info.Attributes(i).Name, ...       %%if cell flag is set
+               'XSPDE_iscell') 
+           is_cell = 1;                             %%mark as cell array
+       end
+    end
+    for i=1:num_groups
+       if all(isstrprop(info.Groups(i).Name, ...    %%if have purely numeric
+               'digit'))                            %%named subgroup
+          is_cell = 1;                              %%mark as cell array
+       end
+    end
+    if (~is_cell)                                   %%if not a cell array
+        for i = 1:num_attributes                    %%loop over attributes
+            attname = info.Attributes(i).Name;
+            attvalue = info.Attributes(i).Value;
+            if ~ischar(attvalue)
+                attvalue = attvalue';
+            else
+                len = length (attvalue);            %%if is function handle
+                if (len > 9) && ...                 %%read function as string
+                        strcmp('function_', attvalue(1:9))
+                    attvalue = str2func(attvalue(10:len));
+                end
+            end
+        res.(attname) = attvalue;
+        end
+        for i = 1:num_groups                         %%loop over subgroups
+            group_name = info.Groups(i).Name;
+            tmp = xh5attributes(filename, group_name);%recursively read subgroup           
+            res.(xcut_off_path(group_name)) = tmp;
+        end
+    else                                            %%if is a cell array
+        res = {};
+        for i=1:num_groups                          %%loop over subgroups
+            subpath = strcat(path, '/', int2str(i));
+            tmp = xh5attributes(filename, subpath); %%recursively read subgroup
+            res{i} = tmp.value;
+        end
+    end            
 end
 
 %Version 1.03   xread returns an error flag on read error
@@ -84,28 +115,6 @@ function [res] = xcut_off_path(str)
     res = C{size(C,2)};
 end
     
-function [in] = xh5attributes(info, in)
-%   XH5ATTRIBUTES(info, in) reads HDF5 attribute data.
-%   Output: HDF5 file attributes in 'in' including function data
-%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License.txt
- 
-    for i = 1:size(info.Attributes,1)
-        aName  = info.Attributes(i).Name;
-        aValue = info.Attributes(i).Value;
-        if ~ischar(aValue)
-            aValue = aValue';
-        else
-            len = length (aValue);
-            if (len > 9) && strcmp('function_',aValue(1:9))
-                aValue =str2func(aValue(10:len));
-            end
-        end
-        if ~isfield(in,aName)                    %% If no label present
-            in.(aName) = aValue;
-        end
-    end
-end
-
 function hflag = xreadname(filename)
 %   [filename,hflag] = XREADNAME(in_fname) 
 %   Tests for a valid input filename for reading.
