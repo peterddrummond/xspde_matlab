@@ -127,7 +127,8 @@ e
 \series default
 quation solver.
  It can solve any number of simultaneous stochastic partial differential
- equations in arbitrary space dimensions, with averaging.
+ equations in any number of space dimensions, with averaging and graphical
+ output.
  This xSPDE user's guide can be used as the basis for a 3-4 hour self-taught
  tutorial in using xSPDE for solving practical stochastic problems.
  It includes exercises for the reader.
@@ -260,7 +261,7 @@ name "chap:Interactive-xSPDE"
 \end_layout
 
 \begin_layout Standard
-The general purpose xSPDE toolbox function is:
+The general purpose xSPDE toolbox function co is:
 \end_layout
 
 \begin_layout Itemize
@@ -268,7 +269,7 @@ The general purpose xSPDE toolbox function is:
 \series bold
 xspde(in)
 \series default
-, the combined simulation/graphics function.
+, the combined simulation (xSIM) and graphics (xGRAPH) function.
 \end_layout
 
 \begin_layout Section
@@ -1707,7 +1708,7 @@ xspde(in);
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -1735,7 +1736,7 @@ status collapsed
 
 
 \begin_inset Graphics
-	filename ../../../../../Conferences/ANZSUP/Figures/Laser.pdf
+	filename Figures/Laser.pdf
 	width 75text%
 
 \end_inset
@@ -1945,8 +1946,8 @@ Note that
 \family typewriter
 in.transforms =1
 \family default
- tells xSPDE to Fourier transform the field over the time coordinate, to
- give a spectrum.
+ tells xSPDE to Fourier transform the field over the time coordinate before
+ averaging, to give a spectrum.
  The first argument 
 \begin_inset Formula $v$
 \end_inset
@@ -1957,7 +1958,9 @@ initial
 \emph default
  function is a random field, used optionally to initialize the stochastic
  variable.
- You can transform any field in any dimension, see Chapter 6 for details.
+ You can transform any field in any dimension, with any number of resulting
+ averages.
+ See Chapter 6 for details.
  
 \end_layout
 
@@ -2465,7 +2468,7 @@ Either
 \end_layout
 
 \begin_layout Section
-xSPDE batch jobs
+xSIM and xGRAPH
 \end_layout
 
 \begin_layout Standard
@@ -2481,36 +2484,20 @@ reference "chap:Interactive-xSPDE"
  This allows xSPDE to run in a batch mode, as needed for longer projects
  which involve large ensembles.
  In either case, the Matlab path must include the xSPDE folder.
-\end_layout
-
-\begin_layout Standard
-A minimal xSPDE project function is as follows:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\mathtt{function} & = & project.m\\
-\mathtt{in.}[label1] & = & [parameter1]\\
-\mathtt{in.}[label2] & = & \ldots\\
-\mathtt{in.da} & = & \mathtt{@(a,w,r)}\,\,[my\,derivative]\\
-\mathtt{xspde(in)}\\
-\mathtt{end}
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-For standard graph generation, the script input or project function should
- end with the combined function 
+ For generating graphs automatically, the script input or project function
+ should end with the combined function 
 \series bold
 xspde(in)
 \series default
 .
- Alternatively, to generate simulation data and graphs separately, the function
+ 
+\end_layout
+
+\begin_layout Standard
+With batch jobs it is often useful to divide xSPDE into its simulation function,
+ xSIM, and its graphics function, xGRAPH, to allow graphs to be made at
+ a later time from the simulation.
+ In this case the function
 \series bold
  
 \begin_inset Formula $xsim$
@@ -2528,15 +2515,40 @@ xspde(in)
 \end_layout
 
 \begin_layout Standard
-After preparing a project file using the editor, click on the Run arrow
- above the editor window.
- To create a data file, you must enter the filename before running the simulatio
-n, using the 
+To create a data file, you must enter the filename when running the simulation,
+ using the 
 \begin_inset Formula $in.file=filename$
 \end_inset
 
  input.
- A simple interactive workflow is as follows:
+ A typical xSPDE project function of tyhis type is as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{function}\,[e,ec] & = & project.m\\
+\mathtt{in.}[label1] & = & [parameter1]\\
+\mathtt{in.}[label2] & = & \ldots\\
+\mathtt{in.file} & = & [my\,file].\mathtt{mat}\\
+\mathtt{[e,in]} & = & \mathtt{xsim(in)}\\
+\mathtt{ec} & = & \mathtt{xgraph(in.file)}\\
+\mathtt{end}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+After preparing a project file using the editor, click on the Run arrow
+ above the editor window.
+ 
+\end_layout
+
+\begin_layout Standard
+In summary, a simple batch job workflow is as follows:
 \end_layout
 
 \begin_layout Itemize
@@ -2560,20 +2572,21 @@ Run the simulation with
 \series bold
  [e,in]=xsim(in)
 \series default
-, in case the file-name is changed.
+.
+\end_layout
+
+\begin_layout Itemize
+Note that xSIM changes the file-name if it already exists, and returns the
+ new name for plotting.
 \end_layout
 
 \begin_layout Itemize
 Run 
 \series bold
-xgraph(in)
+xgraph(in.file)
 \series default
 , and the data will be accessed and graphed.
  
-\end_layout
-
-\begin_layout Itemize
-Note that xSPDE changes the file-name if it already exists.
 \end_layout
 
 \begin_layout Itemize
@@ -2682,7 +2695,7 @@ in.file = 'kubo.mat';
 \begin_layout Plain Layout
 
 \family typewriter
-xgraph(in);
+xgraph(in.file);
 \end_layout
 
 \begin_layout Plain Layout
@@ -2727,6 +2740,15 @@ not
 \series default
  overwrite old files, to protect your previous data.
  
+\end_layout
+
+\begin_layout Standard
+You can also include modified graphics parameters as a second input when
+ running 
+\family typewriter
+xgraph, 
+\family default
+just in case the first graphs you generate need changes.
 \end_layout
 
 \begin_layout Section
@@ -3634,7 +3656,7 @@ in.images = 4;
 \begin_layout Plain Layout
 
 \family typewriter
-e = xgraph(in); 
+e = xgraph(in.file); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -4461,11 +4483,17 @@ The sequence
 \end_layout
 
 \begin_layout Subsection
-User functions
+User definable simulation functions
+\end_layout
+
+\begin_layout Standard
+The most commonly used functions are indicated with an asterisk.
+ Others have automatic defaults that are not usually changed, except in
+ special cases.
 \end_layout
 
 \begin_layout Description
-initial is used to initialize each integration in time.
+*initial is used to initialize each integration in time.
  This is a user-defined function, which can involve random numbers if there
  is an initial probability distribution.
  This creates a stochastic field on the lattice, called 
@@ -4484,22 +4512,8 @@ a.
 \end_layout
 
 \begin_layout Description
-
-\series bold
-transfer
-\series default
- is used to initialize sequential simulations,
-\series bold
- 
-\series default
-where previous field values are used to initialize the next integration
- phase.
- 
-\end_layout
-
-\begin_layout Description
-observe is the observation function whose output is averaged over the ensembles,
- called from 
+*observe is the observation function whose output is averaged over the ensembles
+, called from 
 \series bold
 xpath
 \series default
@@ -4513,7 +4527,7 @@ xpath
 \end_layout
 
 \begin_layout Description
-linear is the linear response, including transverse derivatives in space.
+*linear is the linear response, including transverse derivatives in space.
  The default, 
 \begin_inset Formula $\mathbf{xlinear}$
 \end_inset
@@ -4523,24 +4537,40 @@ linear is the linear response, including transverse derivatives in space.
 \end_layout
 
 \begin_layout Description
-da is called by 
+*da is called by 
 \series bold
 step
 \series default
  to calculate derivatives at every step in the process, including the stochastic
  terms.
+ The default, 
+\begin_inset Formula $\mathbf{xstep}$
+\end_inset
+
+, sets this to zero
+\end_layout
+
+\begin_layout Description
+
+\series bold
+transfer
+\series default
+ is a function used to initialize sequential simulations,
+\series bold
  
+\series default
+where previous field values are included as input to the function.
+ The default, 
+\begin_inset Formula $\mathbf{xtransfer}$
+\end_inset
+
+, replicates the output of the previous simulation.
 \end_layout
 
 \begin_layout Description
 step is the algorithm that computes each step in time.
  This also generates the random numbers at each time-step.
- The default is robust and widely applicable: 
-\begin_inset Formula $\mathbf{xMP}$
-\end_inset
-
- uses a midpoint or central-difference technique in the interaction picture.
- Other options are 
+ Options include 
 \series bold
 xEuler
 \series default
@@ -4553,155 +4583,118 @@ xRK2
 xRK4, 
 \series default
 for Euler and Runge-Kutta integration methods.
- This can be user-modified by initializing the handle in.step, and adding
- a new integration function.
-\end_layout
-
-\begin_layout Section
-Graphics function, 
-\emph on
-xgraph
-\end_layout
-
-\begin_layout Standard
-The main functions involved for graphics are: 
-\end_layout
-
-\begin_layout Description
-xgraph is called by xSPDE when the ensemble loops finished.
- The results are graphed and output if required.
- 
-\end_layout
-
-\begin_layout Description
-xgrpreferences is called by 
-\series bold
-xgraph
-\series default
- to set the graphics defaults that are not already entered.
- 
-\end_layout
-
-\begin_layout Standard
-Comparison results are calculated if available from the user-specified 
-\series bold
-in.compare
-\series default
-, an error summary is printed, and the results plotted using the 
-\series bold
-xgraph
-\series default
- routine, which is a function that graphs the observables.
- It is prewritten to cover a range of useful graphs, but can be modified
- to suit the user.
- The code is intended to cascade down from higher to lower dimension, generating
- different types of user-defined graphs.
- Each type of graph is generated once for each specified graphics function.
-\end_layout
-
-\begin_layout Standard
-Graphics results depend on the dimension: 
-\end_layout
-
-\begin_layout Description
-
-\emph on
-dimension=4
-\emph default
- For the highest space dimension, only a slice through 
-\begin_inset Formula $z=0$
+ This can be user-modified by initializing the handle in.step to add a new
+ integration function.
+ The default is robust and widely applicable: 
+\begin_inset Formula $\mathbf{xMP}$
 \end_inset
 
- is available.
- This is then graphed as if it was in three dimensions.
- 
+ uses a midpoint or central-difference technique in the interaction picture.
+\end_layout
+
+\begin_layout Description
+rfilter returns a momentum filter for random initial fields generated in
+ momentum space.
+ The default, 
+\begin_inset Formula $\mathbf{xrfilter}$
+\end_inset
+
+, sets this to unity.
+\end_layout
+
+\begin_layout Description
+nfilter returns a momentum filter for random noises generated in momentum
+ space.
+ The default, 
+\begin_inset Formula $\mathbf{xnfilter}$
+\end_inset
+
+, sets this to unity.
 \end_layout
 
 \begin_layout Description
 
-\emph on
-dimension=3
-\emph default
- For two dimensions, distinct graphic images of observable
-\emph on
- vs x,y
-\emph default
- are plotted at 
-\begin_inset Formula $images$
-\end_inset
-
- time slices.
- Otherwise, only a slice through 
-\begin_inset Formula $y=0$
-\end_inset
-
- is available.
- This is then treated as if it was in two dimensions.
- 
-\end_layout
-
-\begin_layout Description
-
-\emph on
-dimension=2
-\emph default
- For two dimensions, one three-dimensional image of observable
-\emph on
- vs x,t
-\emph default
- is plotted.
- Otherwise, only a slice through 
-\begin_inset Formula $x=0$
-\end_inset
-
- is available.
- This is otherwise treated as in one dimension.
- 
-\end_layout
-
-\begin_layout Description
-
-\emph on
-dimension=1
-\emph default
- For one dimensions, one image of observable
-\emph on
- vs t
-\emph default
- is plotted, with data at each lattice point in time.
- Exact results, error bars and sampling error bounds are included if available.
- 
-\end_layout
-
-\begin_layout Standard
-In addition to time-dependent graphs, the 
 \series bold
-xgraph
+grid
 \series default
- function can generate 
-\emph on
-images 
-\emph default
-(3D)
-\emph on
+ calculates the spatial integration grid.
+ The default, 
+\begin_inset Formula $\mathbf{xgrid}$
+\end_inset
+
+, returns a rectangular grid in ordinary and momentum space.
+\end_layout
+
+\begin_layout Description
+
+\series bold
+prop
+\series default
+ is the spatial propagation function.
+ The default, 
+\begin_inset Formula $\mathbf{xprop}$
+\end_inset
+
+, takes a Fourier transform of 
+\begin_inset Formula $\bm{a}$
+\end_inset
+
+, multiplies by propfactor to propagate in time, then takes an inverse Fourier
+ transform.
  
-\emph default
-and 
-\emph on
-transverse
-\emph default
- (2D) plots at specified points in time, up to a maximum given by the number
- of time points specified.
- The number of these can be individually specified for each graphics output.
- The images available are specified in 
-\emph on
-imagetype
-\emph default
-: 3D perspective plots, grey-scale colour plots and contour plots.
+\end_layout
+
+\begin_layout Description
+
+\series bold
+randomgen
+\series default
+ generates the initial random fields.
+ The default, 
+\begin_inset Formula $\mathbf{xrandomgen}$
+\end_inset
+
+, returns Gaussian real fields that are delta-correlated in space or momentum
+ space.
+\end_layout
+
+\begin_layout Description
+
+\series bold
+noisegen
+\series default
+ generates the initial random fields.
+ The default, 
+\begin_inset Formula $\mathbf{xnoisegen}$
+\end_inset
+
+, returns Gaussian real noises that are delta-correlated in time and also
+ in space or momentum space.
+\end_layout
+
+\begin_layout Description
+propfactor returns the interaction picture propagation factors.
+ The default, 
+\begin_inset Formula $\mathbf{xpropfactor}$
+\end_inset
+
+, uses data from the 
+\begin_inset Formula $\mathbf{linear}$
+\end_inset
+
+ function to calculate this.
 \end_layout
 
 \begin_layout Section
 Errors
+\end_layout
+
+\begin_layout Standard
+Errors caused by the finite time-domain stepsize, as well as those caused
+ by the finite ensemble, are checked automatically.
+ Those caused by the spatial lattice are not checked in the xSIM code.
+ They must be checked by manually, by comparing results with different transvers
+e lattice ranges and step-size.
 \end_layout
 
 \begin_layout Subsection
@@ -4755,7 +4748,7 @@ Sampling errors
 \end_layout
 
 \begin_layout Standard
-Sampling error estimation in xSPDE uses sub-ensemble averaging.
+Sampling error estimation in xSIM uses sub-ensemble averaging.
  This generally leads to more reliable sampling error estimates, and makes
  efficient use of the vector instruction sets that are used by Matlab.
  Ensembles are specified in three levels.
@@ -4863,17 +4856,349 @@ which increases the trajectories in a single thread.
  Sampling error control helps ensures accuracy.
 \end_layout
 
+\begin_layout Section
+Graphics function, 
+\emph on
+xGRAPH
+\end_layout
+
 \begin_layout Standard
-Note that error bars and sampling errors are only graphed for 2D graphs
- of results vs time.
+The main functions involved for graphics are: 
+\end_layout
+
+\begin_layout Description
+xgraph is called by xSPDE when the ensemble loops finished.
+ The results are graphed and output if required.
+ 
+\end_layout
+
+\begin_layout Subsection
+User definable graphics functions
+\end_layout
+
+\begin_layout Standard
+It is possible to simply run 
+\begin_inset Formula $\mathbf{xgraph}$
+\end_inset
+
+ as is, without much intervention.
+ However, there are many customization options, including two user defined
+ functions which have useful applications.
+ These are as follows:
+\end_layout
+
+\begin_layout Description
+*functions(o,r) is is a cell array of functions whose output 
+\begin_inset Formula $\mathbf{xgraph}$
+\end_inset
+
+ is designed to plot.
+ There is one function for each multidimensional dataset that is plotted.
+ The default value is just the average stored in the data array generated
+ by the simulation observe function, provided these are scalar observables.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+An arbitrary number of functions of these observables can also be plotted,
+ including vector observables.
+ The input to functions is the observed data averages, stored in a cell
+ array of size 
+\begin_inset Formula $o\{ngraphs\}(points(1),nspace,ofields)$
+\end_inset
+
+.
+ Here 
+\begin_inset Formula $ngraphs$
+\end_inset
+
+ is the number of observable averaging functions, 
+\begin_inset Formula $points(1)$
+\end_inset
+
+ is the number of time points,
+\begin_inset Formula $nspace$
+\end_inset
+
+ the number of space points, 
+\begin_inset Formula $ofields$
+\end_inset
+
+ the vector dimension of the averaging or observable function.
+ This can change depending on the observable.
+\end_layout
+
+\begin_layout Description
+*compare(r) is a cell array of functions used to obtain comparison results.
+ These are calculated from the user-specified 
+\series bold
+in.compare
+\series default
+ handle, giving a dashed line on the generated timedomain graphs, and an
+ error summary which is printed.
+ 
+\end_layout
+
+\begin_layout Standard
+The results from the two graphics functions plotted using the 
+\series bold
+xgraph
+\series default
+ routines.
+ 
+\end_layout
+
+\begin_layout Subsection
+xGRAPH outputs
+\end_layout
+
+\begin_layout Standard
+This routine is prewritten to cover a range of useful graphs, but can be
+ modified to suit the user.
+ 
+\end_layout
+
+\begin_layout Standard
+The code is intended to cascade down from higher to lower dimension, generating
+ different types of user-defined graphs.
+ Each type of graph is generated once for each specified graphics function.
+ The graphics axes that are used for plotting, and the points plotted, are
+ defined using the optional 
+\series bold
+\emph on
+axes 
+\series default
+\emph default
+input parameters, where 
+\begin_inset Formula $axes\{n\}$
+\end_inset
+
+ indicates the n-th specified graphics function or set of generated graphical
+ data.
+\end_layout
+
+\begin_layout Standard
+If there are no 
+\series bold
+\emph on
+axes 
+\series default
+\emph default
+inputs, or the inputs are zero - for example, 
+\begin_inset Formula $axes\{1\}=\{0,0,0\}$
+\end_inset
+
+ - only the lowest dimensions are plotted, up to 3.
+ If the 
+\series bold
+\emph on
+axes 
+\series default
+\emph default
+inputs project out a single point in a given dimension, - for example, 
+\begin_inset Formula $axes\{1\}=\{0,31,-1,0\}$
+\end_inset
+
+, these axes are suppressed in the plots.
+ This reduces the effective dimension of the data - in this case to two
+ dimensions.
+ 
+\end_layout
+
+\begin_layout Standard
+Examples:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $axes\{1\}=\{0\}$
+\end_inset
+
+ - For function 1, plot all the time points; higher dimensions get defaults.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $axes\{2\}=\{-1,0\}$
+\end_inset
+
+ - For function 2, plot the maximum time (the default), and all x-points.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $axes\{3\}=\{1:4:51,32,64\}$
+\end_inset
+
+ - For function 3, plot every 4-th time point at x point 32, y point 64
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $axes\{4\}=\{0,1:4:51,0\}$
+\end_inset
+
+ - For function 4, plot every time point, every 4-th x point, and al the
+ y-points.
+\end_layout
+
+\begin_layout Standard
+Note that 
+\begin_inset Formula $-1$
+\end_inset
+
+ indicates a default `typical' point, which is the last point on the time
+ axis, and the midpoint on the other axes.
+ 
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+pdimension
+\emph default
+ input can also be used to reduce dimensionality, as this sets the maximum
+ effective plotted dimension.
+ For example, 
+\begin_inset Formula $pdimension\{1\}=1$
+\end_inset
+
+ means that only plots vs time are output for the first function plotted.
+ Note that in the following, 
+\begin_inset Formula $t,x,y,z$
+\end_inset
+
+ may be replaced by corresponding higher dimensions if there are axes that
+ are suppressed.
+ Slices can be taken at any desired point, not just the midpoint.
+ Using the standard notation of, for example, 
+\begin_inset Formula $axes\{1\}=\{6:3:81\}$
+\end_inset
+
+, can be used to modify the starting, interval, and finishing points for
+ complete control on the plot points.
+\end_layout
+
+\begin_layout Standard
+The graphics results depend on the resulting effective dimension.
+ Since the plot has to include a data axis, the plot will be typically one
+ dimension higher than the underlying space-time lattice: 
+\end_layout
+
+\begin_layout Description
+
+\emph on
+dimension>3
+\emph default
+ For higher lattice dimensions, only a slice through the chosen point, or
+ the default midpoint, is available, reducing the lattice dimension to 
+\begin_inset Formula $3$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Description
+
+\emph on
+dimension=3
+\emph default
+ For three lattice dimensions, if 
+\begin_inset Formula $images>1$
+\end_inset
+
+, a movie of distinct 3D graphic images of observable
+\emph on
+ vs x,y
+\emph default
+ are plotted as 
+\begin_inset Formula $images$
+\end_inset
+
+ slices - usually in time.
+ Otherwise, only a slice through the chosen point, or the default midpoint,
+ is available for the highest dimension, reducing the lattice dimension
+ to 
+\begin_inset Formula $2$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Description
+
+\emph on
+dimension=2
+\emph default
+ For two lattice dimensions, one 3D image of observable
+\emph on
+ vs x,t
+\emph default
+ is plotted.
+ A movie of distinct 2D graphic plots is also possible.
+ Otherwise, only a slice through 
+\begin_inset Formula $x=0$
+\end_inset
+
+ is available, reducing the lattice dimension to 
+\begin_inset Formula $1$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Description
+
+\emph on
+dimension=1
+\emph default
+ For one lattice dimension, a 2D plot of observable
+\emph on
+ vs t
+\emph default
+ is plotted, with data at each lattice point in time.
+ Exact results, error bars and sampling error bounds are included if available.
+ 
+\end_layout
+
+\begin_layout Standard
+In addition to time-dependent graphs, the 
+\series bold
+xgraph
+\series default
+ function can generate 
+\emph on
+images 
+\emph default
+(3D)
+\emph on
+ 
+\emph default
+and 
+\emph on
+transverse
+\emph default
+ (2D) plots at specified points in time, up to a maximum given by the number
+ of time points specified.
+ The number of these can be individually specified for each graphics output.
+ The images available are specified in 
+\emph on
+imagetype
+\emph default
+: 3D perspective plots, grey-scale colour plots and contour plots.
+\end_layout
+
+\begin_layout Standard
+Note that error bars and sampling errors are only graphed for 2D plots,
+ typically of results vs time.
  The error-bars are not plotted when they are below a user-specified size,
  to improve graphics quality.
  Higher dimensional graphs do not include this, for visibility reasons,
  but they are still recorded in the data files.
- Errors caused by the spatial lattice are not checked automatically in the
- xSPDE code.
- They must be checked by manually, by comparing results with different transvers
-e lattice ranges and step-size.
+ 
 \end_layout
 
 \begin_layout Section
@@ -4943,13 +5268,13 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-function a = Mystep(a,w,dt,r) 
+function a = Mystep(a,w,r) 
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-% a = Mystep(a,w,dt,r) propagates a step my way.
+% a = Mystep(a,w,r) propagates a step my way.
  
 \end_layout
 
@@ -5156,7 +5481,7 @@ Simulation parameters
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="25" columns="4">
+<lyxtabular version="3" rows="26" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -5229,7 +5554,7 @@ string
 \begin_layout Plain Layout
 
 \emph on
-'xSPDE1.05'
+'xSIM1.1'
 \emph default
  
 \end_layout
@@ -5412,7 +5737,7 @@ vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Range of coordinates in [t,x,y,z]
+Range of coordinates in [t,x,y,z,..]
 \end_layout
 
 \end_inset
@@ -5454,7 +5779,7 @@ vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Origin of coordinates in [t,x,y,z]
+Origin of coordinates in [t,x,y,z,..]
 \end_layout
 
 \end_inset
@@ -5496,7 +5821,7 @@ vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Output lattice points in [t,x,y,z]
+Output lattice points in [t,x,y,z,..]
 \end_layout
 
 \end_inset
@@ -6141,6 +6466,52 @@ Observable labels
 \begin_layout Plain Layout
 
 \emph on
+ofields
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+[1 1 1...]
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Observable vector function dimensions
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
 transforms
 \emph default
  
@@ -6282,7 +6653,7 @@ The most common functions, output field dimensions and calling arguments,
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="16" columns="4">
+<lyxtabular version="3" rows="18" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -6853,6 +7224,86 @@ Comparison function cell array
 \begin_layout Plain Layout
 
 \emph on
+randomgen
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[randoms,nlattice]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+(r)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Initial random generator
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+noisegen
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[noises,nlattice]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+(r)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Noise generator
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
 xint
 \end_layout
 
@@ -7060,7 +7511,7 @@ For
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="33" columns="4">
+<lyxtabular version="3" rows="34" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -7551,6 +8002,52 @@ double
 
 \begin_layout Plain Layout
 Output time-step
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+dtr
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+double 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+0.1000
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reduced, internal time-step
 \end_layout
 
 \end_inset
@@ -8108,7 +8605,7 @@ Total lattice: ensembles(1) x n.space
 \begin_layout Plain Layout
 
 \emph on
-n.ensemble
+ncopies
 \emph default
  
 \end_layout
@@ -8150,7 +8647,7 @@ ensembles(2) x ensembles(3)
 \begin_layout Plain Layout
 
 \emph on
-n.random
+randoms
 \emph default
  
 \end_layout
@@ -8192,7 +8689,7 @@ Number of initial random fields
 \begin_layout Plain Layout
 
 \emph on
-n.noise
+noises
 \emph default
  
 \end_layout
@@ -8625,12 +9122,34 @@ The simulation data of the
 
  program, along with optional graphics parameters for each observable, to
  create an extended in structure.
- These are all cell arrays when there is more than one observable:
+ 
+\end_layout
+
+\begin_layout Standard
+These are all cell arrays when there is more than one type of graph or observabl
+e, so that the graphics parameters can be individually set for each output
+ that is plotted.
+ The axis labels are also cell arrays, as there can be any number of axes
+ to label.
+\end_layout
+
+\begin_layout Standard
+The plotted result can be an arbitrary function of the generated average
+ data, by using the optional input
+\emph on
+ functions.
+ 
+\emph default
+If this is omitted, the
+\emph on
+ 
+\emph default
+generated averages are plotted.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="4">
+<lyxtabular version="3" rows="16" columns="4">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -8681,6 +9200,52 @@ Description
 \begin_layout Plain Layout
 
 \emph on
+gversion
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+string 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+'xGRAPH1.1'
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Current version number (added automatically)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
 minbar
 \emph default
  
@@ -8715,6 +9280,132 @@ cell
 
 \begin_layout Plain Layout
 Minimum relative error-bar size
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+*function
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cell 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+{@(d,~)d{1}(:,:,:).^2,..} 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Functions plotted of averages
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+*xfunctions
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+nested cell 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+{{@(x,~)x.^2,..}} 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Axis transformation functions
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+axes
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+nested cell 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+{{0,12,1:2:81},..} 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Points plotted for each axis
 \end_layout
 
 \end_inset
@@ -8791,7 +9482,7 @@ cell
 \begin_layout Plain Layout
 
 \emph on
- {'t' 'x' 'y' 'z'}
+ {'t' 'x' 'y' 'z'...}
 \emph default
  
 \end_layout
@@ -8802,7 +9493,7 @@ cell
 \begin_inset Text
 
 \begin_layout Plain Layout
-Strings for x-axis labels
+Axis labels for each dimension
 \end_layout
 
 \end_inset
@@ -8839,7 +9530,7 @@ cell
 \emph on
  {'
 \backslash
-omega' 'k_x' 'k_y' 'k_z'}
+omega' 'k_x' 'k_y' 'k_z'...}
 \emph default
  
 \end_layout
@@ -8851,6 +9542,54 @@ omega' 'k_x' 'k_y' 'k_z'}
 
 \begin_layout Plain Layout
 Transformed axis labels
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+glabels
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+nested cell 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+{ {'
+\backslash
+omega' 'x' 'y' 'z'...}
+\emph default
+ }
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Graph-specific axis labels
 \end_layout
 
 \end_inset
@@ -8883,7 +9622,7 @@ cell
 \begin_inset Text
 
 \begin_layout Plain Layout
-{1,..} 
+{'My heading',..} 
 \end_layout
 
 \end_inset
@@ -8892,7 +9631,7 @@ cell
 \begin_inset Text
 
 \begin_layout Plain Layout
-Switch for graph headers
+Graph headers
 \end_layout
 
 \end_inset

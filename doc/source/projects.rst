@@ -19,7 +19,7 @@ Alternatively, if you just want the data, and no graphs, use:
 
 ::
 
-    [e,data] = xsim(in)
+    [e,input,data] = xsim(in)
 
 Next, you should know the object label you wish to change. Note that the :func:`xsim` and :func:`xgraph` program inputs are either structure objects containing data for one simulation, or else cell arrays of structures with many simulations in sequence, which are treated later. You can use
 either in xSPDE.
@@ -28,7 +28,7 @@ To change the project name for the graph headings, input:
 
 ::
 
-    in.name = "My new project"
+    in.name ='My new project';
 
 then replot the data using
 
@@ -40,9 +40,9 @@ More graphics information can be added, for example using
 
 ::
 
-    in.olabels = "x"
+    in.olabels = 'Intensity';
 
-which inputs this additional graphics data to the ``in`` structure to xSPDE. Just plot again, using the same instructions.
+which inputs this additional graphics data to the ``in`` structure to xSPDE. Just plot again, using the same instructions. 
 
 
 Ensembles in xSPDE
@@ -72,7 +72,7 @@ Random walk with averaging
 To demonstrate this, try adding some more trajectories, points and an output label to the ``in`` parameters of the random walk example:
 
 ::
-
+    clear
     in.da = @(a,z,r) z;
     in.ensembles = [500,20];
     in.points = 101;
@@ -106,8 +106,8 @@ A minimal xSPDE project function is as follows:
 ::
 
     function = project()
-        in.label1 = parameter1
-        in.label2 = parameter2
+        in.label1 = parameter1;
+        in.label2 = parameter2;
         ...
         xspde(in)
     end
@@ -174,9 +174,9 @@ It is often inconvenient to work interactively, especially for large simulations
 
 The xSPDE program allows you to specify a file name that stores data in either standard HDF5 format, or in Matlab format. It also gives multiple ways to edit data for either simulations or graphs. A simple interactive workflow is as follows:
 
--  Create the metadata ``in``, and include a file name.
+-  Create the metadata ``in``, and include a file name, say ``in.file = `filename.mat` ``.
 -  Run the simulation with :func:`xsim`.
--  Run ``xgraph('', in)``, and the data will be accessed and graphed.
+-  Run ``xgraph(`filename.mat`)``, and the data will be accessed and graphed.
 
 Saving data files
 -----------------
@@ -204,15 +204,15 @@ To reload and reanalyze any previously saved Matlab simulation data, say ``Kubo.
 Graphing saved data
 -------------------
 
-If the ``in`` metadata is still available in an interactive session, just type
+If the filename is still available in an interactive session workspace, just type
 
 ::
 
-    xgraph('', in)
+    xgraph(in.file)
 
 which tells :func:`xgraph` to use the file-name already present in ``in``.
 
-More generally, one can use a file name directly in :func:`xgraph`, which works with any file type. Once the data is saved in a file by running :func:`xsim` or :func:`xspde` with an input ``filename``, just type:
+More generally, one can use any file name directly in :func:`xgraph`, which works with either matlab or HDF5 file types. Once the data is saved in a file by running :func:`xsim` or :func:`xspde` with an input ``filename``, just type:
 
 ::
 
@@ -226,7 +226,7 @@ or for HDF5 files,
 
 to replot the resulting data.
 
-Note that you can use :func:`xgraph` with either Matlab or HDF5 file data inputs, and without having to specify the ``in`` structure. This metadata is automatically saved with the data in the output file. This approach has the advantage that many simulations can be saved and then graphed later.
+Note that you can use :func:`xgraph` with either Matlab or HDF5 file data inputs, and without having to specify the ``in`` structure. This metadata is automatically saved with the data in the output file. This approach has the advantage that many simulations can be saved and then graphed later. In the current version, in order to access the function handles in the saved files, Matlab needs to access the original input file. Hence, when you move the data to a new computer, it is best to include the original input file in the same directory as the data, to make the handles available.
 
 Editing saved data
 ------------------
@@ -239,13 +239,13 @@ If the saved data was a Matlab file, one can load the simulated data and metadat
 
 Results can easily be replotted interactively, with changed input and new graphics details, using this method. This approach loads all the relevant saved data into your work-space.
 
-Hence one can easily edit and re-edit the graphics inputs in the ``in`` structure, by using:
+Hence one can easily edit and change the graphics inputs in the ``in`` structure, then use the standard graphics command:
 
 ::
 
     xgraph(data, in)
 
-To change cell contents for a sequence, be aware that sequence inputs are stored in cell arrays with curly bracket indices.
+To change cell contents for a sequence, be aware that sequence inputs are stored in cell arrays with curly bracket indices, so you have to change them individually using an index.
 
 Combining saved data with new metadata
 --------------------------------------
@@ -264,19 +264,10 @@ or if the data was saved in an HDF5 file, it is:
 
     xgraph('Kubo.h5', in)
 
-Provided the ``in`` structure is present, and includes a valid file-name, you can also use:
 
-::
-
-    xgraph('', in)
-
-With this input the :func:`xgraph` program automatically knows that it should look for the file-name in the ``in`` metadata.
-
-In all cases the new ``in`` metadata is combined with the old metadata. Any new input metadata takes precedence over old, filed metadata.
+In both cases the new ``in`` metadata is combined with the old metadata. Any new input metadata takes precedence over old, filed metadata.
 
 **This allows fonts and labels, for example, to be easily changed --- without having to re-enter all the simulation input details.**
-
-Note that ``xgraph('')`` is obviously invalid.
 
 
 .. _sec-sequential-integration:

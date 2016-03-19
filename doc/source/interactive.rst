@@ -38,7 +38,7 @@ Next, enter the xspde parameters (see :ref:`chap-api`) into the command window, 
 
 - The notation ``in.label = parameter`` creates a field in the structure ``in`` (which is created dynamically, if it has not been defined before).
 - The notation ``@(..)`` is the Matlab shorthand for an anonymous function.
-- The parameters passed to the :attr:`in.da` function are: ``a``, the stochastic variable; ``z``,  the random noise; and ``r``, a structure with parameters.
+- The parameters passed to the :attr:`in.da` function are: ``a``, the stochastic variable; ``z``,  the random noise; and ``r``, the input structure with additional coordinates and parameters.
 - :func:`xspde` is called with the input structure as the only argument.
 - parameters or functions that are omitted are replaced with default values.
 - a sequence of simulations requires an input list: `{in1,in2..}`.
@@ -87,10 +87,11 @@ where :math:`\zeta=\left(\zeta_{1}+i\zeta_{2}\right)`, so that:
 
     \left\langle \zeta(t)\zeta^{*}(t^\prime)\right\rangle =2\delta\left(t-t^\prime\right).
 
-Here the coefficient :math:`b` describes the quantum noise of the laser, and is inversely proportional to the equilibrium photon number. An xSPDE script in Matlab is given below, for the case of :math:`b=0.01`, with an output graph in :numref:`fig-laser`.
+Here the coefficient :math:`b` describes the quantum noise of the laser, and is inversely proportional to the equilibrium photon number. An xSPDE script in Matlab is given below, for the case of :math:`b=0.01`, with an output graph in :numref:`fig-laser`. Note the use of the clear command here to clean up the Matlab workspace before the start.
 
 ::
 
+    clear
     in.noises = 2;
     in.observe = @(a,r) abs(a)^2;
     in.olabels = '|a|^2';
@@ -153,8 +154,9 @@ An interactive xSPDE script in Matlab is given below with an output graph in :nu
 
 ::
 
-    in.initial = @(v,r) 1
-    in.da = @(a,z,r) -0.4*a+a*z
+    clear
+    in.initial = @(v,r) 1;
+    in.da = @(a,z,r) -0.4*a+a*z;
     xspde(in)
 
 .. _fig-black-scholes:
@@ -173,7 +175,7 @@ This graph is of a single stochastic realisation. Generation of averages is also
 Stochastic partial differential equations
 =========================================
 
-More generally, xSPDE solves [Werner1997]_ a stochastic partial differential equation for a complex vector field defined in space-time dimension :math:`d=1-4`. Equations of this type occur in many disciplines, including biology, chemistry, engineering and physics. They are in differential form as
+More generally, xSPDE solves [Werner1997]_ a stochastic partial differential equation for a complex vector field defined with arbitrary transverse dimension. The total dimension is then input as :math:`d=2,3,...`. Equations of this type occur in many disciplines, including biology, chemistry, engineering and physics. They are in differential form as
 
 .. math::
 
@@ -187,7 +189,7 @@ Here :math:`\boldsymbol{a}` is a real or complex vector or vector field. The ini
     \left\langle \zeta_{i}^{x}\left(t,\boldsymbol{x}\right)\zeta_{j}^{x}\left(t,\boldsymbol{x}^\prime\right)\right\rangle  & = \delta\left(\boldsymbol{x}-\boldsymbol{x}^\prime\right)\delta\left(t-t^\prime\right)\delta_{ij}\nonumber \\
     \left\langle \zeta_{i}^{k}\left(t,\boldsymbol{k}\right)\zeta_{j}^{k}\left(t,\boldsymbol{k}^\prime\right)\right\rangle  & = f(\boldsymbol{k})\delta\left(\boldsymbol{k}-\boldsymbol{k}^\prime\right)\delta\left(t-t^\prime\right)\delta_{ij}.\end{split}
 
-Transverse boundary conditions are assumed periodic. The term :math:`\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]` may be omitted if :math:`d=1`, as there are no space dimensions. The momentum filter :math:`f(\boldsymbol{k})` is an arbitrary user-specified function, allowing for spatially correlated noise.
+Transverse boundary conditions are assumed periodic. The term :math:`\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]` may be omitted if :math:`d=1`, as there are no space dimensions in this case. The momentum filter :math:`f(\boldsymbol{k})` is an arbitrary user-specified function, allowing for spatially correlated noise.
 
 To treat stochastic partial differential equations or SPDEs, the equations are divided into the first two terms, which are essentially an ordinary stochastic equation, and the last term which gives a linear partial differential equation:
 
@@ -237,6 +239,7 @@ the ``.*`` notation is used in functions here, as fields require element-wise mu
 
 ::
 
+    clear
     in.noises = 2;
     in.dimension = 3;
     in.steps = 10;

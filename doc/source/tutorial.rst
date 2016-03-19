@@ -63,6 +63,7 @@ First, make sure you type ``clear`` to clear the previous example. This is good 
 
 ::
 
+    clear
     in.initial = @(v,~) 1+v;
     in.ensembles = [20,20];
     in.da = @(a,z,~) i*a + z;
@@ -310,7 +311,14 @@ Together with the initial condition that :math:`a(0,x)=exp(-\left|\mathbf{x}\rig
 Gaussian inputs
 ---------------
 
-A possible user set of parameters to simulate this is:
+Before running this simulation, be careful to change the Matlab working directory to your intended working directory, which must have write permission enabled. For example, type:
+ 
+::
+
+    cd ~  
+    
+    
+A  possible user set of parameters to simulate this is:
 
 ::
 
@@ -320,18 +328,18 @@ A possible user set of parameters to simulate this is:
         in.da = @(a,~,~) zeros(size(a));
         in.linear = @(D,r) 1i*0.05*(D.x.^2+D.y.^2+D.z.^2);
         in.observe = {@(a,~) a.*conj(a)};
-        in.olabels = {'|a(x)|^2'};
-        in.HDF5file = {'Gaussian.f5'};
+        in.olabels = '|a(x)|^2';
+        in.file = 'Gaussian.h5';
         in.images = 4;
         in.imagetype = 1;
         in.transverse = 2;
         in.headers = 1;
         in.compare{1} = @(t,~) [1+(t/10).^2].^(-3/2);
-        e = xsim(in);
-        e = xgraph('',in);
+        [e,in] = xsim(in);
+        e = e+xgraph(in.file);
     end
 
-Here the program writes an HDF5 data file using :func:`xsim`, and then reads it in with the stored file-name, using :func:`xgraph`. The program reports the following maximum step-size errors, which in this case are negligible, as they are purely due to the interaction picture transformations:
+Here the program writes an HDF5 data file using :func:`xsim`, and then reads it in with the stored file-name, using :func:`xgraph`. Note that :func:`xsim` may have to change the file-name to avoid overwriting any old data. In this case, it returns the new file-name is uses. The program reports the following maximum step-size errors, which in this case are negligible, as they are purely due to the interaction picture transformations:
 
 ::
 
@@ -453,8 +461,8 @@ Planar inputs
         a0(2,:)  = (v(3,:)+1i*v(4,:))/sqrt(2);
     end
     function da = D_planar(a,z,r)
-        da(1,:)  = (xi(1,:)+1i*xi(2,:))/sqrt(2);
-        da(2,:)  = (xi(3,:)+1i*xi(4,:))/sqrt(2);
+        da(1,:)  = (z(1,:)+1i*z(2,:))/sqrt(2);
+        da(2,:)  = (z(3,:)+1i*z(4,:))/sqrt(2);
         end
     function L = Linear(D,r)
         lap = D.x.^2+D.y.^2;
@@ -698,7 +706,7 @@ The full input file is given below.
         in.noises = [2,0];
         in.ensembles = [1000,10,1];
         in.initial = @(v,~) (v(1,:)+1i*v(2,:))/sqrt(2);
-        in.da = @(a,z,r) -a + z(1,:)+1i*xi(2,:);
+        in.da = @(a,z,r) -a + z(1,:)+1i*z(2,:);
         in.observe{1} =@(a,~) a.*conj(a);
         in.observe{2} =@(a,~) a.*conj(a);
         in.transforms ={0,1};

@@ -13,6 +13,42 @@ If you have a favorite integration method that isn’t here, don’t panic. User
 Similarly, the interaction-picture transformation, :attr:`in.prop`, can also be changed if the built-in choice is not adequate for your needs.
 
 
+Notation
+========
+
+The general equation treated here is given in differential form as
+
+.. math::
+
+    \frac{\partial\boldsymbol{a}}{\partial t} =\boldsymbol{A}\left[\boldsymbol{a}, t \right]+\underline{\mathbf{B}}\left[\boldsymbol{a}, t \right] \cdot\boldsymbol{\zeta}(t)+ \underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]\cdot\boldsymbol{a}.
+
+
+It is convenient for the purposes of describing interaction picture methods,  to introduce an abbreviated notation as:
+        
+.. math::
+    
+    \begin{aligned} \mathcal{D}\left[\mathbf{a}, t \right]=\boldsymbol{A}\left[\boldsymbol{a},t \right]+\underline{\mathbf{B}}\left[\boldsymbol{a},t \right]\cdot\boldsymbol{\zeta}(t).
+    \end{aligned}
+
+
+Hence, we can rewrite the differential equation in the form:
+    
+    
+.. math::
+
+    \frac{\partial\boldsymbol{a}}{\partial t}=\mathcal{D}\left[\mathbf{a}, t \right]+\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]\cdot\boldsymbol{a}.
+
+
+Next, we define a linear propagator. This is given formally by:
+    
+.. math::
+
+  \mathcal{P}\left(\Delta t \right) = \exp \left( \Delta t \underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right] \right)
+
+
+Typically, but not necessarily, this is evaluated in Fourier space, where it should be just a diagonal term in the momentum vector conjugate to the transverse space coordinate. It will then involve a Fourier transform, multiplication by an appropriate function of the momentum, and then an inverse Fourier transform afterwards.
+
+
 xSPDE algorithms
 ================
 
@@ -34,9 +70,11 @@ The four built-in algorithms provided are:
 
     A fourth order Runge-Kutta method, which is a popular ODE solver.
 
-The reader is referred to the literature ([Drummond1991]_, [Kloeden1995]_, [Werner1997]_, [Higham2001]_) for more details.
+For simplicity, the stochastic noise is assumed constant throughout the interval :math:`dt`. The reader is referred to the literature ([Drummond1991]_, [Kloeden1995]_, [Werner1997]_, [Higham2001]_) for more details.
 
 However, a word of caution is in order. For stochastic equations, which are non-differentiable, the classifications of convergence order should be taken *cum grano salis.* In other words, don’t believe it. Stochastic convergence is a complex issue, and the usual rules of calculus don’t apply. This is because stochastic noise is non-differentiable. It has relative fluctuations proportional to :math:`1/\sqrt{dtdV}`, for noise defined on a lattice with temporal cell-size :math:`dt` and spatial cell-size :math:`dV`. Hence the usual differentiability and smoothness properties required to give high-order convergence for standard Runge-Kutta methods are simply not present.
+
+Higher order, more complex algorithms for stochastic integration do exist, but they are not included in the current xSPDE distribution. The reason for this is simply that stochastic integration errors are often dominated by the sampling error, which makes the practical advantage of using high-order algorithms less significant in most calculations.  
 
 All is not completely lost however, since xSPDE will attempt to estimate both the step-size and the sampling error, so you can check convergence yourself.
 
@@ -46,13 +84,13 @@ Euler
 
 This is an explicit Ito-Euler method using an interaction picture. While very traditional, it is not generally recommended except for testing purposes. If it is used, very small step-sizes will generally be necessary to reduce errors to a usable level.
 
-This is because it is is only convergent to first order, and therefore tends to have large errors. It is designed for use with an Ito form of stochastic equation. It requires one IP transform per step (``in.ipsteps = 1``). To get the next time point, one calculates:
+This is because it is is only convergent to first order, and therefore tends to have large errors. It is designed for use with an Ito form of stochastic equation. It requires one IP transform per step (``in.ipsteps = 1``). Starting from time :math:`t=t_{n}`, to get the next time point at :math:`t=t_{n+1}=t_{n}+\Delta t`,  one calculates:
 
 .. math::
 
     \begin{aligned}
-    \Delta\mathbf{a}_{n} & = \Delta t\mathbf{D}\left[\mathbf{a}_{n}\right] \\
-    \mathbf{a}_{n+1} & = \mathbf{P}\left(\Delta t\right)\cdot\left[\mathbf{a}_{n}+\Delta\mathbf{a}_{n}\right]\end{aligned}
+    \Delta\mathbf{a}_{n} & = \Delta t\mathcal{D}\left[\mathbf{a}_{n}, t_{n}\right] \\
+    \mathbf{a}_{n+1} & = \mathcal{P}\left(\Delta t\right)\cdot\left[\mathbf{a}_{n}+\Delta\mathbf{a}_{n}\right]\end{aligned}
 
 
 Second order Runge-Kutta
@@ -65,9 +103,9 @@ To get the next time point, one calculates:
 .. math::
 
     \begin{aligned}
-    \bar{\mathbf{a}} & = \mathbf{P}\left(\Delta t\right)\cdot\left[\mathbf{a}_{n}\right] \\
-    \mathbf{d}^{(1)} & = \Delta t\mathbf{P}\left(\Delta t\right)\cdot\mathbf{D}\left[\mathbf{a}_{n}\right] \\
-    \mathbf{d}^{(2)} & = \Delta t\mathbf{D}\left[\bar{\mathbf{a}}+\mathbf{d}^{(1)}\right] \\
+    \bar{\mathbf{a}} & = \mathcal{P}\left(\Delta t\right)\cdot\left[\mathbf{a}_{n}\right] \\
+    \mathbf{d}^{(1)} & = \Delta t\mathcal{P}\left(\Delta t\right)\cdot\mathcal{D}\left[\mathbf{a}_{n},  t_{n} \right] \\
+    \mathbf{d}^{(2)} & = \Delta t\mathcal{D}\left[\bar{\mathbf{a}}+\mathbf{d}^{(1)}, t_{n+1} \right] \\
     \mathbf{a}_{n+1} & = \bar{\mathbf{a}}+\left(\mathbf{d}^{(1)}+\mathbf{d}^{(2)}\right)/2\end{aligned}
 
 
@@ -76,14 +114,14 @@ Midpoint
 
 This is an implicit midpoint method using an interaction picture. It gives good results for stochastic [Drummond1991]_ and stochastic partial differential equations [Werner1997]_. While it is only convergent to second order in time for non-stochastic equations, it is strongly convergent and robust. It requires two half-length IP transforms per step (``in.ipsteps = 2``).
 
-To get the next time point, one calculates a midpoint derivative iteratively at :math:`\bar{\mathbf{a}}^{(i)}`, usually with three iterations:
+To get the next time point, one calculates a midpoint derivative iteratively at time to get the next time point at :math:`t=t_{n+1/2}=t_{n}+\Delta t/2`,  to give an estimated midpoint field :math:`\bar{\mathbf{a}}^{(i)}`, usually with three iterations:
 
 .. math::
 
     \begin{aligned}
-    \bar{\mathbf{a}}^{(0)} & = \mathbf{P}\left(\frac{\Delta t}{2}\right)\cdot\left[\mathbf{a}_{n}\right] \\
-    \bar{\mathbf{a}}^{(i)} & = \bar{\mathbf{a}}^{(0)}+\frac{\Delta t}{2}\mathbf{D}\left[\bar{\mathbf{a}}^{(i-1)}\right] \\
-    \mathbf{a}_{n+1} & = \mathbf{P}\left(\frac{\Delta t}{2}\right)\cdot\left[2\bar{\mathbf{a}}^{(i)}-\bar{\mathbf{a}}^{(0)}\right]
+    \bar{\mathbf{a}}^{(0)} & = \mathcal{P}\left(\frac{\Delta t}{2}\right)\cdot\left[\mathbf{a}_{n}\right] \\
+    \bar{\mathbf{a}}^{(i)} & = \bar{\mathbf{a}}^{(0)}+\frac{\Delta t}{2}\mathcal{D}\left[\bar{\mathbf{a}}^{(i-1)}, t_{n+1/2} \right] \\
+    \mathbf{a}_{n+1} & = \mathcal{P}\left(\frac{\Delta t}{2}\right)\cdot\left[2\bar{\mathbf{a}}^{(i)}-\bar{\mathbf{a}}^{(0)}\right]
     \end{aligned}
 
 
@@ -95,12 +133,12 @@ This is a fourth order Runge-Kutta method using an interaction picture [Caradoc-
 .. math::
 
     \begin{aligned}
-    \bar{\mathbf{a}} & = \mathbf{P}\left(\frac{\Delta t}{2}\right)\cdot\left[\mathbf{a}_{n}\right] \\
-    \mathbf{d}^{(1)} & = \frac{\Delta t}{2}\mathbf{P}\left(\frac{\Delta t}{2}\right)\cdot\mathbf{D}\left[\mathbf{a}_{n}\right] \\
-    \mathbf{d}^{(2)} & = \frac{\Delta t}{2}\mathbf{D}\left[\bar{\mathbf{a}}+\mathbf{d}^{(1)}\right] \\
-    \mathbf{d}^{(3)} & = \frac{\Delta t}{2}\mathbf{D}\left[\bar{\mathbf{a}}+\mathbf{d}^{(2)}\right] \\
-    \mathbf{d}^{(4)} & = \frac{\Delta t}{2}\mathbf{D}\left[\mathbf{P}\left(\frac{\Delta t}{2}\right)\left[\bar{\mathbf{a}}+2\mathbf{d}^{(3)}\right]\right] \\
-    \mathbf{a}_{n+1} & = \mathbf{P}\left(\frac{\Delta t}{2}\right)\cdot\left[\bar{\mathbf{a}}+\left(\mathbf{d}^{(1)}+2\left(\mathbf{d}^{(2)}+\mathbf{d}^{(3)}\right)\right)/3\right]+\mathbf{d}^{(4)}/3
+    \bar{\mathbf{a}} & = \mathcal{P}\left(\frac{\Delta t}{2}\right)\cdot\left[\mathbf{a}_{n}\right] \\
+    \mathbf{d}^{(1)} & = \frac{\Delta t}{2}\mathcal{P}\left(\frac{\Delta t}{2}\right)\cdot\mathcal{D}\left[\mathbf{a}_{n}, t_{n}\right] \\
+    \mathbf{d}^{(2)} & = \frac{\Delta t}{2}\mathcal{D}\left[\bar{\mathbf{a}}+\mathbf{d}^{(1)}, t_{n+1/2} \right] \\
+    \mathbf{d}^{(3)} & = \frac{\Delta t}{2}\mathcal{D}\left[\bar{\mathbf{a}}+\mathbf{d}^{(2)}, t_{n+1/2} \right] \\
+    \mathbf{d}^{(4)} & = \frac{\Delta t}{2}\mathcal{D}\left[\mathcal{P}\left(\frac{\Delta t}{2}\right)\left[\bar{\mathbf{a}}+2\mathbf{d}^{(3)}, t_{n+1} \right]\right] \\
+    \mathbf{a}_{n+1} & = \mathcal{P}\left(\frac{\Delta t}{2}\right)\cdot\left[\bar{\mathbf{a}}+\left(\mathbf{d}^{(1)}+2\left(\mathbf{d}^{(2)}+\mathbf{d}^{(3)}\right)\right)/3\right]+\mathbf{d}^{(4)}/3
     \end{aligned}
 
 This might seem like the obvious choice, having the highest order. However, it can actually converge at a range of apparent rates, depending on the relative importance of stochastic and non-stochastic terms. Due to its reliance on differentiability, it may converge more slowly than the midpoint method with stochastic terms present.

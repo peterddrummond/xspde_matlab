@@ -1,14 +1,18 @@
-Changes that are included in xSPDE1.05
+Changes that are included in xSPDE1.1
 
+This is a major redesign of the graphics code, to allow more flexibility in slicing, plotting and replotting multidimensional data.
 
-(1) wtph  is deleted, all Fourier transforms now done without phase factors
+(1) For stand-alone use, xgraph is in a separate folder and subdivided into distinct function files.
 
-(2) r.kg is  deleted, as momentum axes are computed only when needed.
+(2) Graphs can be made of functions, `in.functions{n}', whose default value is the n-th average obtained from the simulation data. In general, any function of averages is permitted. There is a another function 'in.xfunctions{n}{nd}' allowing any axis transformation. A combined cell array of axis labels for each graph,'in.glabels{n}{nd}' allows any graphed function to have any axis label. For backward compatibility, the global labels 'in.xlabels{nd}', 'in.klabels{nd}' are allowed.
 
-(3) A bug on reading .h5 files for multi-dimensional data is fixed.
+(3) An input ‘in.axes{n}{k}’ is available for each graphics function. For each graph function {n}, this has d components, one for each axis. If axes{n}{k}= 0, all of axis k is plotted. If axes{n}{k} = -1, gives the middle point for space axes or the last point for the time axis. If axes{n}{k} = a:b, plots the range of a:b, while if axes{n}{k} = a:b:c uses steps of b, for the k-th axis.
 
-(4) Any number of dimensions are supported, with corresponding documentation
+(4) Order of inputs to xgraph is reversed with data first. A new input, in.averages, gives the largest number of averages that will be returned. 
 
-(5) The xint, xd, and xave functions are improved so they behave more consistently
+(5) Improvements are made to xgraph so that any new parameter inputs over-ride previous file inputs of graphics parameters. The previous inputs are in turn preferred over the graphics default values. 
 
-(6) Number attributes are labeled as r.nspace (etc) for compatibility with .h5 files.
+(6) Average data is now stored in a nested cell array of form data{seq}{graph}(error,np,nspace)
+ 
+
+ 

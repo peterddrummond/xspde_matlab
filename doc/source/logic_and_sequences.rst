@@ -81,13 +81,13 @@ The logical order is as follows:
 
 :func:`xsim` decides the overall workflow, and parallel operation at a high level. Here, ``in.ensembles(3)`` is used to specify parallel integration, with a ``parfor`` loop. The random seeds include data from the loop index to make sure the noise is independent for each ensemble member, including parallel ensembles.
 
-.. function:: xlattice
-
-    creates a space-time lattice from the input data, which is a data-structure. This also initializes the actual ``data`` array for averaging purposes. Next, a loop is initiated over an ensemble of fields for checking and ensemble averaging. The calculations inside the loop can all be carried our in parallel, if necessary. These internal steps are actually relatively simple.
-
 .. function:: xinpreferences
 
     is called by :func:`xlattice` to set the defaults that are not already entered.
+
+.. function:: xlattice
+
+    creates a space-time lattice from the input data, which is a data-structure. This also initializes the actual ``data`` array for averaging purposes. Next, a loop is initiated over an ensemble of fields for checking and ensemble averaging. The calculations inside the loop can all be carried our in parallel, if necessary. These internal steps are actually relatively simple.
 
 .. function:: xensemble
 
@@ -101,8 +101,8 @@ The logical order is as follows:
 
     uses Fourier space to calculate a step in the interaction picture, using linear transformations that are pre-calculated. There are both linear transformations and momentum dependent terms available. These are pre-calculated by the :func:`xlattice` function, and stored in the ``prop`` arrays.
 
-User functions
---------------
+Simulation user functions
+-------------------------
 
 :attr:`in.initial`
 
@@ -127,8 +127,8 @@ User functions
 Details of the different parts of the program are given below. Note that the functions ``tic()`` and ``toc()`` are called to time each simulation.
 
 
-Graphics function
-=================
+Graphics function, xgraph
+=========================
 
 At the end of the loop, global averages and error-bars are calculated. The main functions involved are:
 
@@ -140,7 +140,30 @@ At the end of the loop, global averages and error-bars are calculated. The main 
 
 Comparison results are calculated if available from the user-specified :attr:`in.compare`, an error summary is printed, and the results plotted using the :func:`xgraph` routine, which is a function that graphs the observables. It is prewritten to cover a range of useful graphs, but can be modified to suit the user. The code is intended to cascade down from higher to lower dimension, generating different types of user-defined graphs. Each type of graph is generated once for each specified graphics function.
 
-Results depend on the value of :attr:`in.dimension`:
+The code is intended to cascade down from higher to lower dimension, generating different types of user-defined graphs. Each type of graph is generated once for each specified graphics function. The graphics axes that are used for plotting, and the points plotted, are defined using the optional axes input parameters, where :attr:`in.axes{n}` indicates the n-th specified graphics function or set of generated graphical data.
+
+If there are no axes inputs, or the inputs are zero - for example,
+``in.axes{1} = {0,0,0}``, then only the lowest dimensions are plotted, up to 3. If the axes inputs project out a single point in a given dimension, - for example, ``axes{1}={0,31,-1,0}``, these axes are suppressed in the plots. This reduces the effective dimension of the data - in this case to two dimensions. 
+
+Examples:
+
+• ``axes{1}={0}``
+  - For function 1, plot all the time points; higher dimensions get defaults.
+
+• ``axes{2}={-1,0}``
+  - For function 2, plot the maximum time (the default), and all x-points.
+
+• ``axes{3}={1:4:51,32,64}``
+  - For function 3, plot every 4-th time point at x point 32, y point 64
+
+• ``axes{4}={0,1:4:51,0}``
+  - For function 4, plot all time points, every 4-th x point, and all y-points.
+
+Note that -1 indicates a default point, which is the last point on the time axis, and the midpoint on the other axes. 
+
+The pdimension input can also be used to reduce dimensionality, as this sets the maximum effective plotted dimension. For example, ``pdimension{1}=1`` means that only plots vs time are output for the first function plotted. Note that in the following, t,x,y,z may be replaced by corresponding higher dimensions if there are axes that are suppressed. Slices can be taken at any desired point, not just the midpoint. Using the standard notation of, for example, ``axes{1}={6:3:81}``, can be used to modify the starting, interval, and finishing points for complete control on the plot points.
+
+Results depend on the value of :attr:`in.dimension`, or else the effective graphics dimension if axes are suppressed:
 
 - ``4``: for the highest space dimension, only a slice through :math:`z=0` is available. This is then graphed as if it was in three dimensions.
 
@@ -152,6 +175,20 @@ Results depend on the value of :attr:`in.dimension`:
 
 In addition to time-dependent graphs, the :func:`xgraph` function can generate :attr:`in.images` (3D) and :attr:`in.transverse` (2D) plots at specified points in time, up to a maximum given by the number of time points specified. The number of these can be individually specified for each graphics output. The images available are specified in :attr:`in.imagetype`: 3D perspective plots, grey-scale colour plots and contour plots.
 
+Graphics user functions
+-----------------------
+
+:attr:`in.function`
+
+    This is used when a graph is needed that is a function of the observed averages. 
+
+:attr:`in.xfunctions`
+
+    This is used when a graph is needed whose axes are a function of the original axes. 
+
+:attr:`in.compare`
+
+    This is used when a two-dimensional graph is needed with a comparison line.
 
 Error control
 =============
