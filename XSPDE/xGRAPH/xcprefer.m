@@ -1,12 +1,12 @@
 function inlabel = xcprefer (in,label,max,default)
 %   inlabel = XCPREFER (in,label,max,default) sets defaults for cell data.
-%   Input: struct 'in', string 'label', max fields 'max', default 'default'.
+%   Input: struct 'in', string 'label', max fields 'max', default 'default'
 %   Output:  preferred value for in.label if none is present.
 %   If in.(label) is not a cell array, it is converted to a cell array.
-%   Here 'default' is a cell array containing vectors of preferences.
+%   Here 'default' is a cell array containing cells/vectors of preferences.
 %   For missing components or cells, fills in missing values with defaults.
-%   If 'default' cell has less fields than 'max', last default cell is used.
-%   All xSPDE functions are licensed by Peter D. Drummond, (2015) - see License.txt 
+%   If 'default' has less fields than 'max', last default cell is used.
+%   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License 
 
     if ~isfield(in,label)                    %% If no label data is input
               in.(label) = default;          %% Set to default
@@ -15,9 +15,13 @@ function inlabel = xcprefer (in,label,max,default)
          in.(label)={in.(label)};            %% Convert to cell
     end                                      %% End if data is not cell
     lc = length (in.(label));                %% Get length of cell array
-    for nc = 1:lc                            %% For cells present
+    inlabel = cell(1,max);
+    for nc = 1:lc                            %% For cells present in input
         cdata = in.(label){nc};              %% Get input cell data at nc
         nd = min(nc,length(default));        %% Cell index for default data
+        if iscell(default{1})&&~iscell(cdata)%% If default is nested
+            cdata = {cdata};
+        end
         while ~ischar(cdata) && (length(cdata) < length(default{nd}))
           ns=length(cdata);                  %% Get length
           if iscell(default{nd})             %% If data is nested cell

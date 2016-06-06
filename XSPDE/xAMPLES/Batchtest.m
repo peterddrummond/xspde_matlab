@@ -1,9 +1,14 @@
+
+function [] = Batchtest()
 %   BATCHTEST is a Matlab script to test the operation of the xSPDE toolbox 
 %   There are currently 21 projects tested, each with graphical output 
-%   Matlab Parallel toolbox is required for a complete test
-%   Total runtime should be around 60s, depending on CPU speed.
+%   Matlab Parallel toolbox is required for a complete test.
+%   Runtime: 100-400s, for R2016a on a Mac, depending on the hardware.
 %   To see the generated graphs, add '%' before the  'close all' commands
 
+cd ~          %Use home directory for stored data files
+
+t1=tic;
 e(1) = Wiener;
 e(2) = SHO;
 e(3) = Kubo;
@@ -28,11 +33,15 @@ e(20) = SolitonDeriv;
 e(21) = GPEvortex2D;
 close all;         %%Deletes all figures if not wanted
 
-fprintf('xSPDE error scores, expected reults in brackets:\n');
-e1 = [0.185807,0.034223,0.012153,0.037387,0.000000,74.251926,19.535136,...
-    0.008131,4.858198,50.560601,0.000009,0.076435,0.237978,0.065598,...
-    0.338336,0.000001,0.000001,0.017825,0.000092,0.000123,0.001375];
+Et = toc(t1);      %%Elapsed time of all simulations
+
+fprintf('\n\nxSPDE error scores, expected reults in brackets:\n\n');
+e1 = [84.428414,0.000195,0.012153,0.008502,0.000000,75.918679,10.151231,...
+    0.008131,4.881128,50.560601,0.000009,0.000935,0.237978,0.035262,...
+    0.338336,0.000001,0.000001,0.017825,0.000092,0.000123,0.024137];
 for j = 1:21
-    fprintf('xSPDE test # %d error score  = %f (%f)\n',j,e(j),e1(j));
+    fprintf('xSPDE Batchtest # %d error score  = %f (%f)\n',j,e(j),e1(j));
 end
-fprintf('xSPDE batch test error score = %f (11.549549)\n',prod(e)*10^45);
+fprintf('\nxSPDE Batchtest total error score = %f (0.391124)\n',prod(e)*10^45);
+fprintf('\nxSPDE Batchtest elapsed time  = %f (<358) seconds\n',Et);
+end

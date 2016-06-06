@@ -21,10 +21,12 @@ function e = Wiener()
  in.compare{1}   =   @(t,~) [0*t;4+t;0*t;3*(4+t).^2];%%Comparison handle
  in.function{2} =    @(o,r) o{1}(2,:);           %%Space-time function
  in.compare{2}   =   @(t,~) 4+t;                 %%Comparison handle
- in.function{3} =    @(o,r) o{1}(4,:)  ;         %%Space-time function
+ in.function{3} =    @(o,r) o{1}(4,:);           %%Space-time function
  in.xfunctions{3} =  {@(t,r) (4+t).^2};          %%Space-time function
- in.compare{3}   =   @(tau,~) 3*tau;             %%Comparison handle
+ in.compare{3}   =    @(tau,~) 3*tau;            %%Comparison handle
  in.olabels   =      {'<a^n>','<a^2>','<a^4>'};  %%labels
- in.glabels{3}   =   {'\tau = (4+t)^2'};         %%labels
+ in.glabels{1}   =    {'t'};                     %%labels
+ in.glabels{2}   =    {'t'};                     %%labels
+ in.glabels{3}   =    {'\tau = (4+t)^2'};        %%labels
  e        =          xspde(in);                  %%Runs xspde simulation
 end                                              %%end of main function

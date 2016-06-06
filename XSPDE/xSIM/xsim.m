@@ -11,8 +11,6 @@ function [error,input,data,raw] = xsim(input)
 
 tic();                                           %%set timer
 
-s = RandStream('CombRecursive','Seed',1);        %%define RNG type
-RandStream.setGlobalStream(s);                   %%set RNG type
 input = xmakecell(input);                        %%make input a cell
 sequence = length(input);                        %%find sequence length
 data = cell(sequence);                           %%allocate data as cell
@@ -23,12 +21,17 @@ l = cell(sequence);                              %%allocate l as cell
 for s=1:sequence                                 %%loop over sequence
   input{s} = xpreferences(input{s});             %%set input defaults
   l{s} = xlattice(input{s});                     %%initialise lattice
-  for n=1:l{s}.averages
-        data{s}{n} = zeros(l{s}.d.data{n});      %%initialise data cells
+  if input{s}.seed >=0  && ~input{s}.octave      %%check if not octave
+    sd = RandStream('CombRecursive','Seed',1);   %%define RNG type
+    RandStream.setGlobalStream(sd);              %%set RNG type
+  end
+  for n=1:l{s}.functions
+        data{s}{n} = zeros(l{s}.d.data{n});  %%initialise data cells
   end
   fprintf ('%s sequence %d: %s\n',l{s}.version,s,l{s}.name);%%version name
   if l{s}.print >1                               %%if print switch verbose
-    display (l{s},'xSIM parameters');            %%display input data
+    display ('xSIM parameters');                 %%display input data
+    display (l{s});                              %%display input data
   end;                                           %%end if print switch
 end                                              %%end loop over sequence
 r = l{1};                                        %%first sequence cell 
@@ -37,9 +40,11 @@ r = l{1};                                        %%first sequence cell
 
 if r.ensembles(3) > 1                            %%if parallel simulations
     parfor npar = 1:r.ensembles(3)               %%loop on parallel threads
-        [dp,raw{npar}] = xensemble(npar,l);      %%call xensemble function
+        [dp,raw1] = xensemble(npar,l);           %%call xensemble function
+        raw(:,:,:,npar) =raw1;                   %%accumulate raw data
         data = xaddcell(data,dp);                %%accumulate averages
     end                                          %%end parallels loop
+    raw = reshape(raw,[sequence,r.errorchecks,r.ncopies]); %%reshape raw 
 else                                             %%no parallels specified
     [data,raw] = xensemble(1,l);                 %%call xensemble function
 end                                              %%end if parallels
@@ -51,21 +56,22 @@ for s=1:sequence                                 %%loop over sequence
   r = l{s};                                      %%get lattice for sequence
   esp =0;                                        %%initial sampling errors
   es =0;                                         %%initial step errors
-  for n=1:r.averages
-    data{s}{n}(3,:,:,:)=data{s}{n}(3,:,:,:) - data{s}{n}(1,:,:,:).^2;
-    if r.ncopies>1                               %%if ensemble averaging   
-      data{s}{n}(3,:,:,:)=real(sqrt(data{s}{n}(3,:,:,:)/(r.ncopies-1))); 
-      esp = esp+max(max(max(abs(data{s}{n}(3,:,:,:))))); %%max of sd matrix
+  for n=1:r.functions
+    data{s}{n}(:,3,:,:)=data{s}{n}(:,3,:,:) - data{s}{n}(:,1,:,:).^2;
+    if r.ncopies > 1                               %%if ensemble averaging   
+      data{s}{n}(:,3,:,:)=real(sqrt(data{s}{n}(:,3,:,:)/(r.ncopies-1))); 
+      esp = esp+max(max(max(abs(data{s}{n}(:,3,:,:))))); %%max of sd matrix
     end                                          %%end if ensemble
     if r.errorchecks > 1                         %%if errorchecks needed
-      data{s}{n}(2,:,:,:)=data{s}{n}(2,:,:,:) - data{s}{n}(1,:,:,:);
+      data{s}{n}(:,2,:,:)=data{s}{n}(:,2,:,:) - data{s}{n}(:,1,:,:);
       if r.order > 0                             %%if extrapolation order
-        data{s}{n}(2,:,:,:) = data{s}{n}(2,:,:,:)/(2^(r.order)-1.);
-        data{s}{n}(1,:,:,:) = data{s}{n}(1,:,:,:)- data{s}{n}(2,:,:,:);
+        data{s}{n}(:,2,:,:) = data{s}{n}(:,2,:,:)/(2^(r.order)-1.);
+        data{s}{n}(:,1,:,:) = data{s}{n}(:,1,:,:)- data{s}{n}(:,2,:,:);
       end                                        %%end if extrapolation
-      data{s}{n}(2,:,:,:) = abs(data{s}{n}(2,:,:,:));
-      es = es+ max(max(max(data{s}{n}(2,:,:,:)))); %%Sum of max step errors
+      data{s}{n}(:,2,:,:) = abs(data{s}{n}(:,2,:,:));
+      es = es+ max(max(max(data{s}{n}(:,2,:,:)))); %%Sum of max step errors
     end                                          %%end if errorchecks
+    data{s}{n}=reshape(data{s}{n},r.gpoints{n});
   end
   if esp>0      
       fprintf('Sum of max sampling errors, sequence %d = %e\n',s,esp);

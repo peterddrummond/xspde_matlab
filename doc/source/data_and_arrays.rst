@@ -2,7 +2,22 @@
 Data and arrays
 ***************
 
-The xSPDE data and arrays that are user accessible are the fields ``a``, the parameters``r``,  the average observables ``o``, and the raw trajectories ``raw``.
+The xSPDE data and arrays that are user accessible are parameters ``r``, fields ``a``,  average observables ``data``, and raw trajectories ``raw``. Apart from the parameters, which are Matlab structures, all fields and data are arrays. There is a unified index ordering of:
+
+
+#. field index 
+
+#. ensemble or error index
+
+#. time index
+
+#. space index 1
+
+#. space index 2
+
+#. space index 3 ..
+
+The number of space coordinates is arbitrary. However, to conserve storage, time dimensions are reduced to a single, current, index for propagating fields. The ensemble index can be adjusted to increase or decrease local memory usage. If needed, all data can be stored in `raw' arrays.
 
 The fields ``a`` are complex arrays stored discretely on spatial or momentum grids. Internally, the fields are matrices stored on the flattened xSPDE internal lattice. This combines a local ensemble and a spatial grid. Temporary transformations to the Fourier domain are used for calculating interaction picture propagation [Caradoc-Davies2000]_ and averages over Fourier space. 
 
@@ -45,9 +60,11 @@ The third or parallel ensemble contains ``ensembles(3)`` of the serial ensembles
 Grids in x and k
 ================
 
+The xSPDE space and momentum grid can have any dimension, provided there is enough memory. Using more than six to ten total dimensions causes large time requirements and is not very practical.
+
 The xSPDE algorithms all use a sequence of interaction pictures. Each successive interaction picture is referenced to :math:`t=t_{n}`, for the n-th step starting at :math:`t=t_{n}`, so :math:`\boldsymbol{a}_{I}(t_{n})=\boldsymbol{a}(t_{n})\equiv\boldsymbol{a}_{n}`. It is possible to solve stochastic partial differential equations in xSPDE using explicit derivatives, but this is generally less efficient. To understand spatial discretization and the interaction picture, we first must understand the xSPDE spatial grids.
 
-The space grid can have any dimension, provided there is enough memory.
+
 
 Space grid
 -------------
@@ -149,11 +166,11 @@ For calculating derivatives and propagating in the interaction picture, the nota
 
 This means, for example, that to calculate a one dimensional space derivative in the Linear routine, one uses:
 
-- :math:`\nabla_{x}\rightarrow` ``D.x``
+- :math:`\nabla_{x}\rightarrow` ``r.Dx``
 
-Here ``D.x`` returns an array of momenta in cyclic order in dimension :math:`d` as defined above, suitable for an FFT calculation. The imaginary :math:`i` is not needed to give the correct sign, from the equation above. Instead, it is included in the D array. In two dimensions, the code to return a full two-dimensional Laplacian is:
+Here ``r.Dx`` returns an array of momenta in cyclic order in dimension :math:`d` as defined above, suitable for an FFT calculation. The imaginary :math:`i` is not needed to give the correct sign, from the equation above. Instead, it is included in the D array. In two dimensions, the code to return a full two-dimensional Laplacian is:
 
-- :math:`\boldsymbol{\nabla}^{2}=\nabla_{x}^{2}+\nabla_{y}^{2}\rightarrow` ``D.x.^2+D.y.^2``
+- :math:`\boldsymbol{\nabla}^{2}=\nabla_{x}^{2}+\nabla_{y}^{2}\rightarrow` ``r.Dx.^2+r.Dy.^2``
 
 Note that the dot in the notation of ``.^`` is needed to take the square of each element in the array.
 
@@ -161,7 +178,7 @@ Note that the dot in the notation of ``.^`` is needed to take the square of each
 Graphics transforms
 ===================
 
-All transforms defined in the observables are obtained from a vector called :attr:`in.transforms`, which determines if a given coordinate axis is transformed prior to a given observable being measured. This can be turned on and off independently for each observable. The coordinate axes are specified in the order of ``t,x,y,z``.
+All transforms defined in the observables are obtained from a cell array of vectors called :attr:`in.transforms`, which determines if a given coordinate axis is transformed prior to a given observable being measured. This can be turned on and off independently for each observable and axis. The coordinate axes are specified in the order of ``t,x,y,z,..``.
 
 The index ordering and normalization used in the standard discrete FFT approach is efficient for interaction picture propagation, but not useful for graphing, since graphics routines prefer the momenta to be monotonic, i.e. in the order:
 
@@ -175,7 +192,7 @@ Accordingly, all momentum indices for observable data and axes are re-ordered wh
 Fields
 ======
 
-In the xSPDE code, the complex vector field ``a`` is stored as a complex matrix with dimensions ``[fields, lattice]``. Here ``lattice`` is the total number of lattice points including an ensemble dimension, to increase computational efficiency:
+In the xSPDE code, the complex vector field ``a`` is genrally stored as a compressed or flattened matrix with dimensions ``[fields, lattice]``. Here ``lattice`` is the total number of lattice points including an ensemble dimension, to increase computational efficiency:
 
 ::
 
@@ -191,9 +208,11 @@ The use of a matrix for the fields is convenient in that fast matrix operations 
 
 
 
-In different subroutines it maybe necessary to expand out this array to more easily reference the array structure. The expanded structure is as follows
+In different subroutines it may be necessary to expand out this array to more easily reference the array structure. The expanded field structure ``a`` is as follows
 
-**Array** ``a`` has dimension: ``(in.fields, in.ensembles(1), in.points(2), ..., in.points(in.dimension))``.
+::
+
+    [in.fields, in.ensembles(1), 1, in.points(2) ,... , in.points(dimension)] 
 
 Note: Here, :attr:`in.fields` is the number of field components and ``in.ensembles(1)`` is the number of statistical samples processed as a parallel vector. This can be set to one to save data space, or increased to improve parallel efficiency. Provided no frequency information is needed, the time dimension ``in.points(1)`` is compressed to one during calculations. During spectral calculations, the full length of the time lattice, ``in.points(1)``, is stored, which increases memory requirements.
 
@@ -208,23 +227,29 @@ Data
 Observables: ``data``
 ---------------------
 
-During the calculation, observables are calculated and averaged over the ``ensembles(1)`` parallel trajectories in the :func:`xpath` function. The results are added to the earlier results in the array ``data``, to create graphs for each observable. At this stage, both the first and second moment is stored, in order to allow calculation of the sampling error in each quantity.
+During the calculation, observables are calculated and averaged over the ``ensembles(1)`` parallel trajectories in the :func:`xpath` function. These are determined by the functions in the :attr:`in.observe` cell array.
 
-There are :attr:`in.graphs` real observables, which are determined by the number of functions defined in the :attr:`in.observe` cell array. The number of :attr:`in.graphs` may be smaller or larger than the number of vector fields. The observable field includes all the necessary averages over the ensembles.
+The number of :attr:`in.observe` functions may be smaller or larger than the number of vector fields. The observable may be a scalar or vector. These include the averages over the ensembles, and can be visualized as a single graph with one or more lines.
 
-When step-size checking is turned on using the :attr:`in.errorchecks` flag set to ``2``, a low resolution field is stored for comparison with a high-resolution field of half the step-size, to obtain the time-step error.
+Next, arbitrary functional transforms can be taken, using the :attr:`in.function` cell array. These functions can use as their input any of the :attr:`in.observe` output data arrays. They default to the original :attr:`in.observe` data if they are not user-defined. The results are added to the earlier results in the array ``data``, to create graphs for each function. At this stage, both the first and second moment is stored, in order to allow calculation of the sampling error in each quantity.  These are averaged over the higher level ensembles, to allow estimates of sampling errors.
 
-The observable ``data`` which is stored has three arrays which are all included in the data array. These are the high resolution means, together with error-bars due to time-steps, and estimates of high-resolution standard deviations due to sampling statistics.
+Functional transforms are most useful if one wishes to use functions which require knowledge of normalization or ensemble averages of lower-level data.
 
-The observable ``data`` which is plotted includes step-size error bars and plotted lines for the two estimated upper and lower standard deviations, obtained from the statistical moments.
-
-Data from each simulation is stored  in an array of size
+Each resulting graph or average data is each stored  in an array of size
 
 ::
 
-    3 * in.points(1) * ... * in.points(dimension) * in.graphs
+    [components, errors, in.points(1), in.points(2), ... , in.points(dimension)] 
 
-This is necessary in order to generate outputs at each of the ``in.points(1)`` time slices. Here the first index is ``errors = 1, 2, 3``, which is used to index over the
+In the simplest case, there is just one vector component per average. More generally, the number of components is larger than this if there is a requirement to compare different results in one graph. Note that, unlike the propagating field, the time dimension is fully expanded.  This is necessary in order to generate outputs at each of the ``in.points(1)`` time slices. 
+
+When step-size checking is turned on using the :attr:`in.errorchecks` flag set to ``2``, a low resolution field is stored for comparison with a high-resolution field of half the step-size, to obtain the time-step error.
+
+The observables which are stored have three error indices which are all included in the array. These are the high resolution means, together with error-bars due to time-steps, and estimates of high-resolution standard deviations due to sampling statistics.
+
+The observable ``data`` which is plotted automatically includes step-size error bars and plotted lines for the two estimated upper and lower standard deviations, obtained from the statistical moments.
+
+In summary, after ensemble averaging, the second index is ``errors = 1, 2, 3``, which is used to index over the
 
 #. mean value,
 
@@ -240,33 +265,43 @@ All these fields are resident in memory. They can be re-accessed and replotted, 
 
 .. data:: cdata
 
-    **Cell Array**, has dimension: ``cdata{sequence}``.
+    **Cell Array**, has dimension: ``cdata{sequence}{graph}``.
 
-.. data:: data
+.. data:: observable or function
 
-    **Array**, has dimension: ``(errors, in.points(1), ... in.points(in.dimension), in.graphs)``.
+    **Array**, has dimension: ``(components, errors, in.points(1), ... in.points(in.dimension))``.
 
-The cell index enumerates the sequence number. The first array index (``1``, ``2``, ``3``) give the error-checking status of the data. If there is no error-bar checking, the second data array is zero. If there is no sampling error checking, the third data array is zero.
+The cell index enumerates first the sequence number and then the graph number. The second array index (``1``, ``2``, ``3``) give the error-checking status of the data. If there is no error-bar checking, the second data array is zero. If there is no sampling error checking, the third data array is zero.
+
+Graphics Data
+=============
+
+Observables: ``data``
+---------------------
+
+During the calculation, observables are calculated and averaged over the ``ensembles(1)`` parallel trajectories in the :func:`xpath` function. The results are added to the earlier results in the array ``data``, to create graphs for each observable. At this stage, both the first and second moment is stored, in order to allow calculation of the sampling error in each quantity.
+
+There are :attr:`in.graphs` real observables, which are typically determined by the number of functions defined in the :attr:`in.observe` cell array, unless there are further definitions of functional transformations. The number of :attr:`in.graphs` may be smaller or larger than the number of vector fields. The observable field includes all the necessary averages over the ensembles.
 
 Raw data
 ========
 
-Although the quantity of data generated can be overwhelming, xSPDE can store every trajectory generated if asked to do so.
+If required, xSPDE can store every trajectory generated.
 
 This raw data is stored in a cell array :data:`raw`. The array is written to disk using the Matlab file-name, on completion, provided a file name is input.
 
-The cell indices are: the ensemble index, the error-checking index and the sequence index.
+The cell indices are: sequence index, error-checking index, ensemble index.
 
 .. data:: raw
 
-    **Cell Array**, has dimension: ``raw{ensemble, err, seq}``
+    **Cell Array**, has dimension: ``raw{seq, errcheck, in.ensemble(2)*in.ensemble(3)}``
 
-Inside each cell is at least one complete space-time :data:`field` stored as a complex array, with indices for the field index, the sample-space lattice, and the time index. The sample-space lattice structure internal to xSPDE means that a subensemble of individual stochastic fields is integrated in parallel. These are defined as a real or complex array:
+If thread-level parallel processing is used, these are also stored in the cell array, which is indexed over both the parallel and serial ensemble. Inside each raw cell is at least one complete space-time :data:`field` stored as a complex array, with indices for the field index, the samples, the time index and the  space lattice. 
+
+The sample-time-space trajectory in xSPDE  is a real or complex array with (in.dimension+2) indices:
 
 .. data:: field
 
-    **Array**, has dimension: ``(in.fields, in.lattice, in.points(1))``
+    **Array**, has dimension: ``(in.fields, in.ensemble(1), in.points)``
 
-While this is a lengthy description, and an even larger array, it is also necessary if all the raw data needs to be extracted.
-
-The main utility of the raw data is to provide a platform for further development of analytic tools for third party developers, to treat statistical features not included in the functional tools provided. For example, the basic xSPDE package does not provide histograms of distributions.
+The main utility of raw data is for storing data-sets from large simulations for later re-analysis. It is also a platform for further development of analytic tools for third party developers, to treat statistical features not included in the functional tools provided. For example, one might need to plot histograms of distributions from this.

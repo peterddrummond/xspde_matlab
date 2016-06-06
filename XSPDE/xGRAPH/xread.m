@@ -45,7 +45,7 @@ for s = 1:sequence                             %%loop over sequence
     for g = 1:graphs                           %%loop over graphs
         graphname = sprintf('/graph_%d',g);
         dsname = [seq graphname]; 
-        data{s}{g}(:,:,:)= h5read(fname,dsname);
+        data{s}{g}= h5read(fname,dsname);
     end                                        %%end loop graphs
     in=xh5attributes(fname, [seq '/input']);    
     input{s} = in;

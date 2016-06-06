@@ -205,18 +205,19 @@ In more detail, in Fourier space, if :math:`\tilde{\boldsymbol{a}}\left(\boldsym
 
     \tilde{\boldsymbol{a}}(\boldsymbol{k},dt)=\mathcal{P}\left(\boldsymbol{k},dt\right)\mathbf{\tilde{a}}_{I}\left(\boldsymbol{k},dt\right)
 
-where the propagation function can be written intuitively as :math:`\mathcal{P}=\exp\left[\underline{\mathbf{L}}(\mathbf{D})dt\right]`, where :math:`\mathbf{D}=i\boldsymbol{k}\sim\nabla`. The function :math:`\underline{\mathbf{L}}(\mathbf{D})` is input using the xSPDE function :func:`xlinear`. With this definition, at each step the equation
-that is solved can be re-written in a more readily soluble form as:
+where the propagation function can be written intuitively as :math:`\mathcal{P}=\exp\left[\underline{\mathbf{L}}(\mathbf{D})dt\right]`, where :math:`\mathbf{D}=i\boldsymbol{k}\sim\nabla`. The function :math:`\underline{\mathbf{L}}(\mathbf{D})` is input using the xSPDE linear response function :func:`linear`. With this definition, at each step the equation that is solved can be re-written in a more readily soluble form as:
 
 .. math::
 
     \frac{\partial\boldsymbol{a}_{I}}{\partial t}=\mathcal{D}\left[\mathcal{F}^{-1}\mathcal{P}\left(\mathcal{F}\boldsymbol{a}_{I}\right)\right]
 
-The total derivative in the interaction picture is the xSPDE function :func:`xda`:
+The total derivative in the interaction picture is the xSPDE derivative function :func:`da`:
 
 .. math:: \dot{\boldsymbol{a}}_{I}=\boldsymbol{A}+\underline{\mathbf{B}}\,\boldsymbol{\zeta}
 
 where usually :math:`\boldsymbol{A}`, :math:`\underline{\mathbf{B}}` are evaluated at the midpoint which is the origin in the interaction picture.  For convenience, the final output is calculated in the original picture, with at least two interaction picture (IP) transformations per time-step.
+
+Note that there are many types of partial differential equation that can be treated with xSPDE, even if the interaction picture method doesn't apply. This occurs when there are nonlinear functions with arbitrary derivatives, or derivatives that are non-diagonal in the vector indices. For these cases, the space derivatives are evaluated inside the derivative term :func:`da`:. If there are higher order time derivatives as well, these can be re-expressed as a set of first-order time derivatives, provided the problem is an initial-value problem.
 
 
 Symmetry breaking
@@ -243,7 +244,7 @@ the ``.*`` notation is used in functions here, as fields require element-wise mu
     in.noises = 2;
     in.dimension = 3;
     in.steps = 10;
-    in.linear = @(D,r) i*0.01*(D.x.^2+D.y.^2);
+    in.linear = @(r) i*0.01*(r.Dx.^2+r.Dy.^2);
     in.observe = @(a,~) abs(a).^2;
     in.olabels = '|a|^2';
     in.da = @(a,z,~) (1-abs(a(1,:)).^2).*a+0.001*(z(1,:)+i*z(2,:));
@@ -254,7 +255,7 @@ Here:
 - :attr:`in.dimension` is the space-time dimension, with an :math:`x-t` plot given here.
 - :attr:`in.steps` gives the integration steps per plot-point, for improved accuracy.
 - :attr:`in.linear` is the linear operator --- an imaginary laplacian
-- ``D.x`` indicates a derivative operation, :math:`\partial/\partial x`. See the reference entry for :attr:`in.linear` for more information.
+- ``r.Dx`` indicates a derivative operation, :math:`\partial/\partial x`. See the reference entry for :attr:`in.linear` for more information.
 
 .. _fig-symmetry-breaking:
 .. figure:: Figures/GinzLand.*

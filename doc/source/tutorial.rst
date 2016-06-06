@@ -251,7 +251,7 @@ The important parameters and functions in this case are:
         in.dimension = 2;
         in.initial = @(v,r) sech(r.x);
         in.da = @(a,~,r) i*a.*(conj(a).*a);
-        in.linear = @(D,r) 0.5*i*(D.x.^2-1.0);
+        in.linear = @(r) 0.5*i*(r.Dx.^2-1.0);
         in.olabels = {'a_1(x)'};
         in.compare{1}= @(t,~) 1;
         e = xspde(in);
@@ -326,7 +326,7 @@ A  possible user set of parameters to simulate this is:
         in.dimension = 4;
         in.initial = @(v,r) exp(-0.5*(r.x.^2+r.y.^2+r.z.^2));
         in.da = @(a,~,~) zeros(size(a));
-        in.linear = @(D,r) 1i*0.05*(D.x.^2+D.y.^2+D.z.^2);
+        in.linear = @(r) 1i*0.05*(r.Dx.^2+r.Dy.^2+r.Dz.^2);
         in.observe = {@(a,~) a.*conj(a)};
         in.olabels = '|a(x)|^2';
         in.file = 'Gaussian.h5';
@@ -464,8 +464,8 @@ Planar inputs
         da(1,:)  = (z(1,:)+1i*z(2,:))/sqrt(2);
         da(2,:)  = (z(3,:)+1i*z(4,:))/sqrt(2);
         end
-    function L = Linear(D,r)
-        lap = D.x.^2+D.y.^2;
+    function L = Linear(r)
+        lap = r.Dx.^2+r.Dy.^2;
         L(1,:)  = 1i*0.5*lap(:);
         L(2,:)  = 1i*0.5*lap(:);
     end
@@ -636,7 +636,7 @@ The important parameters and functions in this case are:
         in.dimension = 2;
         in.initial = @(v,r) sech(2.*(r.x+2.5));
         in.da = @(a,z,r) 0*a;
-        in.linear = @(D,r) -D.x;
+        in.linear = @(r) -r.Dx;
         in.olabels = {'a_1(x)'};
         in.compare = {@(t,in) sech(2.*(t-2.5))};
         e = xspde(in);

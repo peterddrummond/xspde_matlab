@@ -11,9 +11,8 @@ function [e] = Gain()
 
 in.name =      'Loss with noise';          %%name for simulation
 in.ranges =    4;                          %%ranges: t
-in.print =     2;                          %%print internal variables
 in.noises =    [2,0];                      %%xnoises, knoises per point
-in.ensembles = [10000,1,8];                %%samples,ensembles,parallel
+in.ensembles = [10000,8,1];                %%samples,ensembles,parallel
 in.ensembles = [10000,1];                  %%samples,ensembles,parallel
 in.initial =   @(w,~) (w(1,:)+1i*w(2,:))/sqrt(2); %%Initialisation 
 in.da =        @(a,xi,r)  -a + xi(1,:)+1i*xi(2,:);   %%Derivative  

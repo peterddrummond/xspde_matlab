@@ -11,7 +11,7 @@ Stochastic equations are equations with random noise terms [Gardiner2004]_. They
 
 The xSPDE code is an extensible Stochastic Partial Differential Equation solver. It is a **stochastic toolbox** for constructing simulations, which is applicable to many stochastic problems [Gardiner2004]_. It has a modular design which can be changed to suit different applications, and includes strategies for calculating errors. At a basic level just one or two lines of input are enough to specify the equation. For advanced users, the entire architecture is open and extensible in numerous ways.
 
-Versions with an `.m` ending are written in Matlab, an interpreted scientific language of The Mathworks Inc. This version is best regarded as a prototyping platform. A code for new applications can be quickly developed and tested. This will not be quite as fast as a dedicated code but can be written easily and *understandably*.
+Versions with an `.m` ending are written in Matlab, an interpreted scientific language of The Mathworks Inc, and are compatible with Octave, an open-source clone of Matlab. This version is best regarded as a prototyping platform. A code for new applications can be quickly developed and tested. This will not be quite as fast as a dedicated code but can be written easily and *understandably*.
 
 The xSPDE logo is a three-pointed star that symbolizes that the code is suitable for all three domains: ordinary, partial or stochastic equations. Coincidentally, the logo is also similar to the three-pointed star from a Mercedes 280SE, renowned for its advanced automotive engineering.
 

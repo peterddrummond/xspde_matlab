@@ -11,8 +11,8 @@ function e = Equilibrium()
 
 in.name =      'Equilibrium spectrum';           %%name for simulation
 in.points =    640;                              %%points in time
-in.seed =      240;                              %%set the random seed
 in.ranges =    100;                              %%range in time
+in.seed =      240;                              %%set the random seed
 in.noises =    [2,0];                            %%xnoises per point
 in.ensembles = [100,5,1];                        %%samples,ensembles
 in.initial =   @(w,~) (w(1,:)+1i*w(2,:))/sqrt(2);%%Initialisation 

@@ -1,4 +1,4 @@
-function [datan,nx,x,xlab] =  xreduce(n,datan,g) 
+function [datan,np,x,xlab] =  xreduce(n,datan,g) 
 %   err = xreduce(n,datan,g) reduces multidimensional data files
 %   for a single xSPDE plot function in at most three grid dimensions.
 %   Input:  graph number 'n', n-th data array 'datan',parameters 'g'.
@@ -9,24 +9,25 @@ function [datan,nx,x,xlab] =  xreduce(n,datan,g)
     grd = 0;                                   %%Initial graph number 
     ax = zeros(1,4);                           %%list of plotted axes
     x = g.xc;                                  %%x coords
-    nx = g.points;                             %%index ranges
-    mx = 1+floor(nx/2);                        %%index midpoint: space axis
-    mx(1) = nx(1);                             %%index default: time axis
+    np = g.gpoints{n};                         %%index ranges
+    dimension = length(np)-2;
+    mx = 1+floor(np/2);                        %%index midpoint: space axis
+    mx(3) = np(3);                             %%index default: time axis
     xlab = g.glabels{n};                       %%get x or k label
-    
+
     %Loop over dimension to find data axes to plot
     
-    for nd = 1:g.dimension                     %%Loop over dimension      
-        datan = reshape(datan,[3,nx]);          %%reshape data
+    for nd = 1:dimension                       %%Loop over dimension
+        datan = reshape(datan,np);             %%reshape data to np
         if g.transforms{n}(nd)                 %%If transform switch
             x{nd} =  fftshift(g.kc{nd});       %%get graphics k coords
-            datan = fftshift(datan,nd+1);      %%shift data k coords        
+            datan = fftshift(datan,nd+2);      %%shift data k coords        
         end                                    %%end if transform switch
-        if length (g.axes{n}{nd}) == 1         %%if one number in range
+        if length (g.axes{n}{nd}) == 1         %%if only one index wanted
             if g.axes{n}{nd} == 0              %%if default index range
-                g.axes{n}{nd} = 1:nx(nd);      %%set full index range
+                g.axes{n}{nd} = 1:np(nd+2);    %%set full index range
             elseif g.axes{n}{nd} < 0           %%if negative index range
-                g.axes{n}{nd} = mx(nd);        %%not plotted, set default
+                g.axes{n}{nd} = mx(nd+2);      %%not plotted, set default
             end                                %%end if full index range
         end                                    %%end if one number in range
         if length (g.axes{n}{nd}) > 1          %%if axis has finite range
@@ -37,17 +38,15 @@ function [datan,nx,x,xlab] =  xreduce(n,datan,g)
                 xnd = x{nd}(g.axes{n}{nd});
                 x{grd}=g.xfunctions{n}{nd}(xnd,g);%%update coordinates
             else                               %%too many graphs
-                g.axes{n}{nd} = mx(nd);        %%set default index 
+                g.axes{n}{nd} = mx(nd+2);      %%set default index 
             end                                %%end if less than 3 graphs
         end                                    %%end if axis plotted
-        n1 = prod(nx(1:nd-1));                 %%points below
-        n2 = prod(nx(nd+1:g.dimension));       %%points above
-        datan= reshape(datan,[3,n1,nx(nd),n2]);%%reshape data
-        datan = datan(:,:,g.axes{n}{nd},:);    %%reduce points
-        nx(nd) = length(g.axes{n}{nd});        %%reset points count   
+        n1 = prod(np(3:nd+1));                 %%points below
+        n2 = prod(np(nd+3:dimension+2));       %%points above
+        datan= reshape(datan,[np(1:2),n1,np(nd+2),n2]);%%reshape data
+        datan = datan(:,:,:,g.axes{n}{nd},:);  %%reduce points
+        np(nd+2) = length(g.axes{n}{nd});      %%reset points count
     end                                        %%end loop over dimension
-    nx = nx(ax(1:grd));                        %%adjust points plotted
-    if ~isempty(nx)
-        datan = reshape(datan,[3,nx]);         %%reshape data
-    end
+    np = [np(1:2),np(2+ax(1:grd))];             %%adjust points plotted
+    datan = reshape(datan,np);                 %%reshape data
 end

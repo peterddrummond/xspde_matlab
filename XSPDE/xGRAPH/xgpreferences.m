@@ -27,24 +27,12 @@ end                                              %% End if oldinput ~empty
                           %% Obtain the number of graph functions 
                           
 sequence = length(input);                        %%get sequence length
+lines = {'-k','--k',':k','-.k','-ok','--ok',':ok','-.ok','-+k','--+k'};
 for s = 1:sequence                               %%loop over sequence 
   in = xpreferences(input{s});                   %%get input structure
-  graphs=0;                                      %%Initial plot number
-  if isfield(in,'function')                      %%If plot functions input
-      graphs = length(in.function);              %%Number of plot functions
-  end                                            %%End if plot functions 
-  if graphs < in.averages                        %%More averages than plots
-      graphs = in.averages;                      %%Plots set to averages
-      in.function{graphs} =[];                   %%Set last plot function
-  end                                            %%End averages vs plots
-
-                       %% Set the graphics default parameters
+  
+                  %% Set the graphics default parameters
                        
-  if in.ensembles(2)*in.ensembles(3) > 1         %%If sampling errors
-      esample = 1;                               %%Set sampling flag to 1
-  else                                           %%Else no sampling errors
-      esample = 0;                               %%Set sampling flag to 0
-  end                                            %%End if sampling errors
   if in.numberaxis || in.dimension > 4
       xlabels={'t','x_1','x_2','x_3','x_4','x_5','x_6','x_7','x_8'};
       klabels={'\omega','k_1','k_2','k_3','k_4','k_5','k_6','k_7','k_8'};
@@ -53,13 +41,13 @@ for s = 1:sequence                               %%loop over sequence
       klabels={'\omega','k_x','k_y','k_z'};
   end
   
-  in.gversion =   xprefer(in,'gversion',0,'xGRAPH1.1');
-  in.graphs =     xprefer(in,'graphs',1,graphs);
+  in.gversion =   xprefer(in,'gversion',0,'xGRAPH1.2');
+  in.graphs =     xprefer(in,'graphs',1,in.functions);
   in.transforms = xcprefer(in,'transforms',in.graphs,{zeros(1,in.dimension)});
   in.axes =       xcprefer(in,'axes',in.graphs,{num2cell(zeros(1,in.dimension))});
   in.minbar =     xcprefer(in,'minbar',in.graphs,{0.01});
-  in.ebar =       xcprefer(in,'ebar',in.graphs,{in.ebar});
-  in.esample =    xcprefer(in,'esample',in.graphs,{esample});
+  in.lines =      xcprefer(in,'lines',in.graphs,{lines});
+  in.esample =    xcprefer(in,'esample',in.graphs,{1});
   in.font =       xcprefer(in,'font',in.graphs,{18});
   in.headers =    xcprefer(in,'headers',in.graphs,{in.name});
   in.images =     xcprefer(in,'images',in.graphs,{0});  
@@ -68,13 +56,12 @@ for s = 1:sequence                               %%loop over sequence
   in.pdimension = xcprefer(in,'pdimension',in.graphs,{3});
   in.compare =    xcprefer(in,'compare',in.graphs,{''});
   
-  for n = 1:graphs                               %% Loop over graphs
-    if  isempty(in.function{n})
-      if  n<=in.averages
-          in.function{n} = @(d,~) d{n}(:,:,:);   %% Return default average
-      else
-          error ('xGRAPH error: no function, sequence %d, graph %d\n',s,n);
-      end
+  if ~isfield(in,'gfunction')                    %% If no label data
+      in.gfunction{in.graphs} = [];
+  end 
+  for n = 1:in.graphs                            %% Loop over graphs
+    if  isempty(in.gfunction{n})
+      in.gfunction{n} = @(d,~) d;                %% Return default average
     end                                          %% End if undefined
     in.xfunctions{n}{in.dimension+1}=[];
     in.glabels{n}{in.dimension+1}=[];

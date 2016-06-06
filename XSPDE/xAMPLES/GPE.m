@@ -26,7 +26,8 @@ in.observe{1} = @(a,r)         a.*conj(a);
 in.images  =  {2};                                       
 in.imagetype   = {2}; 
 in.olabels = {'|a|^2'};
-in.file =       'GPE.h5';
+in.file =       'GPE.mat';
+in.print =2;
 [e,in] = xsim(in);                         %%sim program
 xgraph(in.file,in);                        %%graph program
 end                                        %%end of function

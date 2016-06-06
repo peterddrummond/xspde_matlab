@@ -16,6 +16,10 @@ else
       D = struct('x',1i*r.kx,'y',1i*r.ky,'z',1i*r.kz); %%compute D, symbolic
     end
 end
-L = reshape(r.linear(D,r),r.d.ft);                    %%linear response
-propagator = exp(L*r.dt/(nc*r.ipsteps));              %%propagation factor
+L = reshape(r.linear(D,r),r.d.fields);                    %%linear response
+if isequal(L,zeros(r.d.fields))
+    propagator = 1;
+else 
+    propagator = exp(L*r.dt/(nc*r.ipsteps));              %%propagation factor
+end
 end

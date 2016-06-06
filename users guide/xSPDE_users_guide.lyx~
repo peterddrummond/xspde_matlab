@@ -6557,8 +6557,9 @@ The most common functions, output field dimensions and calling arguments,
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="19" columns="3">
+<lyxtabular version="3" rows="19" columns="4">
 <features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -6568,6 +6569,15 @@ The most common functions, output field dimensions and calling arguments,
 
 \begin_layout Plain Layout
 Label 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Output dimension 
 \end_layout
 
 \end_inset
@@ -6601,6 +6611,15 @@ Purpose
 *da
 \emph default
  
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+d.a
 \end_layout
 
 \end_inset
@@ -6644,6 +6663,15 @@ Stochastic derivative
 \begin_inset Text
 
 \begin_layout Plain Layout
+d.a
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \emph on
 (v,r)
@@ -6679,6 +6707,15 @@ Function to initialize fields
 \begin_inset Text
 
 \begin_layout Plain Layout
+d.r
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 (r)
 \end_layout
 
@@ -6704,6 +6741,15 @@ Linear derivative function
 *rfilter
 \emph default
  
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+d.random2
 \end_layout
 
 \end_inset
@@ -6749,6 +6795,15 @@ Random input filter in k-space
 \begin_inset Text
 
 \begin_layout Plain Layout
+d.noise2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 (r)
 \end_layout
 
@@ -6774,6 +6829,15 @@ Noise filter function in k-space
 *transfer
 \emph default
  
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+d.a
 \end_layout
 
 \end_inset
@@ -6817,6 +6881,15 @@ Initializion in a sequence
 \begin_inset Text
 
 \begin_layout Plain Layout
+d.a
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 (a,z,dt,r)
 \end_layout
 
@@ -6842,6 +6915,15 @@ Calculation of a time-step
 *grid
 \emph default
  
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+d.r
 \end_layout
 
 \end_inset
@@ -6887,6 +6969,15 @@ Grid calculator for lattice
 \begin_inset Text
 
 \begin_layout Plain Layout
+d.a
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 (a,r)
 \end_layout
 
@@ -6920,6 +7011,15 @@ Interaction picture propagator
 \begin_inset Text
 
 \begin_layout Plain Layout
+d.a 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 (nc,r)
 \end_layout
 
@@ -6945,6 +7045,15 @@ Propagator array calculation
 *observe
 \emph default
  
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+d.int 
 \end_layout
 
 \end_inset
@@ -6988,6 +7097,15 @@ Observable function cell array
 \begin_inset Text
 
 \begin_layout Plain Layout
+cell 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 {@(av,~)av{1}(:,:,:).^2,..} 
 \end_layout
 
@@ -7013,6 +7131,15 @@ Functions stored of averages
 *compare
 \emph default
  
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+points(1)
 \end_layout
 
 \end_inset
@@ -7052,6 +7179,15 @@ randomgen
 \begin_inset Text
 
 \begin_layout Plain Layout
+[randoms,nlattice]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 (r)
 \end_layout
 
@@ -7075,6 +7211,15 @@ Initial random generator
 
 \emph on
 noisegen
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[noises,nlattice]
 \end_layout
 
 \end_inset
@@ -7114,7 +7259,16 @@ xint
 \begin_inset Text
 
 \begin_layout Plain Layout
-(a,dx,r)
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -7145,7 +7299,16 @@ xave
 \begin_inset Text
 
 \begin_layout Plain Layout
-(a,av,r)
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -7176,7 +7339,16 @@ xd
 \begin_inset Text
 
 \begin_layout Plain Layout
-(a,D,r)
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -7282,7 +7454,7 @@ For
 \end_inset
 
 .
- The graph labels will use this notation also, unless specified otherwise.
+ Actual graph labels will use this notation also, unless specified otherwise.
 \end_layout
 
 \begin_layout Standard
@@ -9478,7 +9650,7 @@ Maximum plot dimensions
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+@(t,in) t^2 
 \end_layout
 
 \end_inset
@@ -9511,7 +9683,7 @@ Comparison functions
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+{@(t,~)t.^2,@(x,~)x.^2..} 
 \end_layout
 
 \end_inset
@@ -9544,7 +9716,7 @@ axes{n}
 \begin_inset Text
 
 \begin_layout Plain Layout
-{0,..} 
+{0,12,1:2:81} 
 \end_layout
 
 \end_inset
@@ -9579,7 +9751,9 @@ glabels{n}
 \begin_layout Plain Layout
 
 \emph on
- {'t' 'x' 'y' 'z'}
+ {'
+\backslash
+omega' 'x' 'y' 'z'...}
 \emph default
  
 \end_layout

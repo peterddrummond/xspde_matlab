@@ -6,7 +6,7 @@ function in = xpreferences (in)
   
 %%Unconditional  preference list - can be changed if required
 
-    in.version =    xprefer(in,'version',0,'xSIM1.1');
+    in.version =    xprefer(in,'version',0,'xSIM1.2');
     in.name =       xprefer(in,'name',0,'');
     in.dimension =  xprefer(in,'dimension',1,1);
     in.fields =     xprefer(in,'fields',1,1);
@@ -21,11 +21,13 @@ function in = xpreferences (in)
     in.order =      xprefer(in,'order',1,1);
     in.errorchecks= xprefer(in,'errorchecks',1,2);
     in.ebar  =      xprefer(in,'ebar',1,in.errorchecks-1);
+    in.octave =     xprefer(in,'octave',1,exist('OCTAVE_VERSION', 'builtin'));
     in.seed =       xprefer(in,'seed',1,0);
     in.file =       xprefer(in,'file',0,'');
     in.print =      xprefer(in,'print',1,1);
     in.raw   =      xprefer(in,'raw',1,0);
     in.numberaxis = xprefer(in,'numberaxis',1,0);
+    in.errors =     3;                            %%Number of error fields
     
 %%Function  preference list - can be changed if required
 
@@ -36,7 +38,7 @@ function in = xpreferences (in)
     in.randomgen =  xprefer(in,'randomgen',0,@xgaussrandom);
     in.nfilter =    xprefer(in,'nfilter',0,@xnfilter);
     in.rfilter =    xprefer(in,'rfilter',0,@xrfilter);
-    in.step =       xprefer(in,'step',0,@xMP);
+    in.step =       xprefer(in,'step',0,@xRK4);
     in.grid =       xprefer(in,'grid',0,@xgrid);
     in.prop =       xprefer(in,'prop',0,@xprop);
     in.da   =       xprefer(in,'da',0,@xda);
@@ -45,16 +47,17 @@ function in = xpreferences (in)
 %%Conditional preference list - these preferences depend on other choices
 
     if ~isfield(in,'observe')                %%does input have no observe?
-        for n = 1:in.fields
-            in.olabels{n} = ['a_',num2str(n)];
-            in.observe{n} =  @(a,~) real(a(n,:));
-        end
+        in.olabels{1} = 'a';
+        in.observe{1} =  @(a,~) a;
+        if prod(in.ensembles)>1
+            in.olabels{1} = '<a>';
+        end 
     else                                     %%else input does have observe
+        in.observe = xmakecell(in.observe);
         lc = length (in.observe);
         in.olabels = xcprefer(in,'olabels',lc,{' '});
     end
     in.averages =   xprefer(in,'averages',1,length(in.observe));
-    in.ofields =    xprefer(in,'ofields',in.averages,ones(1,in.averages));
     in.transforms = xcprefer(in,'transforms',in.averages,{zeros(1,in.dimension)});
     switch func2str(in.step)                 %%set ipsteps for given method
       case {'xEuler','xRK2'}                 %%single transform methods
@@ -62,6 +65,25 @@ function in = xpreferences (in)
       otherwise                              %%double transform methods
        in.ipsteps = xprefer(in,'ipsteps',1,2);
     end
+    
+  in.functions=0;                            %%Initial plot number
+  if isfield(in,'function')                  %%If plot functions input
+      in.functions = length(in.function);    %%Number of plot functions
+  end                                        %%End if plot functions 
+  if in.functions < in.averages              %%More averages than plots
+      in.functions = in.averages;            %%Plots set to averages
+      in.function{in.functions} =[];         %%Set last plot function
+  end                                        %%End averages vs plot
+  in.gpoints = xcprefer(in,'gpoints',in.functions,{[1,in.errors,in.points]});
+  for n = 1:in.functions                     %% Loop over graphs
+    if  isempty(in.function{n})
+      if  n<=in.averages
+          in.function{n} = @(o,~) o{n};      %% Return default average
+      else
+          error ('xSIM error: no function, sequence %d, graph %d\n',s,n);
+      end
+    end                                      %% End if undefined
+  end
     
 %%Calculated lattice inputs - parameters needed in both xsim and xgraph
 
@@ -78,7 +100,7 @@ function in = xpreferences (in)
       p = mod(p+in.points(n)/2,in.points(n));%%n-th cyclic k-index
       p = p - in.points(n)/2;                %%n-th shifted k-index
       in.kc{n} = p*in.dk(n);                 %%n-th propagation k-coords
-    end;                                     %%end loop over dimension 
+    end;                                     %%end loop over dimension
 end                                          %%end xpreferences function 
 
 
@@ -101,9 +123,9 @@ function L = xlinear(~,r)                    %% Default linear filter
 end
 
 function Kn = xnfilter(r)                    %% Default stochastic filters
-    Kn = ones(r.d.noise2);                   %% Default noise filter
+    Kn = ones(r.noises(2),r.nlattice);       %% Default noise filter
 end
 
 function Kr = xrfilter(r)                    %% Default stochastic filters
-    Kr = ones(r.d.random2);                  %% Default input filter
+    Kr = ones(r.randoms(2),r.nlattice);      %% Default input filter
 end

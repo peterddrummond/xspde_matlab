@@ -106,19 +106,24 @@ Simulation user functions
 
 :attr:`in.initial`
 
-    is used to initialize each integration in time. This is a user-defined function, which can involve random numbers if there is an initial probability distribution. This creates a stochastic field on the lattice, called ``a``. The default is :func:`xinitial`, which sets fields to zero.
+    is used to initialize each integration in time. This is a user-defined function, which can involve random numbers if there is an initial probability distribution. This creates a stochastic field on the lattice, called ``a``. Initialization functions can use coordinates, ``r.x``, ``r.y``, ``r.z``, or for larger dimensions, using numerical lattice labels ``r.x{1}``, ``r.x{2}``, ``r.x{3}``, ``r.x{4}``. Numerical labels can be used for any number of dimension if the switch ``numberaxis=1``. The default is :func:`xinitial`, which sets fields to zero.
 
 :attr:`in.step`
 
     is the algorithm or method computes each space-time point in the lattice. This also generates the random numbers fields at each time-step. It can be user-modified by setting the handle in.step.
 
-:attr:`in.observe`
+:attr:`in.observe{n}`
 
-    is the observation function whose output is averaged over the ensembles, called from :func:`xpath`. The default, :func:`xobserve`, returns the real amplitudes.
+    is the n-th observation function whose output is averaged over the ensembles, called from :func:`xpath`. In general, this returns an array whose first coordinate is the line-number of the n-th graph. The default, :func:`xobserve`, returns the real amplitudes. The return value is averaged over the local ensemble and stored as data, ``d{n}``.
+    
+:attr:`in.function{n}`
+
+    is used when a graph is needed that is a function of the observed averages. The default value is simply ``d{n}``. This is further averaged over higher ensembles to obtain sampling error estimates.
+
 
 :attr:`in.linear`
 
-    is the linear response, including transverse derivatives in space. The default, :func:`xlinear`, sets this to zero.
+    is the linear response, including transverse derivatives in space. The default, :func:`xlinear`, sets this to zero. Derivatives are specified using arrays ``r.Dx``, ``r.Dy``, ``r.Dz``, or for larger dimensions, using numerical lattice labels ``r.D{1}``, ``r.D{2}``, ``r.D{3}``, ``r.D{4}``.
 
 :attr:`in.da`
 
@@ -134,7 +139,7 @@ At the end of the loop, global averages and error-bars are calculated. The main 
 
 :func:`xgraph` is called by xSPDE when the ensemble loops finished. The results are graphed and output if required.
 
-.. function:: xgrpreferences
+.. function:: xgpreferences
 
     is called by :func:`xgraph` to set the graphics defaults that are not already entered.
 
@@ -178,9 +183,9 @@ In addition to time-dependent graphs, the :func:`xgraph` function can generate :
 Graphics user functions
 -----------------------
 
-:attr:`in.function`
+:attr:`in.gfunction`
 
-    This is used when a graph is needed that is a function of the observed averages. 
+    This is used when a graph is needed that is a function of the data coming from the simulation package, since this data can be analysed at a later time. Error estimates are less accurate when this function is used, due to error-propagation effects that may occur after averaging, unless corrected for explicitly in the graphics function. 
 
 :attr:`in.xfunctions`
 

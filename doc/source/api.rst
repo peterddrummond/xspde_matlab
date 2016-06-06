@@ -16,19 +16,19 @@ The high-level xSPDE functions process the input parameters, producing simulatio
 
 .. function:: xspde(input)
 
-    This is the combined xSPDE function. It accepts a simulation sequence, ``input``. This can be a single structure, ``in``, or else a cell array of structures, ``{in1,in2,..}``, for  sequences. Output graphs are displayed, and it returns the output ``[maxerror, input, data]``, where ``maxerror`` is the maximum error or difference found. If a filename is specified, it generates an output data file. It calls the functions :func:`xsim` and :func:`xgraph`.
+    This is the combined xSPDE function. It accepts a simulation sequence, ``input``. This can be a single structure, ``in``, or else a cell array of structures, ``{in1,in2,..}``, for  sequences. Output graphs are displayed. It returns the output ``[error, input, data,raw]``, where ``error`` is the sum of simulation errors in :func:`xsim`, and difference errors found in the :func:`xgraph` comparisons. If a filename is specified in  the input, it writes an output data file including input and all output data. Raw data is stored on request. It calls the functions :func:`xsim` and :func:`xgraph`.
 
 
 .. function:: xsim(input)
 
-    This is the xSPDE simulation function. Like :func:`xspde`, it accepts input parameters in ``input``. It returns ``[error, input, data, raw]``, where: ``error = [error(1),error(2)]`` is a vector of maximum step-size and sampling errors, ``input`` is the full input structure or cell array for sequences, including default values, and ``data`` is a cell array of average observables. If the ``in.raw`` option is used, data for the actual trajectories is output in ``raw``. This can be run as a stand-alone function if no graphs are required.
+    This is the xSPDE simulation function. Like :func:`xspde`, it accepts input parameters in ``input``. It returns ``[maxerror, input, data, raw]``, where: ``maxerror`` is the sum of maximum step-size and maximum sampling errors, ``input`` is the full input structure or cell array for sequences, including default values, and ``data`` is a cell array of average observables. If the ``in.raw`` option is used, data for the actual trajectories is output in ``raw``. This can be run as a stand-alone function if no graphs are required.
 
 .. function:: xgraph(data [,input])
 
     This is the xSPDE graphics function. It takes computed simulation  ``data`` and ``input``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions. The ``data`` should have as many cells as ``input`` cells, for sequences. 
     If ``data = 'filename.h5'`` or ``data= 'filename.mat'``, the specified file is read both for ``input`` and ``data``. Here ``.h5`` indicates an HDF5 file, and ``.mat`` indicates a Matlab file.
-    When the``data`` input is given as a filename, input parameters in the file are replaced by any of the the new ``input`` parameters that are specified.  Any stored ``input`` can be overwritten, allowing graphs to be modified with new labels.
-    If the ``input`` field is not present, then a file-name must be specified in the ``data`` field. 
+    When the``data`` input is given as a filename, input parameters in the file are replaced by any of the the new ``input`` parameters that are specified.  Any stored ``input`` can be overwritten, allowing graphs to be modified retrospectively.
+    If the ``input`` is not present, a file-name must be specified in the ``data`` field. 
 
 
 
@@ -118,7 +118,7 @@ The code to take a spatial derivative is carried out using the xSPDE :func:`xd` 
 
 .. attribute:: xd(o, [D, ] r)
 
-This function takes a scalar ``o``, and returns a derivative over selected dimensions with a derivative ``D``.  Set ``D = r.D.x`` for a first order x-derivative, ``D = r.D.y`` for a first order y-derivative, and similarly ``D = r.D.x.*r.D.y`` for a cross-derivative in ``x`` and ``y``. Higher derivatives require powers of these. Time derivatives are ignored at present. Derivatives are returned at all lattice locations.
+This function takes a scalar ``o``, and returns a derivative over selected dimensions with a derivative ``D``.  Set ``D = r.Dx`` for a first order x-derivative, ``D = r.Dy`` for a first order y-derivative, and similarly ``D = r.Dz.*r.Dy`` for a cross-derivative in ``z`` and ``y``. Higher derivatives require powers of these. For higher dimensions use numerical labels, where ``D = r.Dx`` becomes ``D = r.D{1}``, and so on. Time derivatives are ignored at present. Derivatives are returned at all lattice locations.
 
 If the derivative ``D`` is omitted, a first order x-derivative is returned.
 Note that :func:`xd` returns a lattice observable, as required when used in the :attr:`in.observe` function. If the integral is used in another function, note that it returns a matrix of dimension ``[1, lattice]``.
@@ -1389,11 +1389,11 @@ A stochastic equation solver requires the definition of an initial distribution 
 
     Calculates derivatives :math:`da` of the equation. The noise vector, ``z``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension  whose default value is :attr:`in.fields` if :attr:`in.noises` are not given. Otherwise, it has a first dimension of ``in.noises(1) + in.noises(2)``. The second type of input noise allows for spatially correlated and filtered noise specified in momentum space.
 
-.. attribute:: in.linear(D,r)
+.. attribute:: in.linear(r)
 
     *Default:* :func:`xlinear`
 
-    A user-definable function which returns the linear coefficients :math:`L` in Fourier space. This is a function of the differential operator ``D``. The default is zero. Here ``D`` is a structure with components ``D.x``, ``D.y``, ``D.z``, which correspond to :math:`\partial / \partial x`, :math:`\partial / \partial y`, :math:`\partial / \partial z` respectively. Each component has an array dimension the same as the coordinate lattice.
+    A user-definable function which returns the linear coefficients :math:`L` in Fourier space. This is a function of the differential operator ``Dx``, ``Dy``, ``Dz``, which correspond to :math:`\partial / \partial x`, :math:`\partial / \partial y`, :math:`\partial / \partial z` respectively. Each component has an array dimension the same as the coordinate lattice. If axes are numbered, use  ``D{1}``, ``D{2}``, ``D{3}`` etc.
 
 .. attribute:: in.observe(a,r)
 
@@ -1524,6 +1524,10 @@ Advanced input functions
 
 Advanced input functions are user-definable functions which don’t usually need to be changed from default values. They allow customization and extension of xSPDE. These are as follows:
 
+.. function:: in.function(data,in)
+
+    This is a cell array of graphics function handles. Use when a graph is needed that is a function of the observed local averages over ``ensemble(1)``. The default value generates all the averages that are in the simulated data. The input is the data array of averages, and the output is another data array. This function can generate  error-bars and sampling errors in the local averages.
+
 .. attribute:: in.grid(r)
 
     *Default:* :func:`xgrid`
@@ -1579,13 +1583,13 @@ In the following descriptions, :attr:`in.graphs` is the total number of graphed 
 Graphics functions
 ~~~~~~~~~~~~~~~~~~
 
-.. function:: in.function(data,in)
+.. function:: in.gfunction(data,in)
 
-    This is a cell array of graphics function handles. Use when a graph is needed that is a function of the observed averages. The default value generates all the averages that are in the simulated data. The input is the data array of averages, and the output is the  data array that is plotted.
+    This is a cell array of graphics function handles. Use when a graph is needed that is a function of the data generated by xsim, as a post-processing step. The default value is the simulated data. The input is the data array of averages from xsim, including error-estimates, and the output is the  data array that is plotted. Any handling of error estimates must be user-provided at this stage.
     
-.. function:: in.xfunctions(x,in)
+.. function:: in.xfunctions(x_nd,in)
 
-    This is a nested cell array of graphics axis transformations. Use when a graph is needed with an axis that is a function of the original axes. The default value generates all the averages that are in the simulated data. The input of the function is the original axis coordinates, and the output is the new coordinate set. Called as in.xfunctions{n}{nd} for the n-th graph and axis nd.
+    This is a nested cell array of graphics axis transformations. Use when a graph is needed with an axis that is a function of the original axes. The default value generates all the averages that are in the simulated data. The input of the function is the original axis coordinates, and the output is the new coordinate set. Called as in.xfunctions{n}{nd}(x_nd,in) for the n-th graph and axis nd, where x_nd is a vector of axis coordinate points for that axis dimension.
     
 
 .. function:: in.compare(t,in)
@@ -1612,17 +1616,17 @@ Together with default values, they are:
     
 .. attribute:: in.graphs
 
-    *Default:* ``-1``
+    *Default:* ``1``
 
-    If non-negative, this sets the maximum number of graphed datasets. Can be used to suppress unwanted graphs from an xSPDE graphics script. If omitted or set to the default value, all the graphs output from the in.grfunc graphics processing function are plotted.
+    If non-negative, this sets the maximum number of graphed datasets. Can be used to suppress unwanted graphs from an xSPDE graphics script. If omitted, all the graphs output from the graphics processing function are plotted.
     
     ::
 
-        in.graphs = -1,..
+        in.graphs = 1,..
         
 .. attribute:: in.olabels
 
-    *Default:* ``{'a_1', ...}``
+    *Default:* ``{'a', ...}``
 
     **Cell array** of labels for the graph axis observables and functions. These are text labels that are used on the graph axes. The default value is ``'a_1'`` if the default observable is used, otherwise it is blank. This is overwritten by any subsequent label input when the graphics program is run:
 
@@ -1643,7 +1647,7 @@ Together with default values, they are:
 
 .. attribute:: in.font
 
-    *Default:* ``{18, ...}``
+    *Default:* ``{18}``
 
     This sets the default font size for the graph labels. This can be changed per graph.
 
@@ -1653,7 +1657,7 @@ Together with default values, they are:
 
 .. attribute:: in.minbar
 
-    *Default:* ``{0.01, ...}``
+    *Default:* ``{0.01}``
 
     This is the minimum relative error-bar that is plotted. Set to a large value to suppress unwanted error-bars, although its best not to ignore the error-bar information! 
 
@@ -1663,7 +1667,7 @@ Together with default values, they are:
         
         .. attribute:: in.esample
 
-    *Default:* ``{1, ...}``
+    *Default:* ``{1}``
 
     This is the flag for plotting sampling error. Set to zero to suppress unwanted sampling error lines and just plot means, although its best not to ignore this information! 
 
@@ -1703,7 +1707,7 @@ Together with default values, they are:
 
 .. attribute:: in.headers
 
-    *Default:* ``{'head1', 'head2', ...}``
+    *Default:* ``{'', '', ...}``
 
     This is a string variable giving the graph headers for each type of function plotted. The default value is an empty string ``''``, which gives the simulation heading. Use a space ``' '`` for no headers. It is useful to include simulation headers - which is the default - to identify graphs in preliminary stages, while they may not be needed in a published final result. 
 
@@ -1752,6 +1756,18 @@ Together with default values, they are:
     ::
 
         in.glabels{n} = {in.xlabels(1), ..., in.xlabels(in.dimension)}
+        
+        
+         .. attribute:: in.lines
+
+    *Default:* `` {{'-k','--k',':k','-.k','-ok','--ok',':ok','-.ok','-+k','--+k'}}``
+
+    Line types for each line in every two-dimensional graph plotted.
+
+    ::
+
+        in.lines{n} = {linetype{1}, ..., linetype{nl}}
+      
 
 Graphics projections
 ~~~~~~~~~~~~~~~~~~~~

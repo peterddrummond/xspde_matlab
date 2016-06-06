@@ -3,15 +3,15 @@ function [] =  ximageplot(n,datan,nx,x,xlab,olab,g)
 %   MIT licensed by Peter D. Drummond, (2015) - see License.txt 
 
 imhead= ' ';                                   %%make image header blank
-g.images{n}   = min(nx(1),g.images{n});        %%image numbers
+g.images{n}   = min(nx(3),g.images{n});        %%image numbers
 for i = 0:g.images{n}-1                        %%Loop over images to plot
     if g.images{n} == 1                        %%only one image wanted
-        np = nx(1);                            %%Print last image 
+        np = nx(3);                            %%Print last image 
     else                                       %%several images wanted
-        np = (nx(1)-1)/(g.images{n}-1);        %%image spacing in time
+        np = (nx(3)-1)/(g.images{n}-1);        %%image spacing in time
         np = round(1+i*np);                    %%round to next time step   
     end                                        %%End if images == 
-    im = reshape(datan(1,np,:,:),nx(2),nx(3)); %%Image at time t(np)
+    im = reshape(datan(1,1,np,:,:),nx(4),nx(5)); %%Image at time t(np)
     if ~isempty(g.headers{n})                  %%if full xheader wanted
         imhead = [olab,', ',xlab{1},sprintf(' = %0.3f',x{1}(np))];
     end                                        %%end if xheaders

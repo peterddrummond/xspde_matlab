@@ -1,6 +1,6 @@
 function incell = xmakecell (input)
 %   incell = XMAKECELL (input) makes cells from non-cell data.
-%   All xSPDE functions are licensed by Peter D. Drummond, (2015) - see License.txt 
+%   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
     if ~iscell(input)                        %% If input data not cell
          incell ={input};                    %% Convert to cell

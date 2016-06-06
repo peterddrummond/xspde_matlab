@@ -27,28 +27,38 @@ for s = 1:sequence                             %%Loop over sequence
   in = input{s};                               %%inputs for sequence s
   fprintf ('%s sequence %d: %s\n',in.gversion,s,in.name);%%version name
   if in.print >1                               %%if print switch is verbose
-    display(in,'xGRAPH data');                 %%display lattice data
+    display('xGRAPH data');                    %%display lattice data
+    display(in);                               %%display lattice data
   end;                                         %%end if print switch
   
 %  Loop over a set of graph functions
   
-  for n =1:in.graphs                           %%Loop over graphs
+  for n =1:in.graphs                             %%Loop over graphs
      if in.pdimension{n} > 0 && in.dimension > 0
-         if in.print >2                        %%if graphics print switch 
-             fprintf ('Plot function %d: %s\n',n,in.gname{n}); %%plot name
-         end;                                  %%end if print switch
-         data = in.function{n}(cdata{s},in);   %%get graph data
-         if  isempty(data)                     %%check if any graph data
+       if in.print >2                            %%if graphics print switch 
+         fprintf ('Plot %d: %s\n',n,in.gname{n});%%plot name
+       end;                                      %%end if print switch
+       data = cdata{s}{n};
+       in.gpoints{n} = size(data);
+       data(:,2,:) =  data(:,2,:)+data(:,1,:);
+       data(:,3,:) =  data(:,3,:)+data(:,1,:);   
+       data = in.gfunction{n}(data,in);        %%get graph data
+       if  isempty(data)                       %%check if any graph data
              error('xGRAPH error: no data returned from function{%d}\n',n); 
-         end                                   %%end check if graph data
+       end                                     %%end check if graph data
+       data(:,2,:) =  abs(data(:,2,:)-data(:,1,:));
+       data(:,3,:) =  abs(data(:,3,:)-data(:,1,:));  
+       if  isempty(data)                       %%check if any graph data
+           error('No data at function{%d}\n',n); 
+       end                                     %%end check if graph data
          
 % call multidimensional plot function
  
-         err= xmultiplot(n,data,in);          %%single function plot
-         if err > 0.0
+       err= xmultiplot(n,data,in);             %%single function plot
+       if err > 0.0
            fprintf('Max comparison difference in plot %d = %e\n',n,err);
-         end
-         ec = ec + err;
+       end
+       ec = ec + err;
      end                                       %%end if graph wanted
   end                                          %%end loop over graphs
 end                                            %%end sequence

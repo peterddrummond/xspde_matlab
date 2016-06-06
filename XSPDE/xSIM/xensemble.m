@@ -8,12 +8,12 @@ function [data,raw] = xensemble (npar,l)
 sequence = length(l);                             %%check length of input
 data = cell(sequence);                            %%allocate data sequence
 for seq=1:sequence                                %%loop over sequence
-    for n=1:l{seq}.averages
+    for n=1:l{seq}.functions
         data{seq}{n} = zeros(l{seq}.d.data{n});   %%initialise data cells
     end
 end                                               %%end loop over sequence
 serial = l{1}.ensembles(2);                       %%serial ensemble number
-raw = cell(serial,sequence,l{1}.errorchecks);     %%cell array for raw data
+raw = cell(sequence,l{1}.errorchecks,serial);     %%cell array for raw data
 
       %%Loop over all the serial ensembles
 
@@ -22,8 +22,14 @@ for ns = 1:serial                                 %%loop over ensembles
   
       %%Loop over the error-checking indices
   
-  for  nc  = 1:l{1}.errorchecks                   %%loop over errorchecks 
-    rng(l{1}.seed+nsp);                           %%Set unique random seed
+  for  nc  = 1:l{1}.errorchecks                   %%loop over errorchecks
+    if l{1}.seed >= 0                             %%Test if seed is set
+        if l{1}.octave
+            randn('state',l{1}.seed+nsp)
+        else
+            rng(l{1}.seed+nsp);
+        end                                       %%Set unique random seed
+    end
     if l{1}.print                                 %%If print switch
         fprintf('Check %d, Ensemble %d\n',nc,nsp);%%print indices
     end;                                          %%end if print switch
@@ -51,14 +57,18 @@ for ns = 1:serial                                 %%loop over ensembles
       
       %%Store the averages for the stochastic field path     
       
-      [a,o,raw{ns,seq,nc}] = xpath(a,nc,r);       %%simulate path
-      
-      for n = 1:r.averages    
+      [a,av,raw{seq,nc,ns}] = xpath(a,nc,r);      %%simulate path
+      for n = 1:r.averages
+          av{n} = reshape(av{n},r.d.av{n});       %%reshape average data
+      end
+      for n = 1:r.functions
+        f = real(r.function{n}(av,r));            %%graph data
+        f = reshape(f,r.d.sf{n});                 %%reshape graph data
         if nc == 2 || r.errorchecks == 1          %%if fine check
-         data{seq}{n}(1,:,:,:) = data{seq}{n}(1,:,:,:) + o{n}/r.ncopies;          
-         data{seq}{n}(3,:,:,:) = data{seq}{n}(3,:,:,:) + o{n}.^2/r.ncopies;                                 
+         data{seq}{n}(:,1,:) = data{seq}{n}(:,1,:) + f/r.ncopies;          
+         data{seq}{n}(:,3,:) = data{seq}{n}(:,3,:) + f.^2/r.ncopies;                                 
         else                                      %%else coarse calc
-         data{seq}{n}(2,:,:,:) = data{seq}{n}(2,:,:,:) + o{n}/r.ncopies;
+         data{seq}{n}(:,2,:) = data{seq}{n}(:,2,:) + f/r.ncopies;
         end                                       %%end if errorchecks
       end                                         %%end averages loop
     end;                                          %%end sequence loop

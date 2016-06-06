@@ -1,4 +1,4 @@
-function [e] = Planar()                        
+function [e] = Planartest()                        
 %   e  =  PLANAR() tests xSPDE for a linear stochastic PDE
 %   Tests a three-dimensional partial stochastic differential equation for:
 %   (1) Inputting the ranges in three dimensions
@@ -12,11 +12,12 @@ function [e] = Planar()
 in.name =       'Planar noise growth';         %%name for simulation
 in.dimension =  3;                             %%dimension: 1-4 = t,x,y,z
 in.fields =     2;                             %%field components
+in.points =     [10,20,20];                             %%field components
 in.ranges =     [1,5,5];                       %%ranges: t,x,y,z  
 in.steps =      2;                             %%steps per plotted point
 in.step  =      @xMP;
 in.noises =     [2,2];                         %%xnoises, knoises per point
-in.ensembles =  [10,2,1];                      %%samples,ensembles,parallel
+in.ensembles =  [10,1,1];                      %%samples,ensembles,parallel
 in.initial =    @Initial;                      %%Initialisation  handle
 in.da  =        @D_planar;                     %%Derivative  handle
 in.linear =     @Linear;                       %%Derivative  handle
@@ -31,6 +32,7 @@ in.compare{1} = @(t,in) [1+t]*in.nspace;
 in.compare{2} = @(t,in) [1+t]*in.nspace;
 in.compare{3} = @(t,in) 0*t;
 in.pdimension = {1,1,1,1};                     %%maximum plot dimension
+in.print =2;
 e  =  xspde(in);                               %%Stochasic program
 end                                            %%end of main function
 

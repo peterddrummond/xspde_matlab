@@ -1,6 +1,6 @@
 function a  =  xRK2(a,xi,r)        
 %   a = XRK2(a,xi,dt,r)  propagates a step with second-order Runge-Kutta.   
-%   Input: field a, lattice r, noise xi.
+%   Input: field a, noise xi, parameters r.
 %   Output: new field a. 
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License 
 

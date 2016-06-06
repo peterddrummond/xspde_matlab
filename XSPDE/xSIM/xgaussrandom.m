@@ -1,5 +1,5 @@
-function v = xrandomgauss(r)
-%   v = XRANDOMGAUSS(r) generates random gaussian matrix v
+function v = xgaussrandom(r)
+%   v = XGAUSSRANDOM(r) generates a gaussian random matrix v
 %   Input 'r' structure includes lattice dimensions
 %   Generates [randoms(1),nlattice] x-delta-correlated fields
 %   Generates [randoms(2),nlattice] filtered k-delta-correlated fields
@@ -10,7 +10,7 @@ if r.randoms(2) >0                                    %%Check if k-randoms
      kv = r.s.dk*randn(r.randoms(2),r.nlattice);      %%generate k-randoms
      kv = kv.*r.infilt;                               %%filter k-randoms 
      kv = reshape(kv,[r.randoms(2),r.d.int]);         %%reshape for FFT 
-     for nd = 3:r.dimension+1                         %%loop over dimension
+     for nd = 4:r.dimension+2                         %%loop over dimension
          kv = ifft(kv,[],nd);                         %%inverse FFT
      end                                              %%end dimension loop  
      kv = reshape(kv,r.randoms(2),r.nlattice);        %%reshape for XSPDE

@@ -1,18 +1,8 @@
-Changes that are included in xSPDE1.1
+Changes that are included in xSPDE1.2
 
-This is a major redesign of the graphics code, to allow more flexibility in slicing, plotting and replotting multidimensional data.
+This is a bug-fix release, which also includes a more consistent, unified model of data structures. All data has either explicit or implicit order of component, errors, dimension, including raw data and graphed averages. Different components are lines for graphing. Derivative arrays now have the same notation as coordinates, r.Dx or r.D{1}. 
 
-(1) For stand-alone use, xgraph is in a separate folder and subdivided into distinct function files.
-
-(2) Graphs can be made of functions, `in.functions{n}', whose default value is the n-th average obtained from the simulation data. In general, any function of averages is permitted. There is a another function 'in.xfunctions{n}{nd}' allowing any axis transformation. A combined cell array of axis labels for each graph,'in.glabels{n}{nd}' allows any graphed function to have any axis label. For backward compatibility, the global labels 'in.xlabels{nd}', 'in.klabels{nd}' are allowed.
-
-(3) An input ‘in.axes{n}{k}’ is available for each graphics function. For each graph function {n}, this has d components, one for each axis. If axes{n}{k}= 0, all of axis k is plotted. If axes{n}{k} = -1, gives the middle point for space axes or the last point for the time axis. If axes{n}{k} = a:b, plots the range of a:b, while if axes{n}{k} = a:b:c uses steps of b, for the k-th axis.
-
-(4) Order of inputs to xgraph is reversed with data first. A new input, in.averages, gives the largest number of averages that will be returned. 
-
-(5) Improvements are made to xgraph so that any new parameter inputs over-ride previous file inputs of graphics parameters. The previous inputs are in turn preferred over the graphics default values. 
-
-(6) Average data is now stored in a nested cell array of form data{seq}{graph}(error,np,nspace)
+Note that arbitrary functions of averaged variables can be taken either during simulation, or else while graphing data. The first option has the advantage that accurate error bars are obtained.
  
 
  

@@ -4,7 +4,9 @@ function a  =  xMP(a,xi,r)
 %   Output: new field a. 
 %   All xSPDE functions are licensed by Peter D. Drummond, (2015) - see License.txt 
 
-a = r.prop(a,r);
+if ~isequal(r.propagator,1)
+    a = r.prop(a,r);
+end
 r.t = r.t + .5*r.dtr;                         %%Increment current time
 amid = a;                                     %%Initialize iteration
 for iter=1:r.iterations                       %%Midpoint iteration loop   
@@ -13,5 +15,7 @@ for iter=1:r.iterations                       %%Midpoint iteration loop
      a = amid + 0.5*d1;                       %%midpoint fields                     
 end                                           %%End iteration loop
 a = amid + d1;                                %%initial plus  derivative
-a = r.prop(a,r);                              %%Propagate midpoint field
+if ~isequal(r.propagator,1)
+    a = r.prop(a,r);
+end
 end                                           %%end function

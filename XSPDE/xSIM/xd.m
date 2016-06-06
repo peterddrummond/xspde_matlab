@@ -15,13 +15,13 @@ else
 end
 ac =reshape(ac,r.d.int);                     %%reshape to array 
     for nd = 2:r.dimension                   %%loop over dimension
-        ac = fft(ac,[],nd);                  %%take Fourier transform
+        ac = fft(ac,[],nd+1);                  %%take Fourier transform
     end                                      %%end loop over dimension
     ac = reshape(ac, [1,r.nlattice]);
     ac = D.*ac;                              %%derivative in Fourier space
     ac =reshape(ac,r.d.int);                 %%reshape to array 
     for nd =  2:r.dimension                  %%loop over dimension
-        ac = ifft(ac,[],nd);                 %%inverse Fourier transform
+        ac = ifft(ac,[],nd+1);                 %%inverse Fourier transform
     end                                      %%end loop over dimension
     d = reshape(ac, [1,r.nlattice]);         %%reshape to matrix
 end                                          %%end xd function
