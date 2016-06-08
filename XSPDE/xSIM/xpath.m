@@ -44,6 +44,7 @@ for np = 1:r.points(1);                        %%loop until time tmax
   if r.raw||r.transformw                       %%do fields need storing?
         a = reshape(a,r.d.fields);
         raw(:,:,np,:) = a(:,:,1,:);
+        a = reshape(a,r.d.a);                  %%reshape fields
   end                                          %%end if store data
   for n = 1:r.averages
      if r.transforms{n}(1) == 0                %%if frequency switch off
