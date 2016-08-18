@@ -6,7 +6,7 @@ function in = xpreferences (in)
   
 %%Unconditional  preference list - can be changed if required
 
-    in.version =    xprefer(in,'version',0,'xSIM1.2');
+    in.version =    xprefer(in,'version',0,'xSIM1.22');
     in.name =       xprefer(in,'name',0,'');
     in.dimension =  xprefer(in,'dimension',1,1);
     in.fields =     xprefer(in,'fields',1,1);
@@ -27,13 +27,19 @@ function in = xpreferences (in)
     in.print =      xprefer(in,'print',1,1);
     in.raw   =      xprefer(in,'raw',1,0);
     in.numberaxis = xprefer(in,'numberaxis',1,0);
+    in.structD =    xprefer(in,'structD',1,0);
+%    in.structD =    xprefer(in,'structD',1,1);    %%Structure derivative
     in.errors =     3;                            %%Number of error fields
     
 %%Function  preference list - can be changed if required
 
     in.initial =    xprefer(in,'initial',0,@xinitial);
     in.transfer =   xprefer(in,'transfer',0,@xtransfer);
-    in.linear=      xprefer(in,'linear',0,@xlinear);
+    if in.structD 
+        in.linear=      xprefer(in,'linear',0,@xStructlinear);%%Deprecated
+    else 
+        in.linear=      xprefer(in,'linear',0,@xlinear);
+    end
     in.noisegen =   xprefer(in,'noisegen',0,@xgaussnoise);
     in.randomgen =  xprefer(in,'randomgen',0,@xgaussrandom);
     in.nfilter =    xprefer(in,'nfilter',0,@xnfilter);
@@ -118,9 +124,15 @@ function da = xda(~,~,r)                     %% Default derivative
     da = zeros(r.d.a);                       %% set fields to zero
 end
 
-function L = xlinear(~,r)                    %% Default linear filter
+function L = xlinear(r)                      %% Default linear filter
     L = zeros(r.d.a);                        %% Default is zero response
 end
+
+function L = xStructlinear(D,r)              %% Old-style linear filter
+    L = zeros(r.d.a);                        %% Default is zero response
+end
+
+
 
 function Kn = xnfilter(r)                    %% Default stochastic filters
     Kn = ones(r.noises(2),r.nlattice);       %% Default noise filter

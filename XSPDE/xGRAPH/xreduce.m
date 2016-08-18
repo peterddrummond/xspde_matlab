@@ -18,7 +18,7 @@ function [datan,np,x,xlab] =  xreduce(n,datan,g)
     %Loop over dimension to find data axes to plot
     
     for nd = 1:dimension                       %%Loop over dimension
-        datan = reshape(datan,np);             %%reshape data to np
+        datan = reshape(datan,np);             %%reshape data 
         if g.transforms{n}(nd)                 %%If transform switch
             x{nd} =  fftshift(g.kc{nd});       %%get graphics k coords
             datan = fftshift(datan,nd+2);      %%shift data k coords        

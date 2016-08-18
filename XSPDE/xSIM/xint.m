@@ -1,10 +1,10 @@
 function o  =  xint(o,varargin)                 
 %   a  =  XINT(o,[dx,] r) integrates an input observable over a lattice. 
 %   Input:  one component  variable 'o', measure `dx', lattice 'r'.
-%   Note 'o' and 'dx' should have total dimension equal to r.dimension
+%   Note 'dx' should have total dimension equal to r.dimension
 %   Output: space integral of 'o' returned in all lattice points.
 %   Integrates only in directions where `dx(i)' > 0.
-%   First observable dimension is for ensembles, and is not integrated.
+%   Second dimension is for ensembles, and is not integrated.
 %   If no dx is present, in.dx is assumed to apply, integrates all space.
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
@@ -18,16 +18,18 @@ switch nargin                                %% checks for arguments
     otherwise                                %% throw an error message
         error ('xSPDE error: xint requires 2 or 3 input arguments.')
 end                                          %% end checks for arguments
-maxind = min(r.dimension,length(dx));        %% get maximum dimension
-inputsize = size(o);                         %% input size 
-o = reshape(o,r.d.int);                      %% unflatten lattice 
-%xintsize = size(o)
+sz = size(o);                                %%get original size to return
+if (length(sz) == 2)                         %%Standard matrix input
+        o = reshape(o,[sz(1),r.d.int]);      %%Unflatten lattice
+end
+maxind = min(length(o)-2,length(dx));        %% get maximum dimension
+sizeo = size(o);
 for i = 2:maxind                             %% loop over space dimension 
     if dx(i)>0                               %% is i-th integration needed? 
-        index = ones(1,r.dimension+1);       %% set index to ones 
-        index(i+1) = r.d.int(i+1);           %% set i-th index to size
-        o =repmat(sum(o,i+1)*dx(i),index);   %% integrate and repeat
+        index = ones(1,length(o));           %% Initialize index vector
+        index(i+2) = sizeo(i+2);             %% Set index to dimension size
+        o =repmat (sum(o,i+2)*dx(i),index);  %% Repeat mean over lattice 
     end                                      %% end i-th integration
 end                                          %% end loop to max dimension 
-o  = reshape(o,inputsize);                   %Flatten lattice 
+o  = reshape(o,sz);                          %restore original dimension
 end                                          %%end function

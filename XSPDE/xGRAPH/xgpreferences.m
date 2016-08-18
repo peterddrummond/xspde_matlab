@@ -34,14 +34,14 @@ for s = 1:sequence                               %%loop over sequence
                   %% Set the graphics default parameters
                        
   if in.numberaxis || in.dimension > 4
-      xlabels={'t','x_1','x_2','x_3','x_4','x_5','x_6','x_7','x_8'};
-      klabels={'\omega','k_1','k_2','k_3','k_4','k_5','k_6','k_7','k_8'};
+      xlabels={'x_1','x_2','x_3','x_4','x_5','x_6','x_7','x_8','x_9'};
+      klabels={'k_1','k_2','k_3','k_4','k_5','k_6','k_7','k_8','k_9'};
   else
       xlabels={'t','x','y','z'};
       klabels={'\omega','k_x','k_y','k_z'};
   end
   
-  in.gversion =   xprefer(in,'gversion',0,'xGRAPH1.2');
+  in.gversion =   xprefer(in,'gversion',0,'xGRAPH1.22');
   in.graphs =     xprefer(in,'graphs',1,in.functions);
   in.transforms = xcprefer(in,'transforms',in.graphs,{zeros(1,in.dimension)});
   in.axes =       xcprefer(in,'axes',in.graphs,{num2cell(zeros(1,in.dimension))});

@@ -30,8 +30,8 @@ function r = xlattice(r)
     if (r.noises(2)+r.randoms(2)) > 0               %%if k-noise required
       Kr =  r.rfilter(r);                           %%get k random filters
       Kn =  r.nfilter(r);                           %%get k noise filters
-      r.infilt = reshape(Kr,[r.randoms(2),r.nlattice]); %%reshape input filter
-      r.noisefilt = reshape(Kn,[r.noises(2),r.nlattice]);%%reshape filter
+      r.infilt = reshape(Kr,[r.randoms(2),r.d.int]); %%reshape input filter
+      r.noisefilt = reshape(Kn,[r.noises(2),r.d.int]);%%reshape filter
     end                                             %%end if k-noise 
   end                                               %% End check dimension
   a = zeros(r.d.a);
@@ -39,15 +39,19 @@ function r = xlattice(r)
   av = cell(1,r.averages);
   for n = 1:r.averages                              %%Loop  over averages
       so = size(r.observe{n}(a,r));                 %%Size of observe data
-      ns = prod(so)/(so(1)*r.ensembles(1));
-      r.d.obs{n} = [so(1),r.ensembles(1),1,ns];
-      r.d.av{n}  = [so(1),1,r.points(1),ns];          %%Size of averaged data
+      if length(so) == 2 
+            ns = so(2)/r.ensembles(1);
+      else
+            ns =  prod(so(3:end));
+      end 
+      r.d.obs{n} = [so(1),r.ensembles(1),1,ns];     %%Size of observed data
+      r.d.av{n}  = [so(1),1,r.points(1),ns];        %%Size of averaged data
       av{n} = zeros([so(1),1,r.points(1)*ns]);
   end
   for n=1:r.functions
-      sf = size(r.function{n}(av,r));              %%Size of function data
+      sf = size(r.function{n}(av,r));               %%Size of function data
       if numel(sf) == 3 &&  sf(3) == r.npoints
-               sf =[sf(1),r.points];               %%Expand function size
+               sf =[sf(1),r.points];                %%Expand function size
       end
       npoints      = prod(sf(2:end));
       r.d.sf{n}    = [sf(1),1,npoints];

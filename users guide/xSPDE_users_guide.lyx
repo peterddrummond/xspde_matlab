@@ -60,7 +60,7 @@
 \quotes_language english
 \papercolumns 1
 \papersides 1
-\paperpagestyle headings
+\paperpagestyle fancy
 \tracking_changes false
 \output_changes false
 \html_math_output 0
@@ -71,7 +71,7 @@
 \begin_body
 
 \begin_layout Title
-xSPDE user's guide
+xSPDE user's guide: v1.22
 \end_layout
 
 \begin_layout Author
@@ -80,6 +80,8 @@ Peter D.
 \end_layout
 
 \begin_layout Address
+
+\series bold
 Centre for Quantum and Optical Science, Swinburne University of Technology,
  Melbourne, Victoria, Australia.
 \end_layout
@@ -105,35 +107,48 @@ name "chap:Introduction"
 \end_layout
 
 \begin_layout Standard
-The xSPDE software is an e
+The xSPDE software toolbox is an e
 \series bold
 x
 \series default
 tensible 
 \series bold
-s
+S
 \series default
 tochastic 
 \series bold
-p
+P
 \series default
 artial 
 \series bold
-d
+D
 \series default
 ifferential 
 \series bold
-e
+E
 \series default
 quation solver.
- It can solve any number of simultaneous stochastic partial differential
- equations in any number of space dimensions, with averaging and graphical
- output.
- This xSPDE user's guide can be used as the basis for a 3-4 hour self-taught
- tutorial in using xSPDE for solving practical stochastic problems.
+ It can solve any number of simultaneous equations in any number of space
+ dimensions, with averaging and graphical output.
+ This user's guide can be used as the basis for a 3-4 hour self-taught tutorial
+ in solving practical stochastic problems.
  It includes exercises for the reader.
  A full-length manual is available online.
+ Research use of this software is encouraged, and should be referenced to
+ the corresponding paper
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kiesewetter"
+
+\end_inset
+
+.
+ See:
+\emph on
  
+\series bold
+\emph default
+www.github.com/peterddrummond/xspde_matlab.
 \end_layout
 
 \begin_layout Section
@@ -194,7 +209,7 @@ Stochastic partial differential equations including space dependence are
  also numerically soluble 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "DrummondMortimer,K=00003D00003D000026P"
+key "DrummondMortimer,KP"
 
 \end_inset
 
@@ -219,9 +234,11 @@ xSPDE is a Matlab based software toolbox.
 ial stochastic equations, and graph results of correlations and averages.
  There are many equations of this type, and the xSPDE toolbox can treat
  a wide range.
- The general structure permits drop-in replacements of the functions provided.
+ The extensible general structure permits drop-in replacements of the functions
+ provided.
  Different simulations can be carried out sequentially, to simulate the
  various stages in an experiment or other process.
+ It can even be used with no noise.
 \end_layout
 
 \begin_layout Standard
@@ -238,15 +255,6 @@ The code supports parallelism at both the vector instruction level and at
 \emph on
 xSPDE is distributed without any guarantee, under the MIT open-source license.
  Contributions and bug reports always welcome.
-\end_layout
-
-\begin_layout Standard
-See:
-\emph on
- 
-\series bold
-\emph default
-www.github.com/peterddrummond/xspde_matlab.
 \end_layout
 
 \begin_layout Chapter
@@ -357,7 +365,7 @@ The notation
 \begin_inset Formula $\mathtt{in.da=}\mathtt{@(a,w,r)}\,\,[derivative]=$
 \end_inset
 
- defines an inline function, namely 
+ defines an inline function, 
 \begin_inset Formula $da/dt$
 \end_inset
 
@@ -410,21 +418,24 @@ Inputs
 \begin_layout Standard
 All xSPDE simulations use a structure 
 \emph on
-in.
-
+in
 \emph default
- for parameters.
- All xSPDE functions use a structure 
-\begin_inset Formula $r.$
+ for input data.
+ All functions use an internally generated structure 
+\begin_inset Formula $r$
 \end_inset
 
- that combines inputs and generated parameters.
+, combining 
+\begin_inset Formula $in$
+\end_inset
+
+ with other generated parameters.
  Any name will do for either structure, as long as you are consistent.
  
 \end_layout
 
 \begin_layout Standard
-All inputs have default values, which can be changed by typing parameters
+All xSPDE inputs have default values, which can be changed by typing parameters
  into the 
 \emph on
 in
@@ -440,6 +451,10 @@ Common xSPDE inputs
 
 \begin_layout Standard
 The most common xSPDE parameters are: 
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -561,9 +576,10 @@ integer
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
 
-\emph on
-1 
+
 \end_layout
 
 \end_inset
@@ -603,7 +619,10 @@ integer
 \begin_inset Text
 
 \begin_layout Plain Layout
-1 
+\begin_inset Formula $1$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -689,7 +708,7 @@ string
 \begin_layout Plain Layout
 
 \emph on
-'a_1'
+'a'
 \end_layout
 
 \end_inset
@@ -859,7 +878,7 @@ function
 \begin_layout Plain Layout
 
 \emph on
-a(1,:)
+a
 \end_layout
 
 \end_inset
@@ -981,7 +1000,10 @@ integer vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-1 
+\begin_inset Formula $1$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1132,6 +1154,10 @@ Output Fourier transforms in [t,x,y,z]
 </row>
 </lyxtabular>
 
+\end_inset
+
+
+\begin_inset Newline newline
 \end_inset
 
 
@@ -2019,7 +2045,7 @@ Change the equation to the laser noise equations.
 \end_layout
 
 \begin_layout Section
-Ito and Stratonovich equations
+Ito and Stratonovich
 \end_layout
 
 \begin_layout Standard
@@ -2033,6 +2059,12 @@ key "Gardiner"
 , which are the broad-band limit of a finite band-width random noise equation.
  Another type of of stochastic equation is the Ito form, which is a limit
  where derivatives are evaluated at the start of each step.
+ If you have an Ito equation, you can either use the Euler integration option,
+ and set 
+\begin_inset Formula $in.step=xEuler$
+\end_inset
+
+, or else apply the Stratonovich correction to the drift, as outlined below.
  
 \end_layout
 
@@ -2059,6 +2091,11 @@ Here
 
 \begin_layout Standard
 When 
+\begin_inset Formula $\bm{\mathsf{B}}$
+\end_inset
+
+ is constant, the two methods are identical.
+ If 
 \begin_inset Formula $\bm{\mathsf{B}}$
 \end_inset
 
@@ -2104,7 +2141,8 @@ where
 \end_layout
 
 \begin_layout Standard
-The corresponding Stratonovich equation, as used in xSPDE is: 
+The corresponding Stratonovich equation, as used in xSPDE for the standard
+ default integration routine is: 
 \begin_inset Formula 
 \begin{equation}
 \dot{a}=\left(\mu-\sigma^{2}/2\right)a+a\sigma w(t).
@@ -2521,7 +2559,7 @@ To create a data file, you must enter the filename when running the simulation,
 \end_inset
 
  input.
- A typical xSPDE project function of tyhis type is as follows:
+ A typical xSPDE project function of this type is as follows:
 \end_layout
 
 \begin_layout Standard
@@ -2958,7 +2996,7 @@ Since tunneling is random, for real experimental comparisons, one would
 \end_layout
 
 \begin_layout Chapter
-Stochastic partial differential equations
+Stochastic PDEs
 \begin_inset CommandInset label
 LatexCommand label
 name "chap:Stochastic-partial-differential"
@@ -2969,8 +3007,11 @@ name "chap:Stochastic-partial-differential"
 \end_layout
 
 \begin_layout Standard
-A stochastic partial differential equation for a complex vector field is
- defined in both time 
+A stochastic partial differential equation or 
+\begin_inset Formula $SPDE$
+\end_inset
+
+ for a complex vector field is defined in both time 
 \begin_inset Formula $t$
 \end_inset
 
@@ -3007,8 +3048,13 @@ A stochastic partial differential equation for a complex vector field is
 \begin_inset Formula $d$
 \end_inset
 
- in xSPDE is arbitrary, and includes both time and space.
- The general equation solved can be written in differential form as
+ in xSPDE is unlimited, and includes time and space.
+ Large 
+\begin_inset Formula $d$
+\end_inset
+
+ is memory-intensive and slow! The general equation solved can be written
+ in differential form as
 \end_layout
 
 \begin_layout Standard
@@ -3117,7 +3163,7 @@ where
 \end_layout
 
 \begin_layout Standard
-The following new ideas are introduced for htis problem: 
+The following new ideas are introduced for this problem: 
 \end_layout
 
 \begin_layout Enumerate
@@ -3811,10 +3857,62 @@ Here, the noise is delta-correlated, and
 \end_layout
 
 \begin_layout Standard
-In the simulations, two planar noise fields are propagated, one using noise
- generated in position space, the other with noise generated in momentum
- space.
- This allows use of finite correlation lengths when needed.
+In the simulations, two planar noise fields are propagated, one using delta-corr
+elated noise, the other with noise transformed to momentum space to allow
+ filtering.
+ This allows use of finite correlation lengths when needed, by including
+ a frequency filter function that is used to multiply the noise in Fourier-space.
+ The Fourier-space noise variance is the square of the filter function.
+ 
+\end_layout
+
+\begin_layout Standard
+The first noise index, 
+\begin_inset Formula $in.noises(1)$
+\end_inset
+
+, indicates how many noise fields are generated, while 
+\begin_inset Formula $in.noises(2)$
+\end_inset
+
+ indicates how many of these are spatially correlated, via fourier-transform,
+ filter and inverse fourier transform.
+ These appear to the user as additional noises, so the total is 
+\begin_inset Formula $in.noises(1)+in.noises(2)$
+\end_inset
+
+.
+ The filtered noises have a finite correlation length.
+ They are correlated with the first 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $in.noises(1)$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ x-space noises they are generated from, as this can be useful.
+ 
 \end_layout
 
 \begin_layout Subsection*
@@ -3881,7 +3979,7 @@ in.steps = 2;
 \begin_layout Plain Layout
 
 \family typewriter
-in.noises = [2,2]; 
+in.noises = [4,2]; 
 \end_layout
 
 \begin_layout Plain Layout
@@ -3961,7 +4059,7 @@ function a0 = Initial(v,r)
 \begin_layout Plain Layout
 
 \family typewriter
-a0(1,:) = (v(1,:)+1i*v(2,:))/sqrt(2); 
+a0(1,:) = (v(5,:)+1i*v(6,:))/sqrt(2); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -3993,7 +4091,7 @@ function da = Da(a,z,r)
 \begin_layout Plain Layout
 
 \family typewriter
-da(1,:) = (z(1,:)+1i*z(2,:))/sqrt(2); 
+da(1,:) = (z(5,:)+1i*z(6,:))/sqrt(2); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -4593,11 +4691,17 @@ xRK4,
 for Euler and Runge-Kutta integration methods.
  This can be user-modified by initializing the handle in.step to add a new
  integration function.
- The default is robust and widely applicable: 
+ The default is 
+\begin_inset Formula $\mathbf{xRK4}$
+\end_inset
+
+, which is widely applicable.
+ Another good option is
 \begin_inset Formula $\mathbf{xMP}$
 \end_inset
 
- uses a midpoint or central-difference technique in the interaction picture.
+, which uses a midpoint or central-difference technique in the interaction
+ picture.
 \end_layout
 
 \begin_layout Description
@@ -4703,61 +4807,149 @@ Data arrays
 
 \begin_layout Standard
 All calculated data, including fields, observables and graphics results,
- is stored in Matlab arrays of rank 
+ is stored in arrays of implicit or explicit rank 
 \begin_inset Formula $2+dimension$
 \end_inset
 
 .
- The first index is a field index, the second a statistics index, and the
- remaining indices are for time and space.
- The total space-time dimension is unlimited.
- When the fields are integrated by the xSPDE integration functions, they
- are flattened to a matrix, with first index describing the field index,
- and the the second index covering all the rest.
+ The first index is a field index (
+\begin_inset Formula $i$
+\end_inset
+
+), the second a statistics/errors index (
+\begin_inset Formula $j$
+\end_inset
+
+), while the remaining indices 
+\begin_inset Formula $k\equiv k_{1},\ldots k_{D}\equiv k_{1},\bm{k}$
+\end_inset
+
+ are for time and space.
+ The space-time dimension 
+\begin_inset Formula $D$
+\end_inset
+
+ is unlimited.
+ When the fields, noises or coordinates are integrated by the xSPDE integration
+ functions, they are flattened to a matrix.
+ The first index is the field index, and the combined second index covers
+ all the rest.
+ 
 \end_layout
 
 \begin_layout Standard
-There are several different types of data arrays used.
+There are several different types of arrays used.
  These are as follows:
 \end_layout
 
 \begin_layout Itemize
-Field arrays - these have a statistics index of up 
-\begin_inset Formula $ensembles(1)$
+Field arrays 
+\begin_inset Formula $a(i,j,1,\bm{k})$
+\end_inset
+
+ - these have a statistics index of up to 
+\begin_inset Formula $j=ensembles(1)$
 \end_inset
 
 , but just a single present time-point for efficiency.
 \end_layout
 
 \begin_layout Itemize
-Raw arrays - like fields, but with all time points stored.
- Used optionally, but take up large amounts of memory.
+Random and noise arrays 
+\begin_inset Formula $w(i,j,1,\bm{k})$
+\end_inset
+
+ - these are like field arrays, except that they contain random numbers
+ for the stochastic equations.
 \end_layout
 
 \begin_layout Itemize
-Data arrays - these store the averages, or arbitrary functions of averages,
- with a statistics index of up to 3, to store error data, and all time points.
+Coordinate arrays 
+\begin_inset Formula $x\{l\}(1,j,1,\bm{k})$
+\end_inset
+
+- these store the values of coordinates at grid-points, depending on the
+ axis label 
+\begin_inset Formula $l=2,\ldots D$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
-Graphics arrays - these store the data that is plotted, and can include
- further functional transformations if required.
+Raw arrays 
+\begin_inset Formula $r\{e,s\}(i,j,k)$
+\end_inset
+
+ - like fields, but with all points stored.
+ Use with care, as they take up large amounts of memory.
+ Note that when output or saved, these have additional cell indices 
+\begin_inset Formula $e=1,2$
+\end_inset
+
+ for the error-checking time-step and 
+\begin_inset Formula $s=1,\ldots S$
+\end_inset
+
+ for the sequence number.
 \end_layout
 
 \begin_layout Itemize
-Coordinate arrays - these store the values of coordinates at grid-points.
+Data arrays 
+\begin_inset Formula $d\{n\}(i,j,k)$
+\end_inset
+
+ - these store the averages, or arbitrary functions of them, with a statistics
+ index 
+\begin_inset Formula $j=1,2,3$
+\end_inset
+
+, to store error data at all time points.
 \end_layout
 
 \begin_layout Itemize
-Random and noise arrays - these are like field arrays, except that they
- contain random numbers for the stochastic equations.
+Graphics arrays 
+\begin_inset Formula $g\{n\}(i,j,k)$
+\end_inset
+
+ - these store the data that is plotted, and can include further functional
+ transformations if required.
 \end_layout
 
 \begin_layout Standard
-The field index in a graphics and data array is intended to describe different
- lines on a graph.
+The field index 
+\begin_inset Formula $i$
+\end_inset
+
+ in a graphics or data array is intended to describe different lines on
+ a graph.
+ There can be quite different first dimensions between fields, noises and
+ output data, as they are specified using different input parameters.
+ If only a single output graph is wanted, the 
+\begin_inset Formula $observe$
+\end_inset
+
+ cell index is not needed.
+\end_layout
+
+\begin_layout Standard
+Outputs have an extra high-level cell index 
+\begin_inset Formula $\{n\}$
+\end_inset
+
+ called the graph or function index.
+ This corresponds to the index 
+\begin_inset Formula $\{n\}$
+\end_inset
+
+ of the observe function used to generate averages.
  One can have several data arrays in a larger cell arrays to make a number
- of distinct output graphs, each with multiple averages.
+ of distinct output graphs labelled 
+\begin_inset Formula $n$
+\end_inset
+
+, each with multiple averages.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -4765,7 +4957,7 @@ Step-size errors
 \end_layout
 
 \begin_layout Standard
-Errors caused by the finite time-domain stepsize, as well as those caused
+Errors caused by the finite time-domain step-size, as well as those caused
  by the finite ensemble, are checked automatically.
  Those caused by the spatial lattice are not checked in the xSIM code.
  They must be checked by manually, by comparing results with different transvers
@@ -4930,7 +5122,7 @@ which increases the trajectories in a single thread.
 \begin_layout Section
 Graphics function, 
 \emph on
-xGRAPH
+xgraph
 \end_layout
 
 \begin_layout Standard
@@ -5009,7 +5201,7 @@ An arbitrary number of functions of these observables can also be plotted,
 \series bold
 in.compare
 \series default
- handle, giving a dashed line on the generated timedomain graphs, and an
+ handle, giving a dashed line on the generated time-domain graphs, and an
  error summary which is printed.
  
 \end_layout
@@ -5278,7 +5470,7 @@ Note that error bars and sampling errors are only graphed for 2D plots,
 \end_layout
 
 \begin_layout Section
-Object architecture and user hints
+Object architecture
 \end_layout
 
 \begin_layout Subsection
@@ -5288,7 +5480,7 @@ xSPDE data objects
 \begin_layout Standard
 The xSPDE data objects include parameters and methods, but with a very open
  type of object-oriented architecture to allow extensibility.
- All xSPDE functions are modular and easily replacable.
+ All xSPDE functions are modular and easily replaceable.
  In many cases this is as easy as just defining a new function handle to
  replace the default value.
  To define your own integration function, include in the xSPDE input the
@@ -5414,7 +5606,7 @@ A full list of functionality is listed next.
 \end_layout
 
 \begin_layout Chapter
-Table of xSPDE metadata
+xSPDE metadata
 \begin_inset CommandInset label
 LatexCommand label
 name "chap:Table-of-xSPDE"
@@ -5521,11 +5713,7 @@ New function definitions can be handles pointing elsewhere.
 \end_layout
 
 \begin_layout Section
-Simulation data: the 
-\emph on
-in
-\emph default
- structure
+Simulation data
 \end_layout
 
 \begin_layout Standard
@@ -5553,13 +5741,21 @@ A...' are always available to users of xSPDE.
 not
 \series default
  recommended, as it is incompatible with the Matlab parallel toolbox.
- All simulation data has default values as distributed, which are also user-modi
-fiable through the
+ 
+\end_layout
+
+\begin_layout Subsection
+Simulation parameters
+\end_layout
+
+\begin_layout Standard
+All simulation data has default values as distributed, which are also user-modif
+iable through the
 \emph on
  xpreferences
 \emph default
  function.
- Any new defaults can be checked by typing 
+ Any defaults can be checked by typing 
 \begin_inset Formula $in.print=2$
 \end_inset
 
@@ -5573,10 +5769,10 @@ xspde(in).
 
 \emph default
  
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout Subsection
-Simulation parameters
+
 \end_layout
 
 \begin_layout Standard
@@ -5635,7 +5831,7 @@ version
 \begin_layout Plain Layout
 
 \emph on
-'xSIM1.2'
+'xSIM1.22'
 \emph default
  
 \end_layout
@@ -6553,6 +6749,10 @@ Common functions
 \begin_layout Standard
 The most common functions, output field dimensions and calling arguments,
  with user-definable functions marked using an asterisk, are:
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6793,7 +6993,7 @@ Noise filter function in k-space
 \begin_inset Text
 
 \begin_layout Plain Layout
-Initializion in a sequence
+Initialization in a sequence
 \end_layout
 
 \end_inset
@@ -7199,11 +7399,7 @@ Takes a spatial derivative
 \end_layout
 
 \begin_layout Section
-Internal data: the 
-\emph on
-r
-\emph default
- structure
+Internal data
 \end_layout
 
 \begin_layout Standard
@@ -7211,7 +7407,7 @@ Internally, xSPDE data is stored in a cell array,
 \begin_inset Formula $latt$
 \end_inset
 
-, of the structures 
+, of the structures called 
 \begin_inset Formula $r$
 \end_inset
 
@@ -7224,7 +7420,7 @@ Internally, xSPDE data is stored in a cell array,
  In addition, it includes the computed parameters given below, which includes
  various internal array dimensions.
  The stochastic variable arrays like 
-\begin_inset Formula $a,v,w$
+\begin_inset Formula $a,w,v$
 \end_inset
 
  are internally flattened to become two-dimensional matrices where possible,
@@ -7283,6 +7479,10 @@ For
 
 .
  The graph labels will use this notation also, unless specified otherwise.
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -8990,11 +9190,7 @@ Dimensions for raw data (flattened)
 \end_layout
 
 \begin_layout Section
-Graphics data: the extended 
-\emph on
-in
-\emph default
- structure
+Graphics data
 \end_layout
 
 \begin_layout Standard
@@ -9007,7 +9203,7 @@ The simulation data of the
 \end_inset
 
  program, along with optional graphics parameters for each observable, to
- create an extended in structure.
+ create an extended graphics data structure.
  
 \end_layout
 
@@ -9023,20 +9219,34 @@ e, so that the graphics parameters can be individually set for each output
  also cell arrays, as there can be any number of axes: so these are all
  nested cell arrays.
  If only a single input is specified, the cell index is automatically supplied.
+ Graphics defaults are also user-modifiable by editing the
+\emph on
+ xgpreferences
+\emph default
+ function.
+ 
 \end_layout
 
 \begin_layout Standard
 The plotted result can be an arbitrary function of the generated average
  data, by using the optional input
 \emph on
- functions.
+ gfunctions.
  
 \emph default
 If this is omitted, the
 \emph on
  
 \emph default
-generated averages are plotted.
+generated average data from 
+\begin_inset Formula $xsim$
+\end_inset
+
+ is plotted.
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -9095,7 +9305,7 @@ gversion
 \begin_layout Plain Layout
 
 \emph on
-'xGRAPH1.2'
+'xGRAPH1.22'
 \emph default
  
 \end_layout
@@ -9606,6 +9816,25 @@ Graph-specific axis labels
 \begin_layout Bibliography
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
+key "Kiesewetter"
+
+\end_inset
+
+S.
+ Kiesewetter, R.
+ Polkinghorne, B.
+ Opanchuk, and P.
+ D.
+ Drummond, 
+\emph on
+xSPDE: extensible software for stochastic equations
+\emph default
+, SoftwareX, March (2016).
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
 key "Gardiner"
 
 \end_inset
@@ -9665,7 +9894,7 @@ Computer simulations of multiplicative stochastic differential equations.
 \begin_layout Bibliography
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
-key "K=00003D00003D000026P"
+key "KP"
 
 \end_inset
 

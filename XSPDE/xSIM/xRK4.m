@@ -1,8 +1,8 @@
 function ao  =  xRK4(a,xi,r)         
 %   a = XRK4(a,xi,r)  propagates a step with fourth-order Runge-Kutta.   
 %   Input: field a, lattice r, noise xi.
-%   Output: new field ao. 
-%   All xSPDE functions are licensed by Peter D. Drummond, (2015) - see License.txt 
+%   Output: new field a. 
+%   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
 if ~isequal(r.propagator,1)
     am = r.prop(a,r);                              %%Initialises midpoint

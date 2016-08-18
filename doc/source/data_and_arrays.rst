@@ -30,6 +30,30 @@ Averaged results are called observables in xSPDE. For each sequence, these are s
 
 If required, ``raw`` ensemble data consisting of all the trajectories ``a`` developing in time can be stored and output. This is memory intensive, and is only done if the :attr:`in.raw` option is set to ``1``.
 
+
+
+In summary, all calculated data, including fields, observables and graphics results, is stored in arrays of implicit or explicit rank (2+d), where d is the space-time dimension given in the input. The first index is a field index (i), the second a statistics/errors index (j), while the remaining indices :math:`k\equiv k_{1},\ldots k_{d}\equiv k_{1},\mathbf{k}` are for time and space. 
+  
+  The space-time dimension d is unlimited. When the fields, noises or coordinates are integrated by the xSPDE integration functions, they are flattened to a matrix. The first index is the field index, and the combined second index covers all the rest. 
+
+There are several different types of arrays used. These are as follows:
+
+• Field arrays,   :math:`a(i,j,1,\mathbf{k})` - these have a statistics index of up to :math:`j=ensembles(1)`, but just a single, i.e., present time-point for efficiency.
+
+• Random and noise arrays,  :math:`w(i,j,1,\mathbf{k})` - these are like field arrays, except that they contain random numbers for the stochastic equations.
+
+• Coordinate arrays :math:`x\{l\}(1,j,1,\mathbf{k})` - these store the values of coordinates at grid-points, depending on the axis label :math:`l=2,\ldots d` .
+
+• Raw arrays,  :math:`r\{e,s\}(i,j,k)` - like fields, but with all points stored. Use with care, as they take up large amounts of memory. Note that when output or saved, these have additional cell indices :math:`e=1,2` for the error-checking time-step and :math:`s=1,\ldots S` for the sequence number.
+
+• Data arrays,  :math:`d\{n\}(i,j,k)` - these store the averages, or arbitrary functions of them, with a statistics index :math:`j=1,2,3`, to store error data at all time points.
+
+• Graphics arrays,  :math:`g\{n\}(i,j,k)`  - these store the data that is plotted, and can include further functional transformations if required.
+
+The field index :math:`i` in a graphics or data array is intended to describe different lines on a graph. There can be quite different first dimensions between fields, noises and output data, as they are specified using different input parameters. If only a single output graph is wanted, the observe  cell index is not needed.
+
+Outputs have an extra high-level cell index :math:`\{n\}` called the graph or function index. This corresponds to the index :math:`\{n\}` of the observe function used to generate averages. One can have several data arrays in a larger cell arrays to make a number of distinct output graphs labelled :math:`n`, each with multiple averages. 
+
 More details of ensembles, grids and the internal lattice are given below. Note that the term ``lattice`` is used to refer to the total internal field storage. This combines the local ensemble and the spatial grid together. 
 
 Ensembles

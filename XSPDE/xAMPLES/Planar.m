@@ -15,13 +15,13 @@ in.fields =     2;                             %%field components
 in.ranges =     [1,5,5];                       %%ranges: t,x,y,z  
 in.steps =      2;                             %%steps per plotted point
 in.step  =      @xMP;
-in.noises =     [2,2];                         %%xnoises, knoises per point
-in.ensembles =  [10,2,1];                      %%samples,ensembles,parallel
+in.noises =     [4,2];                         %%xnoises, knoises per point
+in.ensembles =  [10,10,1];                     %%samples,ensembles,parallel
 in.initial =    @Initial;                      %%Initialisation  handle
 in.da  =        @D_planar;                     %%Derivative  handle
 in.linear =     @Linear;                       %%Derivative  handle
 in.observe{1} = @(a,r) xint(a(1,:).*conj(a(1,:)),r);%%Observe  handle
-in.observe{2} = @(a,r) xint(a(2,:).*conj(a(2,:)),r.dk,r);%%Observe  handle
+in.observe{2} = @(a,r) xint(a(2,:).*conj(a(2,:)),r.dk,r); %%Observe  handle
 in.observe{3} = @(a,r) xave(a(1,:).*conj(a(2,:)),r);%%Observe  handle
 in.transforms = {[0,0,0],[0,1,1],[0,1,1]};
 in.olabels{1} = '<\int|a_1(x)|^2 d^2x>';       %%labels  
@@ -37,18 +37,17 @@ end                                            %%end of main function
 %%XSPDE user functions
 
 function a0 = Initial(w,r)                     %%Initialises fields
-a0(1,:) = (w(1,:)+1i*w(2,:))/sqrt(2);          %%lattice vectors
+a0(1,:) = (w(5,:)+1i*w(6,:))/sqrt(2);          %%lattice vectors
 a0(2,:) = (w(3,:)+1i*w(4,:))/sqrt(2);          %%lattice vectors
 end                                            %%end initialise fields
 
 function da  =  D_planar(a,z,r)                %%Derivatives
-
-da(1,:) = (z(1,:)+1i*z(2,:))/sqrt(2);          %%complex k-noise equation
+da(1,:) = (z(5,:)+1i*z(6,:))/sqrt(2);          %%complex k-noise equation
 da(2,:) = (z(3,:)+1i*z(4,:))/sqrt(2);          %%complex x-noise equation
 end                                            %%end local derivatives
 
-function L = Linear(D,r)                       %%Linear coefficient
-lap = D.x.^2+D.y.^2;                           %%Laplacian
+function L = Linear(r)                         %%Linear coefficient
+lap = r.Dx.^2+r.Dy.^2;                         %%Laplacian
 L(1,:) = 1i*0.5*lap(:);                        %%Linear coefficient(1)
 L(2,:) = 1i*0.5*lap(:);                        %%Linear coefficient(2)
 end                                            %end linear coefficient

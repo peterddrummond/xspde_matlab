@@ -23,13 +23,11 @@ for ns = 1:serial                                 %%loop over ensembles
       %%Loop over the error-checking indices
   
   for  nc  = 1:l{1}.errorchecks                   %%loop over errorchecks
-    if l{1}.seed >= 0                             %%Test if seed is set
-        if l{1}.octave
+    if l{1}.octave
             randn('state',l{1}.seed+nsp)
-        else
+    else
             rng(l{1}.seed+nsp);
-        end                                       %%Set unique random seed
-    end
+    end                                       %%Set unique random seed
     if l{1}.print                                 %%If print switch
         fprintf('Check %d, Ensemble %d\n',nc,nsp);%%print indices
     end;                                          %%end if print switch

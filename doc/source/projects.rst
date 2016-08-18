@@ -285,7 +285,7 @@ Suppose the project has a sequence of two simulations, with input structures of 
 
 ::
 
-    [e,data] = xspde({in1,in2})
+    [e,~,data] = xspde({in1,in2})
 
 To change the file headers, at a later stage, type:
 

@@ -14,7 +14,7 @@ in.dimension =  2;                                      %%dimension: 1-4
 in.axes{1}   =  {0,-1};
 in.initial =    @(w,r)         sech(r.x);               %%Initialisation 
 in.da =         @(a,~,r)       1i*a.*(conj(a).*a);      %%Derivative 
-in.linear =     @(D,r)         0.5*1i*(D.x.^2-1.0);     %%laplacian
+in.linear =     @(r)           0.5*1i*(r.Dx.^2-1.0);    %%laplacian
 in.compare   =  @(t,~) 1+0*t;                           %%Comparison handle
 e =             xspde(in);                              %%main program
 end                                                     %%end of function

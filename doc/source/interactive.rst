@@ -189,7 +189,9 @@ Here :math:`\boldsymbol{a}` is a real or complex vector or vector field. The ini
     \left\langle \zeta_{i}^{x}\left(t,\boldsymbol{x}\right)\zeta_{j}^{x}\left(t,\boldsymbol{x}^\prime\right)\right\rangle  & = \delta\left(\boldsymbol{x}-\boldsymbol{x}^\prime\right)\delta\left(t-t^\prime\right)\delta_{ij}\nonumber \\
     \left\langle \zeta_{i}^{k}\left(t,\boldsymbol{k}\right)\zeta_{j}^{k}\left(t,\boldsymbol{k}^\prime\right)\right\rangle  & = f(\boldsymbol{k})\delta\left(\boldsymbol{k}-\boldsymbol{k}^\prime\right)\delta\left(t-t^\prime\right)\delta_{ij}.\end{split}
 
-Transverse boundary conditions are assumed periodic. The term :math:`\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]` may be omitted if :math:`d=1`, as there are no space dimensions in this case. The momentum filter :math:`f(\boldsymbol{k})` is an arbitrary user-specified function, allowing for spatially correlated noise.
+Note that the x and k noise term for each value of the index are generated from the same underlying stochastic process. This is necessary because there are some equations that require both a filtered and unfiltered noise generated from the same underlying random number distribution. If these correlations are not wanted, and the noises are required to be independent, then different noise indices must be used. 
+
+Transverse boundary conditions are assumed periodic. The term :math:`\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]` may be omitted, as space derivatives can also be treated directly in the derivative function. The momentum filter :math:`f(\boldsymbol{k})` is an arbitrary user-specified function, allowing for spatially correlated noise.
 
 To treat stochastic partial differential equations or SPDEs, the equations are divided into the first two terms, which are essentially an ordinary stochastic equation, and the last term which gives a linear partial differential equation:
 

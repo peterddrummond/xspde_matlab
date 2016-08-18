@@ -114,16 +114,16 @@ Simulation user functions
 
 :attr:`in.observe{n}`
 
-    is the n-th observation function whose output is averaged over the ensembles, called from :func:`xpath`. In general, this returns an array whose first coordinate is the line-number of the n-th graph. The default, :func:`xobserve`, returns the real amplitudes. The return value is averaged over the local ensemble and stored as data, ``d{n}``.
+    is the n-th observation function whose output is averaged over the ensembles, called from :func:`xpath`. In general, this returns an array whose first coordinate is the line-number of the n-th graph. The default, :func:`xobserve`, returns the real amplitudes. The return value is averaged over the local ensemble and stored as data, ``d{n}``. Note that the input of :func:`in.observe{n}` is the complete field array.
     
 :attr:`in.function{n}`
 
-    is used when a graph is needed that is a function of the observed averages. The default value is simply ``d{n}``. This is further averaged over higher ensembles to obtain sampling error estimates.
+    is used when a graph is needed that is a function of the observed averages. The default value is simply ``d{n}``. This is further averaged over higher ensembles to obtain sampling error estimates. Note that the input of :func:`in.function{n}` is the complete data cell array, d, which includes all the averages for all the graphs available.
 
 
 :attr:`in.linear`
 
-    is the linear response, including transverse derivatives in space. The default, :func:`xlinear`, sets this to zero. Derivatives are specified using arrays ``r.Dx``, ``r.Dy``, ``r.Dz``, or for larger dimensions, using numerical lattice labels ``r.D{1}``, ``r.D{2}``, ``r.D{3}``, ``r.D{4}``.
+    is the linear response, including transverse derivatives in space. The default, :func:`xlinear`, sets this to zero. Derivatives are specified using arrays ``r.Dx``, ``r.Dy``, ``r.Dz``, or for larger dimensions, using numerical lattice labels ``r.D{2}``, ``r.D{3}``, ``r.D{4}``, ``r.D{5}``.
 
 :attr:`in.da`
 

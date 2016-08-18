@@ -1266,7 +1266,7 @@ Input parameters
 
     *Default:* :attr:`in.fields`
 
-    This gives the number of stochastic noises generated per lattice point, in coordinate and momentum space respectively. Set to zero (``in.noises = 0``) for no noises. This is the number of *rows* in the noise-vector. Noises can be correlated either in ordinary or momentum spaces. The second input is the dimension of noises in k-space. It can be left out if zero.
+    This gives the number of stochastic noises generated per lattice point, in coordinate and momentum space respectively. Set to zero (``in.noises = 0``) for no noises. This is the number of *rows* in the noise-vector. Noises can be delta-correlated or correlated in space. The second input is the dimension of noises in k-space. It can be left out if zero. This allows use of finite correlation lengths when needed, by including a frequency filter function that is used to multiply the noise in Fourier-space. The Fourier-space noise variance is the square of the filter function. Note that the first noise index, in.noises(1), indicates how many independent noise fields are generated, while in.noises(2) indicates how many of these are are fourier-transformed, filtered and then inverse fourier transformed to give correlations. These appear as extra noises, so the total is in.noises(1)+in.noises(2). The filtered noises have a finite correlation length. They are also correlated with the first in.noises(2) noises they are generated from, as this is sometimes useful. 
 
     ::
 
@@ -1277,7 +1277,7 @@ Input parameters
 
     *Default:* :attr:`in.noises`
 
-    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be correlated either in ordinary or momentum spaces. The second input is the dimension of random fields in momentum space. It can be left out if zero.
+    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be delta-correlated or correlated in space. The second input is the dimension of random fields in momentum space. It can be left out if zero. The Fourier-space random variance is the square of the filter function. Note that the first noise index, in.randoms(1), indicates how many independent random fields are generated, while in.randoms(2) indicates how many of these are are fourier-transformed, filtered and then inverse fourier transformed. These appear as additional random fields, so the total is in.randoms(1)+in.randoms(2). The filtered noises have a finite correlation length. They are correlated with the first in.randoms(2) random fields they are generated from, as this is sometimes useful. 
 
     ::
 

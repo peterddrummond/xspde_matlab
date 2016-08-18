@@ -35,13 +35,13 @@ close all;         %%Deletes all figures if not wanted
 
 Et = toc(t1);      %%Elapsed time of all simulations
 
-fprintf('\n\nxSPDE error scores, expected reults in brackets:\n\n');
-e1 = [84.428414,0.000195,0.012153,0.008502,0.000000,75.918679,10.151231,...
-    0.008131,4.881128,50.560601,0.000009,0.000935,0.237978,0.035262,...
+fprintf('\n\nxSPDE1.22 error scores, expected reults in brackets:\n\n');
+e1 = [84.428414,0.000195,0.012153,0.008502,0.000000,40.745772,10.151231,...
+    0.008131,4.881128,50.560601,0.000007,0.000935,0.237978,0.035262,...
     0.338336,0.000001,0.000001,0.017825,0.000092,0.000123,0.024137];
 for j = 1:21
-    fprintf('xSPDE Batchtest # %d error score  = %f (%f)\n',j,e(j),e1(j));
+    fprintf('Batchtest # %d error score  = %f (%f)\n',j,e(j),e1(j));
 end
-fprintf('\nxSPDE Batchtest total error score = %f (0.391124)\n',prod(e)*10^45);
-fprintf('\nxSPDE Batchtest elapsed time  = %f (<358) seconds\n',Et);
+fprintf('\nxSPDE1.22 Test error score = %f (0.166142)\n',prod(e)*10^45);
+fprintf('\nxSPDE1.22 Test elapsed time  = %f (<~400) seconds\n',Et);
 end

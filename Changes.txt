@@ -1,8 +1,12 @@
-Changes that are included in xSPDE1.2
+Changes that are included in xSPDE1.22
 
-This is a bug-fix release, which also includes a more consistent, unified model of data structures. All data has either explicit or implicit order of component, errors, dimension, including raw data and graphed averages. Different components are lines for graphing. Derivative arrays now have the same notation as coordinates, r.Dx or r.D{1}. 
+This is an updated version of the bug-fix release 1.2, which also includes a more consistent, unified model of data structures. All internal data has either explicit or implicit order of: component, errors, dimension - including raw data and graphed averages. Different components are lines for graphing. Derivative arrays have the same notation as coordinates either r.Dx or r.D{2}. 
 
 Note that arbitrary functions of averaged variables can be taken either during simulation, or else while graphing data. The first option has the advantage that accurate error bars are obtained.
+
+This version also has a more consistent numbering of dimensions when using numbered axes, and implements correlated noise that can be used either with or without k-space filtering.
+
+The improvements are described in the users-guide and reference manual.
  
 
  
