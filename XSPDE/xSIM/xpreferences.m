@@ -6,7 +6,7 @@ function in = xpreferences (in)
   
 %%Unconditional  preference list - can be changed if required
 
-    in.version =    xprefer(in,'version',0,'xSIM1.22');
+    in.version =    xprefer(in,'version',0,'xSIM2.0');
     in.name =       xprefer(in,'name',0,'');
     in.dimension =  xprefer(in,'dimension',1,1);
     in.fields =     xprefer(in,'fields',1,1);
@@ -16,11 +16,13 @@ function in = xpreferences (in)
     in.noises =     xprefer(in,'noises',0,[in.fields,0]);
     in.randoms =    xprefer(in,'randoms',0,in.noises);
     in.ensembles =  xprefer(in,'ensembles',3,[1,1,1]);
+    in.boundaries = xprefer(in,'boundaries',in.dimension,zeros(1,in.dimension));
     in.steps =      xprefer(in,'steps',1,1);
     in.iterations = xprefer(in,'iterations',1,4);
     in.order =      xprefer(in,'order',1,1);
-    in.errorchecks= xprefer(in,'errorchecks',1,2);
-    in.ebar  =      xprefer(in,'ebar',1,in.errorchecks-1);
+    in.checks  =    xprefer(in,'checks',1,[1,zeros(1,in.dimension-1)]);
+    in.errorchecks = sum(in.checks)+1;       %%number of error-check cycles
+    in.ebar  =      xprefer(in,'ebar',1,in.errorchecks>1);
     in.octave =     xprefer(in,'octave',1,exist('OCTAVE_VERSION', 'builtin'));
     in.seed =       xprefer(in,'seed',1,0);
     in.file =       xprefer(in,'file',0,'');
@@ -93,6 +95,7 @@ function in = xpreferences (in)
     
 %%Calculated lattice inputs - parameters needed in both xsim and xgraph
 
+    
     in.dx =  in.ranges./max(1,in.points-1);  %%n-th plotted step in x
     in.dk =  2.0*pi./(in.points.*in.dx);     %%n-th step-size in k
     in.dV  = prod(in.dx(2:in.dimension));    %%lattice cell volume
@@ -127,12 +130,6 @@ end
 function L = xlinear(r)                      %% Default linear filter
     L = zeros(r.d.a);                        %% Default is zero response
 end
-
-function L = xStructlinear(D,r)              %% Old-style linear filter
-    L = zeros(r.d.a);                        %% Default is zero response
-end
-
-
 
 function Kn = xnfilter(r)                    %% Default stochastic filters
     Kn = ones(r.noises(2),r.nlattice);       %% Default noise filter

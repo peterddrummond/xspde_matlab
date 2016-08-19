@@ -3,8 +3,9 @@ function ec =  xgraph(cdata,input)
 %   Input: data cells 'cdata', input cells 'input'.
 %   Output: graphs and sum of comparison differences, `ec'.
 %   If no numeric 'cdata' present, reads cdata from a file named 'cdata'.
-%   MIT licensed by Peter D. Drummond, (2015) - see License.txt 
+%   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
+tic();                                         %%set timer
 ec = 0;                                        %%Initial comparison errors
 
 %  Get data from file if a filename is present
@@ -62,4 +63,5 @@ for s = 1:sequence                             %%Loop over sequence
      end                                       %%end if graph wanted
   end                                          %%end loop over graphs
 end                                            %%end sequence
+fprintf('xGRAPH sequence completed, time = %f \n\n',toc()); %%time taken
 end                                            %%end graphics function

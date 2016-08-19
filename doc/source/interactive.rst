@@ -38,7 +38,7 @@ Next, enter the xspde parameters (see :ref:`chap-api`) into the command window, 
 
 - The notation ``in.label = parameter`` creates a field in the structure ``in`` (which is created dynamically, if it has not been defined before).
 - The notation ``@(..)`` is the Matlab shorthand for an anonymous function.
-- The parameters passed to the :attr:`in.da` function are: ``a``, the stochastic variable; ``z``,  the random noise; and ``r``, the input structure with additional coordinates and parameters.
+- The parameters passed to the :func:`da` function are: ``a``, the stochastic variable; ``z``,  the random noise; and ``r``, the input structure with additional coordinates and parameters.
 - :func:`xspde` is called with the input structure as the only argument.
 - parameters or functions that are omitted are replaced with default values.
 - a sequence of simulations requires an input list: `{in1,in2..}`.
@@ -64,7 +64,7 @@ with a complete xSPDE script in Matlab below, and output in :numref:`fig-simples
 
     in.da = @(a,z,r) z; xspde(in);
 
-- Here :attr:`in.da` defines the derivative function, with ``z`` being the noise.
+- Here :func:`da` defines the derivative function, with ``z`` being the noise.
 - The last argument of xspde user functions is ``r``, containing the parameters required for the simulation.
 
 .. _fig-simplest-case-wiener:
@@ -105,9 +105,9 @@ Here the coefficient :math:`b` describes the quantum noise of the laser, and is 
 
 Note that:
 
-- :attr:`in.noises` is the number of noises,
-- :attr:`in.observe` is the graphed function,
-- :attr:`in.olabels` gives the axis label.
+- :attr:`noises` is the number of noises,
+- :func:`observe` is the graphed function,
+- :attr:`olabels` gives the axis label.
 
 
 Ito and Stratonovich equations
@@ -164,7 +164,7 @@ An interactive xSPDE script in Matlab is given below with an output graph in :nu
 
    Simulation of the Black-Scholes equation describing stock prices.
 
--  Here :attr:`in.initial` describes the initialization function.
+-  Here :func:`initial` describes the initialization function.
 -  The first argument of ``@(v,r)`` is ``v``, an initial random variable.
 -  The error-bars are estimates of step-size error.
 -  Errors can be reduced by using more time-steps: see :ref:`chap-projects`.
@@ -191,7 +191,7 @@ Here :math:`\boldsymbol{a}` is a real or complex vector or vector field. The ini
 
 Note that the x and k noise term for each value of the index are generated from the same underlying stochastic process. This is necessary because there are some equations that require both a filtered and unfiltered noise generated from the same underlying random number distribution. If these correlations are not wanted, and the noises are required to be independent, then different noise indices must be used. 
 
-Transverse boundary conditions are assumed periodic. The term :math:`\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]` may be omitted, as space derivatives can also be treated directly in the derivative function. The momentum filter :math:`f(\boldsymbol{k})` is an arbitrary user-specified function, allowing for spatially correlated noise.
+Transverse boundary conditions are assumed periodic as the default option, which allows the use of efficient spectral Fourier transform propagation codes. Other types of boundary conditions available are Neumann boundaries with zero normal derivatives, and Dirichlet boundaries with zero fields at the boundary. These require the use of finite difference methods. The boundary type can be individually specified in each axis direction. The term :math:`\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]` may be omitted, as space derivatives can also be treated directly in the derivative function, and this is necessary with Neumann or Dirichlet boundaries. The momentum filter :math:`f(\boldsymbol{k})` is an arbitrary user-specified function, allowing for spatially correlated noise.
 
 To treat stochastic partial differential equations or SPDEs, the equations are divided into the first two terms, which are essentially an ordinary stochastic equation, and the last term which gives a linear partial differential equation:
 
@@ -254,10 +254,10 @@ the ``.*`` notation is used in functions here, as fields require element-wise mu
 
 Here:
 
-- :attr:`in.dimension` is the space-time dimension, with an :math:`x-t` plot given here.
-- :attr:`in.steps` gives the integration steps per plot-point, for improved accuracy.
-- :attr:`in.linear` is the linear operator --- an imaginary laplacian
-- ``r.Dx`` indicates a derivative operation, :math:`\partial/\partial x`. See the reference entry for :attr:`in.linear` for more information.
+- :attr:`dimension` is the space-time dimension, with an :math:`x-t` plot given here.
+- :attr:`steps` gives the integration steps per plot-point, for improved accuracy.
+- :attr:`linear` is the linear operator --- an imaginary laplacian
+- ``r.Dx`` indicates a derivative operation, :math:`\partial/\partial x`. See the reference entry for :attr:`linear` for more information.
 
 .. _fig-symmetry-breaking:
 .. figure:: Figures/GinzLand.*

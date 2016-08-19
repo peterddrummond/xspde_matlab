@@ -1,5 +1,5 @@
 
-function [a,av,raw] = xpath(a,nc,r) %TEST VERSION - NO CELL ARRAY
+function [a,av,raw] = xpath(a,nc,r)
 %   [a,data,astore] = XPATH(a,nc,r) solves stochastic equation trajectories.
 %   Initial condition is the 'a' field, returned value 'a' is the final field.
 %   Input parameters in the 'r' structure including equation function handles.
@@ -9,9 +9,15 @@ function [a,av,raw] = xpath(a,nc,r) %TEST VERSION - NO CELL ARRAY
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
       %%Initialize stored data
-                                 
-raw = zeros(r.d.raw);                         %%initialize storage
-av = zeros(r.d.av,r.averages);                %%****nOTE, no cell array
+
+raw = 0;
+av = cell(1,r.averages);
+if r.raw||r.transformw                         %%if store fields                                     
+  raw = zeros(r.d.raw);                        %%initialize storage
+end                                            %%end if field stored
+for  n = 1:r.averages
+    av{n} = zeros(r.d.av{n});
+end
 
       %%Loop over all the time points
 
@@ -40,17 +46,19 @@ for np = 1:r.points(1);                        %%loop until time tmax
         raw(:,:,np,:) = a(:,:,1,:);
   end                                          %%end if store data
   for n = 1:r.averages
-        av(:,:,np,:,n) = xdata(a,n,r);   %%store time-domain data
+     if r.transforms{n}(1) == 0                %%if frequency switch off
+        av{n}(:,:,np,:) = xdata(a,n,r);          %%store time-domain data
+     end
   end
 end;                                           %%end time loop
 if r.transformw                                %%if frequency domain
     raw_ft = fft(raw,[],3)*r.kfact(1);         %%take Fourier transform
     for np = 1:r.points(1)                     %%loop until wmax
         aw = reshape(raw_ft(:,:,np,:),r.d.a);  %%flatten field data
-        r.w = r.kw(np);                        %%set graphics frequencies
+        r.w = r.kc{1}(np);                     %%set graphics frequencies
         for n = 1:r.averages
-            if r.transforms(1,n) == 1         %%if frequency switch on
-              av(:,:,np,:,n) = xdata(aw,n,r);
+            if r.transforms{n}(1) == 1         %%if frequency switch on
+              av{n}(:,:,np,:) = xdata(aw,n,r);
             end
         end
     end                                        %%end loop at wmax
@@ -65,11 +73,12 @@ function av = xdata(a,n,r)
 %   Returned array 'av' is the average observable array, at current time.
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
  
-if sum(r.transforms(2:r.dimension,n))>0        %%if transform needed
+trans = r.transforms{n};                       %%transform switch
+if sum(trans(2:r.dimension))>0                 %%if transform needed
     a = xgraphicsfft(a,trans,r);               %%Fourier transform
-end                                            %%no transform needed   
-o1 = r.observe(a,n,r);                         %%??Get stochastic observable
-av = mean(reshape(o1,r.d.obs),2);              %%??Take average
+end                                            %%no transform needed
+o1 = r.observe{n}(a,r);                        %%Get stochastic observable
+av = mean(reshape(o1,r.d.obs{n}),2);           %%Take average
 end                                            %%end function
 
 function a  =  xgraphicsfft(a,trans,r)            

@@ -92,8 +92,8 @@ The more detailed structure of the random walk is due to having more time-points
 
 Note that:
 
-- :attr:`in.ensembles` is the number of trajectories averaged over
-- :attr:`in.points` is the number of time-points integrated and graphed
+- :attr:`ensembles` is the number of trajectories averaged over
+- :attr:`points` is the number of time-points integrated and graphed
 
 
 xSPDE projects
@@ -155,11 +155,11 @@ The other input parameters are not specified explicitly. Default values are acce
 Here we note that:
 
 - ``Kubo`` defines the parameters and function handles, then runs the simulation.
-- :attr:`in.name` gives a name to identify the project.
-- :attr:`in.ensembles` specifies 400 samples in a parallel vector, repeated 16 times in series.
-- :attr:`in.initial` initializes the input to ones; the noise ``v`` is used as it has the same lattice dimension as the ``a`` field.
-- :attr:`in.da` is the function, :math:`da/dt=ia\zeta`, that specifies the equation being integrated.
-- :attr:`in.olabels` is a cell array with a label for the variable ``a`` that is averaged.
+- :attr:`name` gives a name to identify the project.
+- :attr:`ensembles` specifies 400 samples in a parallel vector, repeated 16 times in series.
+- :func:`initial` initializes the input to ones; the noise ``v`` is used as it has the same lattice dimension as the ``a`` field.
+- :func:`da` is the function, :math:`da/dt=ia\zeta`, that specifies the equation being integrated.
+- :attr:`olabels` is a cell array with a label for the variable ``a`` that is averaged.
 - :func:`xspde` runs the simulation and graphics program using data from the ``in`` structure.
 
 The function names can point to external files instead of those in the project file itself. This is useful when dealing with complex projects, or if you just want to change one function at a time. As no points or ranges were specified, here, default values of 51 points and a range of 10 are used.
@@ -174,7 +174,7 @@ It is often inconvenient to work interactively, especially for large simulations
 
 The xSPDE program allows you to specify a file name that stores data in either standard HDF5 format, or in Matlab format. It also gives multiple ways to edit data for either simulations or graphs. A simple interactive workflow is as follows:
 
--  Create the metadata ``in``, and include a file name, say ``in.file = `filename.mat` ``.
+-  Create the metadata ``in``, and include a file name, say ``in.file = `filename.mat```.
 -  Run the simulation with :func:`xsim`.
 -  Run ``xgraph(`filename.mat`)``, and the data will be accessed and graphed.
 
@@ -277,7 +277,7 @@ Sequential integration
 
 Sequences of calculations are available simply by adding a sequence of inputs to xSPDE, representing changed conditions or input/output processing. These are combined in a single file for data storage, then graphed separately. The results are calculated over specified ranges, with it’s own parameters and function handles. In the current version of xSPDE, the numbers of ensembles must be the same throughout.
 
-The initialization routine for the first fields in the sequence is called :attr:`in.initial`, while for subsequent initialization it is called :attr:`in.transfer`. The sequential initialization function has four input arguments, to allow noise to be combined with previous field values and input arguments, as may be required in some types of simulation. This is described in the next chapter.
+The initialization routine for the first fields in the sequence is called :func:`initial`, while for subsequent initialization it is called :attr:`transfer`. The sequential initialization function has four input arguments, to allow noise to be combined with previous field values and input arguments, as may be required in some types of simulation. This is described in the next chapter.
 
 In many cases, the default transfer value --- which is to simply reuse the final output of the previous set of fields --- is suitable. To help indicate the order of a sequence, a time origin can be included optionally with sequential plots, so that the new time is the end of the previous time, if this is required.
 

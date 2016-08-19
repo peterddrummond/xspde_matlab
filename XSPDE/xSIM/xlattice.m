@@ -6,6 +6,7 @@ function r = xlattice(r)
 
   r.ncopies = r.ensembles(2)*r.ensembles(3);        %%parallel ensembles
   r.transformw = 0;                                 %%initial w-transform
+  
   for i=1:r.averages                                %%check for w-transform
       r.transformw = max(r.transformw,r.transforms{i}(1));
   end                                               %%end for w-transform

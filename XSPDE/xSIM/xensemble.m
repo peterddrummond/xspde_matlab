@@ -1,8 +1,8 @@
 function [data,raw] = xensemble (npar,l) 
 %   data = XENSEMBLE (npar,latt)  integrates and ensemble averages fields.
-%   Input:  'npar' is total ensemble count,'l' is  lattice description.
+%   Input:  'npar' is the ensemble number,'l' is the lattice structure.
 %   Output: 'data' is average data generated from stochastic integration.
-%   and 'raw' is raw data generated from stochastic integration.
+%           'raw' is raw data generated from stochastic integration.
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
 sequence = length(l);                             %%check length of input
@@ -27,7 +27,7 @@ for ns = 1:serial                                 %%loop over ensembles
             randn('state',l{1}.seed+nsp)
     else
             rng(l{1}.seed+nsp);
-    end                                       %%Set unique random seed
+    end                                           %%Set unique random seed
     if l{1}.print                                 %%If print switch
         fprintf('Check %d, Ensemble %d\n',nc,nsp);%%print indices
     end;                                          %%end if print switch

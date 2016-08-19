@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass scrbook
 \use_default_options false
 \maintain_unincluded_children false
@@ -9,16 +11,16 @@
 \language_package none
 \inputencoding iso8859-15
 \fontencoding default
-\font_roman default
-\font_sans default
-\font_typewriter default
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
 \graphics default
 \default_output_format default
 \output_sync 1
@@ -71,7 +73,7 @@
 \begin_body
 
 \begin_layout Title
-xSPDE user's guide: v1.22
+xSPDE user's guide: v2.0
 \end_layout
 
 \begin_layout Author
@@ -253,7 +255,7 @@ The code supports parallelism at both the vector instruction level and at
 \begin_layout Standard
 
 \emph on
-xSPDE is distributed without any guarantee, under the MIT open-source license.
+xSPDE is distributed without any guarantee, under an open-source license.
  Contributions and bug reports always welcome.
 \end_layout
 
@@ -455,13 +457,17 @@ The most common xSPDE parameters are:
 \end_inset
 
 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="16" columns="4">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1268,6 +1274,10 @@ reference "fig:The-simplest-case: Wiener"
 \end_inset
 
 ).
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1283,6 +1293,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -1392,6 +1407,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -1435,6 +1455,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -1489,6 +1514,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -1607,6 +1637,10 @@ Most lasers have more than
 \end_inset
 
  photons, and hence less noise!
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1622,6 +1656,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -1696,6 +1735,10 @@ reference "fig:The-laser"
 
 ).
  
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1711,6 +1754,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -1877,6 +1925,10 @@ The input parameters are given below.
 USE THE DOT
 \series default
 .
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1892,6 +1944,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -1992,6 +2049,10 @@ initial
 
 \begin_layout Standard
 To define as many observables as you like, use a Matlab cell array; 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2007,6 +2068,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -2178,6 +2244,10 @@ reference "fig:The-Black-Scholes"
 
 ), Note the spiky behaviour, typical of multiplicative noise, and also of
  the risky stocks in the small capitalization portions of the stock market.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2193,6 +2263,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -2328,13 +2403,17 @@ name "chap:Projects-xSPDE"
 Projects are larger scale investigations, where files are used to record
  inputs and data.
  This requires a new input parameter:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="4">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2680,6 +2759,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -3273,6 +3357,10 @@ reference "fig:Symmetry-breaking"
 \end_inset
 
 ) .
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3288,6 +3376,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -3493,6 +3586,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -3643,6 +3741,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -3875,8 +3978,8 @@ The first noise index,
 \begin_inset Formula $in.noises(2)$
 \end_inset
 
- indicates how many of these are spatially correlated, via fourier-transform,
- filter and inverse fourier transform.
+ indicates how many of these are spatially correlated, via Fourier transform,
+ filter and inverse Fourier transform.
  These appear to the user as additional noises, so the total is 
 \begin_inset Formula $in.noises(1)+in.noises(2)$
 \end_inset
@@ -3938,6 +4041,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -4246,6 +4354,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -4798,157 +4911,584 @@ propfactor returns the interaction picture propagation factors.
 \end_layout
 
 \begin_layout Section
-Data arrays and errors
+Arrays and errors
 \end_layout
 
 \begin_layout Subsection
-Data arrays
+Array indexing
 \end_layout
 
 \begin_layout Standard
-All calculated data, including fields, observables and graphics results,
- is stored in arrays of implicit or explicit rank 
-\begin_inset Formula $2+dimension$
-\end_inset
-
-.
- The first index is a field index (
-\begin_inset Formula $i$
-\end_inset
-
-), the second a statistics/errors index (
-\begin_inset Formula $j$
-\end_inset
-
-), while the remaining indices 
-\begin_inset Formula $k\equiv k_{1},\ldots k_{D}\equiv k_{1},\bm{k}$
-\end_inset
-
- are for time and space.
- The space-time dimension 
-\begin_inset Formula $D$
+In xSPDE, the space-time dimension 
+\begin_inset Formula $d$
 \end_inset
 
  is unlimited.
- When the fields, noises or coordinates are integrated by the xSPDE integration
- functions, they are flattened to a matrix.
- The first index is the field index, and the combined second index covers
- all the rest.
+ All data, including fields and average results is stored in arrays of implicit
+ or explicit rank 
+\begin_inset Formula $2+d$
+\end_inset
+
+.
+ The index ordering is always 
+\begin_inset Formula $(i,e,\mathbf{j})$
+\end_inset
+
+.
+ The first is a field index (
+\begin_inset Formula $i$
+\end_inset
+
+).
+ The second is an ensembles/checks index (
+\begin_inset Formula $e/c$
+\end_inset
+
+).
+ The 
+\begin_inset Formula $d$
+\end_inset
+
+ indices 
+\begin_inset Formula $j_{1},\ldots j_{d}\equiv\bm{j}$
+\end_inset
+
+ are for time and space, where 
+\begin_inset Formula $\bm{j}$
+\end_inset
+
+ indicates a 
+\begin_inset Formula $d$
+\end_inset
+
+-dimensional index, and 
+\begin_inset Formula $\bm{j}'=[1,j_{2},\ldots]$
+\end_inset
+
+ indicates a 
+\begin_inset Formula $d$
+\end_inset
+
+ dimensional index with time index set to one.
  
 \end_layout
 
 \begin_layout Standard
-There are several different types of arrays used.
- These are as follows:
+When the fields, noises or coordinates are integrated by the xSIM integration
+ functions, the field and data arrays are always flattened to a matrix for
+ reasons of convenience in defining mathematical operations.
+ The first index is the field or line index, and the combined second index
+ covers all the rest.
+ This is not done in externally stored data, nor in xGRAPH, which operates
+ on the full data arrays.
 \end_layout
 
-\begin_layout Itemize
-Field arrays 
-\begin_inset Formula $a(i,j,1,\bm{k})$
-\end_inset
-
- - these have a statistics index of up to 
-\begin_inset Formula $j=ensembles(1)$
-\end_inset
-
-, but just a single present time-point for efficiency.
-\end_layout
-
-\begin_layout Itemize
-Random and noise arrays 
-\begin_inset Formula $w(i,j,1,\bm{k})$
-\end_inset
-
- - these are like field arrays, except that they contain random numbers
- for the stochastic equations.
-\end_layout
-
-\begin_layout Itemize
-Coordinate arrays 
-\begin_inset Formula $x\{l\}(1,j,1,\bm{k})$
-\end_inset
-
-- these store the values of coordinates at grid-points, depending on the
- axis label 
-\begin_inset Formula $l=2,\ldots D$
+\begin_layout Standard
+Inside a sequence, data arrays are cell arrays with an additional graph
+ index 
+\begin_inset Formula $n$
 \end_inset
 
 .
+ This distinguishes the different averages generated for output graphs and
+ data.
+ The following information is not required to use xSPDE, but it helps to
+ give insight to how data is stored, and how to customize and extend the
+ code.
+ There are several different types of arrays used.
+ These are as follows:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Label 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Indices 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+a
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(i,e,\bm{j}')$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stochastic fields
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+w
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(i,e,\bm{j}')$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Random and noise fields
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+x
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1,e,\bm{j}')$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Space coordinates
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+r
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\{s,c,f\}(i,e,\mathbf{j})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Raw data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+o
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ 
+\begin_inset Formula $\{n\}(o,c,\mathbf{j})$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Observed average data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+g
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\{s\}\{n\}(o,c,\mathbf{j})$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Graph data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In detail, these are as follows:
 \end_layout
 
 \begin_layout Itemize
-Raw arrays 
-\begin_inset Formula $r\{e,s\}(i,j,k)$
+
+\series bold
+Field
+\series default
+ arrays 
+\begin_inset Formula $a(i,e,\bm{j}')$
 \end_inset
 
- - like fields, but with all points stored.
- Use with care, as they take up large amounts of memory.
- Note that when output or saved, these have additional cell indices 
-\begin_inset Formula $e=1,2$
+ - these have a field index, an ensemble index 
+\begin_inset Formula $e=1,\ldots ensembles(1)$
 \end_inset
 
- for the error-checking time-step and 
+, one time-point, and a full spatial lattice.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Random
+\series default
+ and 
+\series bold
+noise
+\series default
+ arrays 
+\begin_inset Formula $w(i,e,\bm{j}')$
+\end_inset
+
+ - these are like field arrays.
+ They are initial random fields or noise fields for the stochastic equations.
+ The first index can have a different range to the field index.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Coordinate
+\series default
+ arrays 
+\begin_inset Formula $x(1,e,\bm{j}')$
+\end_inset
+
+ - these arrays are the values of coordinates at grid-points, with labels
+ 
+\begin_inset Formula $x,y,z$
+\end_inset
+
+.
+ Numeric labels 
+\begin_inset Formula $x\{l\}$
+\end_inset
+
+ are used with dimensions 
+\begin_inset Formula $d>4$
+\end_inset
+
+, depending on the axis number, 
+\begin_inset Formula $l=2,\ldots d$
+\end_inset
+
+.
+ The same sizes are used for: 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+momentum coordinates 
+\begin_inset Formula $kx,ky,kz$
+\end_inset
+
+ (alternatively labelled 
+\begin_inset Formula $k\{2\},k\{3\},\ldots$
+\end_inset
+
+) - 
+\end_layout
+
+\begin_layout Itemize
+spectral derivative arrays 
+\begin_inset Formula $Dx,Dy,Dz$
+\end_inset
+
+ (alternatively labelled 
+\begin_inset Formula $D\{2\},D\{3\},\ldots$
+\end_inset
+
+) .
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Raw
+\series default
+ arrays 
+\begin_inset Formula $r\{s,c,f\}(i,e,\mathbf{j})$
+\end_inset
+
+ - like fields, except with all time points stored.
+ These are used optionally, as they take up large amounts of memory.
+ These are saved in cell arrays with indices 
+\begin_inset Formula $s$
+\end_inset
+
+ for the sequence, 
+\begin_inset Formula $c$
+\end_inset
+
+ for the time-step check, 
+\begin_inset Formula $f$
+\end_inset
+
+ for high-level ensemble index.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
 \begin_inset Formula $s=1,\ldots S$
 \end_inset
 
- for the sequence number.
+ for the sequence number, 
 \end_layout
 
 \begin_layout Itemize
-Data arrays 
-\begin_inset Formula $d\{n\}(i,j,k)$
+\begin_inset Formula $c=1,2$
 \end_inset
 
- - these store the averages, or arbitrary functions of them, with a statistics
- index 
-\begin_inset Formula $j=1,2,3$
-\end_inset
-
-, to store error data at all time points.
+ for the error-checking time-step used, first coarse then fine, 
 \end_layout
 
 \begin_layout Itemize
-Graphics arrays 
-\begin_inset Formula $g\{n\}(i,j,k)$
+\begin_inset Formula $f=1,\ldots ensemble(2)*ensemble(3)$
 \end_inset
 
- - these store the data that is plotted, and can include further functional
- transformations if required.
+ for a high level combined parallel and serial ensemble index.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Data
+\series default
+ arrays 
+\begin_inset Formula $d\{n\}(o,c,\mathbf{j})$
+\end_inset
+
+ - these store the generated average data at all time points, with an error-chec
+k index 
+\begin_inset Formula $c=1,2,3$
+\end_inset
+
+.
+ Check indices are 
+\begin_inset Formula $c=1$
+\end_inset
+
+ for the estimated average, 
+\begin_inset Formula $c=2$
+\end_inset
+
+ for the estimated time-step error, and 
+\begin_inset Formula $c=3$
+\end_inset
+
+ for the estimated statistical error or standard deviation.
+ Note that the cell index 
+\begin_inset Formula $n$
+\end_inset
+
+ is the graph index, and the first array index 
+\begin_inset Formula $o$
+\end_inset
+
+ is a user-generated graphics output index, which may not correspond to
+ a field index.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Graphics
+\series default
+ arrays 
+\begin_inset Formula $g\{s\}\{n\}(o,c,\mathbf{j})$
+\end_inset
+
+ - these store the complete sequence of data that is plotted, and may have
+ further functional transformations when processed in 
+\series bold
+xgraph
+\series default
+, if required.
 \end_layout
 
 \begin_layout Standard
-The field index 
-\begin_inset Formula $i$
+There may be quite different first dimensions between fields, noises and
+ output data, and they are specified using different input parameters.
+ The output line index 
+\begin_inset Formula $o$
 \end_inset
 
- in a graphics or data array is intended to describe different lines on
- a graph.
- There can be quite different first dimensions between fields, noises and
- output data, as they are specified using different input parameters.
- If only a single output graph is wanted, the 
-\begin_inset Formula $observe$
+ in a graphics or data array describes different lines on a graph.
+ Similarly, the local ensemble index 
+\begin_inset Formula $e$
 \end_inset
 
- cell index is not needed.
+ in a field array has a different range to 
+\begin_inset Formula $c$
+\end_inset
+
+, the check index, in a data array.
 \end_layout
 
 \begin_layout Standard
-Outputs have an extra high-level cell index 
+Graphics cell data has high-level cell indices 
+\begin_inset Formula $\{s\}$
+\end_inset
+
+ for the sequence index, and 
 \begin_inset Formula $\{n\}$
 \end_inset
 
- called the graph or function index.
- This corresponds to the index 
+ for the graph or function index, which corresponds to the index 
 \begin_inset Formula $\{n\}$
 \end_inset
 
  of the observe function used to generate averages.
- One can have several data arrays in a larger cell arrays to make a number
- of distinct output graphs labelled 
+ One can have several data arrays to make a number of distinct output graphs
+ labelled 
 \begin_inset Formula $n$
 \end_inset
 
 , each with multiple averages.
+ These are then combined into a sequence, each with different graphs, and
+ therefore need more indices.
  
 \end_layout
 
@@ -4969,7 +5509,7 @@ Errors due to a finite step-size are estimated by comparing two simulations
  with different step-sizes and the same random sequence, to make sure the
  final results are accurate.
  The final 2D output graphs will have error-bars if 
-\begin_inset Formula $in.errorchecks=2$
+\begin_inset Formula $checks=1$
 \end_inset
 
  was specified, which is also the default parameter setting.
@@ -4996,7 +5536,7 @@ which reduces the step size without changing the graphical resolution.
  The default algorithm and extrapolation order can also be changed, please
  read the full xSPDE manual when doing this.
  Error bars on the graphs can be removed by setting 
-\begin_inset Formula $errorchecks=1$
+\begin_inset Formula $checks=0$
 \end_inset
 
  or increasing 
@@ -5136,6 +5676,23 @@ xgraph is called by xSPDE when the ensemble loops finished.
 \end_layout
 
 \begin_layout Subsection
+xGRAPH inputs
+\end_layout
+
+\begin_layout Standard
+The input to xGRAPH can either come from a file, or it can be from data
+ generated directly with xSIM.
+ The data is a cell array, where each member of the cell array is a numerical
+ graphics array, defining one independent set of averaged data.
+ the observed data averages, stored in a cell array of size 
+\begin_inset Formula $d\{n\}(o,c,\mathbf{j})$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsection
 User definable graphics functions
 \end_layout
 
@@ -5151,14 +5708,11 @@ It is possible to simply run
 \end_layout
 
 \begin_layout Description
-*function(o,r) is is a cell array of functions whose output 
-\begin_inset Formula $\mathbf{xgraph}$
-\end_inset
-
- is designed to plot.
- There is one function for each multidimensional dataset that is plotted.
+*gfunction(d,r) is is a cell array of functions whose output is plotted.
+ There is one graphics function for each multidimensional dataset that is
+ plotted.
  The default value is just the average stored in the data array generated
- by the simulation observe function, provided these are scalar observables.
+ by the simulation observe function.
  
 \begin_inset Newline newline
 \end_inset
@@ -5169,30 +5723,13 @@ It is possible to simply run
 
 An arbitrary number of functions of these observables can also be plotted,
  including vector observables.
- The input to functions is the observed data averages, stored in a cell
- array of size 
-\begin_inset Formula $o\{ngraphs\}(points(1),nspace,ofields)$
+ The input to graphics functions is the observed data averages or functions
+ of averages, stored in a cell array of size 
+\begin_inset Formula $d\{n\}(o,c,\mathbf{j})$
 \end_inset
 
 .
- Here 
-\begin_inset Formula $ngraphs$
-\end_inset
-
- is the number of observable averaging functions, 
-\begin_inset Formula $points(1)$
-\end_inset
-
- is the number of time points,
-\begin_inset Formula $nspace$
-\end_inset
-
- the number of space points, 
-\begin_inset Formula $ofields$
-\end_inset
-
- the vector dimension of the averaging or observable function.
- This can change depending on the observable.
+ 
 \end_layout
 
 \begin_layout Description
@@ -5226,8 +5763,8 @@ This routine is prewritten to cover a range of useful graphs, but can be
 \end_layout
 
 \begin_layout Standard
-The code is intended to cascade down from higher to lower dimension, generating
- different types of user-defined graphs.
+The code will cascade down from higher to lower dimensions, generating different
+ types of user-defined graphs.
  Each type of graph is generated once for each specified graphics function.
  The graphics axes that are used for plotting, and the points plotted, are
  defined using the optional 
@@ -5460,11 +5997,11 @@ imagetype
 \end_layout
 
 \begin_layout Standard
-Note that error bars and sampling errors are only graphed for 2D plots,
- typically of results vs time.
+Note that error bars, sampling errors and multiple lines are only graphed
+ for 2D plots, typically of results vs time.
  The error-bars are not plotted when they are below a user-specified size,
  to improve graphics quality.
- Higher dimensional graphs do not include this, for visibility reasons,
+ Higher dimensional graphs do not include this data, for visibility reasons,
  but they are still recorded in the data files.
  
 \end_layout
@@ -5485,6 +6022,10 @@ The xSPDE data objects include parameters and methods, but with a very open
  replace the default value.
  To define your own integration function, include in the xSPDE input the
  line:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5500,6 +6041,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -5516,6 +6062,10 @@ in.step=@Mystep;
 \begin_layout Standard
 Next, include anywhere on your Matlab path the function definition, for
  example:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5531,6 +6081,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -5778,7 +6333,7 @@ xspde(in).
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="27" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -5831,7 +6386,7 @@ version
 \begin_layout Plain Layout
 
 \emph on
-'xSIM1.22'
+'xSIM2.0'
 \emph default
  
 \end_layout
@@ -6279,7 +6834,7 @@ Extrapolation order
 \begin_layout Plain Layout
 
 \emph on
-errorchecks
+checks
 \emph default
  
 \end_layout
@@ -6292,7 +6847,7 @@ errorchecks
 \begin_layout Plain Layout
 
 \emph on
-2
+1
 \emph default
  
 \end_layout
@@ -6303,7 +6858,7 @@ errorchecks
 \begin_inset Text
 
 \begin_layout Plain Layout
-Number of error-checking cycles
+Check time-step errors?
 \end_layout
 
 \end_inset
@@ -6758,7 +7313,7 @@ The most common functions, output field dimensions and calling arguments,
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="19" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -7488,7 +8043,7 @@ For
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="36" columns="4">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -9252,7 +9807,7 @@ generated average data from
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="16" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -9305,7 +9860,7 @@ gversion
 \begin_layout Plain Layout
 
 \emph on
-'xGRAPH1.22'
+'xGRAPH2.0'
 \emph default
  
 \end_layout

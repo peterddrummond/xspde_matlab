@@ -28,7 +28,9 @@ for i = 2:maxind                             %% loop over space dimension
     if dx(i)>0                               %% is i-th integration needed? 
         index = ones(1,length(o));           %% Initialize index vector
         index(i+2) = sizeo(i+2);             %% Set index to dimension size
-        o =repmat (sum(o,i+2)*dx(i),index);  %% Repeat mean over lattice 
+        %o1 = trapz(o,i+2);
+        o1 = sum(o,i+2);
+        o =repmat (o1*dx(i),index);          %% Repeat mean over lattice 
     end                                      %% end i-th integration
 end                                          %% end loop to max dimension 
 o  = reshape(o,sz);                          %restore original dimension

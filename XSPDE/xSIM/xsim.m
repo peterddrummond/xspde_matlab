@@ -7,7 +7,7 @@ function [error,input,data,raw] = xsim(input)
 %   The output cell array 'input' is input data including default values.
 %   The output cell array 'data' includes the averages and error bars.
 %   The output cell array 'raw' is the raw trajectories if required.
-%   MIT license by Peter D. Drummond, (2015) - see License.txt 
+%   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
 tic();                                           %%set timer
 
@@ -57,19 +57,19 @@ for s=1:sequence                                 %%loop over sequence
   esp =0;                                        %%initial sampling errors
   es =0;                                         %%initial step errors
   for n=1:r.functions
-    data{s}{n}(:,3,:,:)=data{s}{n}(:,3,:,:) - data{s}{n}(:,1,:,:).^2;
+    data{s}{n}(:,3,:)=data{s}{n}(:,3,:) - data{s}{n}(:,1,:).^2;
     if r.ncopies > 1                               %%if ensemble averaging   
-      data{s}{n}(:,3,:,:)=real(sqrt(data{s}{n}(:,3,:,:)/(r.ncopies-1))); 
-      esp = esp+max(max(max(abs(data{s}{n}(:,3,:,:))))); %%max of sd matrix
+      data{s}{n}(:,3,:)=real(sqrt(data{s}{n}(:,3,:)/(r.ncopies-1))); 
+      esp = esp+max(max(max(abs(data{s}{n}(:,3,:))))); %%max of sd matrix
     end                                          %%end if ensemble
     if r.errorchecks > 1                         %%if errorchecks needed
-      data{s}{n}(:,2,:,:)=data{s}{n}(:,2,:,:) - data{s}{n}(:,1,:,:);
+      data{s}{n}(:,2,:)=data{s}{n}(:,2,:) - data{s}{n}(:,1,:);
       if r.order > 0                             %%if extrapolation order
-        data{s}{n}(:,2,:,:) = data{s}{n}(:,2,:,:)/(2^(r.order)-1.);
-        data{s}{n}(:,1,:,:) = data{s}{n}(:,1,:,:)- data{s}{n}(:,2,:,:);
+        data{s}{n}(:,2,:) = data{s}{n}(:,2,:)/(2^(r.order)-1.);
+        data{s}{n}(:,1,:) = data{s}{n}(:,1,:)- data{s}{n}(:,2,:);
       end                                        %%end if extrapolation
-      data{s}{n}(:,2,:,:) = abs(data{s}{n}(:,2,:,:));
-      es = es+ max(max(max(data{s}{n}(:,2,:,:)))); %%Sum of max step errors
+      data{s}{n}(:,2,:) = abs(data{s}{n}(:,2,:));
+      es = es+ max(max(max(data{s}{n}(:,2,:)))); %%Sum of max step errors
     end                                          %%end if errorchecks
     data{s}{n}=reshape(data{s}{n},r.gpoints{n});
   end
@@ -90,13 +90,15 @@ end                                              %%end if file not blank
 if length(input) == 1                            %%if  input length is 1
     input = input{1};                            %%returns struct, not cell
 end                                              %%end if input length is 1
-fprintf('xSIM integration time = %f \n',toc());  %%print time taken
+fprintf('xSIM sequence completed, time = %f \n\n',toc());%%print time taken
 end                                              %%end xsim
+
+
 
 function data1 = xaddcell(data1,data2)
 %   data1 = XADDCELL(data1,data2) 
 %   Adds two cell arrays together
-%   MIT license by Peter D. Drummond, (2015) - see License.txt 
+%   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
 for seq = 1:length(data1)
   for n = 1:length(data1{seq});

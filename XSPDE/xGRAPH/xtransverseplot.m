@@ -1,6 +1,6 @@
 function [] =  xtransverseplot(n,datan,nx,x,xlab,olab,g)
 %   xtransverseplot() makes 2d transverse plots at fixed time
-%   MIT licensed by Peter D. Drummond, (2015) - see License.txt 
+%   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
 imhead= ' ';
 g.transverse{n} = min(nx(3),g.transverse{n});  %%transverse numbers

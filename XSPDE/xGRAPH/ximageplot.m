@@ -1,6 +1,6 @@
 function [] =  ximageplot(n,datan,nx,x,xlab,olab,g)
 %   XIMAGE_PLOT() makes 3d transverse images at fixed axis 1
-%   MIT licensed by Peter D. Drummond, (2015) - see License.txt 
+%   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
 imhead= ' ';                                   %%make image header blank
 g.images{n}   = min(nx(3),g.images{n});        %%image numbers

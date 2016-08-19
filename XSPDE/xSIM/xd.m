@@ -1,10 +1,10 @@
 function d  =  xd(o,varargin) 
-%   a = XD(o,D,r) calculates a spatial derivative of a field component 
+%   a = XD(o,D,r) calculates a spatial derivative of a field 
+%   Uses periodic boundary conditions and Fourier transforms 
 %   Input: field a, [derivative grid D,] lattice r.
 %   Output: derivative  d. 
 %   If no input derivative specified, takes derivative in x direction
-%   Note, first dimension of ac is r.ensembles(1).
-%   All xSPDE functions are licensed by Peter D. Drummond, (2015) - see License.txt 
+%   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
                                                             
 sz = size(o);                            %%get original size to return
 if nargin == 2

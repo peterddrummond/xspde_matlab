@@ -3,7 +3,7 @@ function err =  xmultiplot(n,datan,g)
 %   for a single xSPDE plot function.
 %   Input:  graph number 'n', n-th data array 'datan',parameters 'g'.
 %   Output: graphs and maximum comparison differences, `err'.
-%   MIT licensed by Peter D. Drummond, (2015) - see License.txt 
+%   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
     err = 0;                                   %%Initial comparison errors 
     %set(groot,'defaultAxesFontSize',g.font{n});%%graphics font-size

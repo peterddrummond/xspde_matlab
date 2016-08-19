@@ -1,11 +1,13 @@
 README
 
 
-This folder should contain the xSPDE folder and Examples folder.
+xSPDE2.0
+
+The xSPDE folder should contain the xSIM, xGRAPH and xAMPLES folder.
 
 Set your Matlab path to include this folder and subfolders.
 
-Run Examples/Batchtest.m to test operation.
+Run xAMPLES/Batchtest.m to test operation.
 
 XSPDE runs best combined with the Matlab parallel toolbox.
 

@@ -9,7 +9,7 @@ function [] =  xplot(t,datan,esample,minbar,lines)
 %   The value of minbar is the minimum relative error-bar 
 %   Error bars are  plotted if  relative error > 'minbar'
 %   The cell array 'lines' gives the line-styles that are used.
-%   MIT licensed by Peter D. Drummond, (2015) - see License.txt 
+%   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
 nx = size(datan);
 figure;                                       %%Start new graphics figure

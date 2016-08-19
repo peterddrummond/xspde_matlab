@@ -8,9 +8,9 @@ Stochastic, partial and ordinary differential equations are central to numerical
 
 xSPDE currently provides four built-in choices of algorithm. All built-in methods are defined in an interaction picture. All can be used with any space dimension, including ``in.dimension = 1``, which gives an ordinary stochastic equation. All can be used either with stochastic or with non-stochastic equations. When applied to stochastic equations, the Euler method requires an Ito form of stochastic equation, while the others should be used with the Stratonovich form of these equations. Each uses the interaction picture to take care of exactly soluble linear terms.
 
-If you have a favorite integration method that isn’t here, don’t panic. User-defined algorithms can be added freely. You can easily add your own. The existing methods are listed below, and the corresponding ``.m``-files can be used as a model. Call the routine, for example ``"myalgorithm.m"``, set ``in.step = @myalgorithm``, then adjust the value of :attr:`in.ipsteps` if the interaction-picture transform length must be changed to a new value.
+If you have a favorite integration method that isn’t here, don’t panic. User-defined algorithms can be added freely. You can easily add your own. The existing methods are listed below, and the corresponding ``.m``-files can be used as a model. Call the routine, for example ``"myalgorithm.m"``, set ``in.step = @myalgorithm``, then adjust the value of :attr:`ipsteps` if the interaction-picture transform length must be changed to a new value.
 
-Similarly, the interaction-picture transformation, :attr:`in.prop`, can also be changed if the built-in choice is not adequate for your needs.
+Similarly, the interaction-picture transformation, :attr:`prop`, can also be changed if the built-in choice is not adequate for your needs.
 
 
 Notation
@@ -169,9 +169,11 @@ In summary, there are three types of convergence checks, all of which appear in 
 Extrapolation order and error bars
 ==================================
 
-For checking step-size errors, xSPDE allows the user to specify ``in.errorchecks = 2``, which is the default option. This gives one integration at the specified step-size, and one at half the specified step-size. The data is plotted at the fine step-size. The standard error-bar, with no extrapolation, has a half-size equal to the difference of fine and coarse step graphed results.
+For checking step-size errors, xSPDE allows the user to specify ``checks = 1``, which is the default option. This gives one integration at the specified step-size, and one at half the specified step-size. The data is plotted using the more accurate fine step-size results, but with the coarse time lattice in order to calculate the estimated discretization errors. The standard error-bar, with no extrapolation, has a half-size equal to the difference of fine and coarse step graphed results. 
 
-To allow for extrapolation, xSPDE allows user input of an assumed extrapolation order called :attr:`in.order`. If this is done, and errorchecks are set to 2 to allow successive integration with two different step-sizes, the output of all data graphed will be extrapolated to the specified order. In this case, the error bar half-size is set to the difference of the fine estimate and the *extrapolated* estimate.
+Importantly, both fine and coarse time-step results employ identical underlying random noise processes, from the same initial random seed. To compensate for the grid size, the coarse time-step uses a sum of two successive fine noise increments. This has the useful advantage that any differences are only from the effects of the time-step on the integration accuracy. If different noises were used - which is not done - part of the error-bar would be just from sampling errors. 
+
+To allow for extrapolation, xSPDE allows user input of an assumed extrapolation order called :attr:`order`. If this is done, and :attr:`checks` are set to 1 to allow successive integration with two different step-sizes, the output of all data graphed will be extrapolated to the specified order. In this case, the error bar half-size is set to the difference of the fine estimate and the *extrapolated* estimate.
 
 Extrapolation is a well-known technique for improving the accuracy of a differential equation solver. Suppose an algorithm has a result with a known convergence order :math:`n`. This means that for small enough step-size, integration results :math:`R\left(dt\right)` with step-size :math:`dt` have an error of size :math:`dt^{n}`, that is:
 
@@ -216,9 +218,9 @@ While extrapolated results are usually inside those given by the default error-b
 Sampling errors
 ===============
 
-Sampling error estimation in xSPDE uses sub-ensemble averaging. Ensembles are specified in three levels. The first, ``in.ensemble(1)``, is called the number of samples for brevity. All computed quantities returned by the :attr:`in.observe` functions are first averaged over the samples, which are calculated efficiently using a parallel vector of trajectories. By the central limit theorem, these sample averages are distributed as a normal distribution at large sample number.
+Sampling error estimation in xSPDE uses sub-ensemble averaging. Ensembles are specified in three levels. The first, ``in.ensemble(1)``, is called the number of samples for brevity. All computed quantities returned by the :func:`observe` functions are first averaged over the samples, which are calculated efficiently using a parallel vector of trajectories. By the central limit theorem, these sample averages are distributed as a normal distribution at large sample number.
 
-Next, the sample averages are averaged **again** over the two higher level ensembles, if specified. This time, the variance is accumulated. The variance of these distributions is used to estimate a standard deviation in the mean, since each computed quantity is now a normally distributed result. This method is applied to all the :attr:`in.graphs` observables. The two lines generated represent :math:`\bar{o}\pm\sigma`, where :math:`o` is the observe function output, and :math:`\sigma` is the standard deviation in the mean.
+Next, the sample averages are averaged **again** over the two higher level ensembles, if specified. This time, the variance is accumulated. The variance of these distributions is used to estimate a standard deviation in the mean, since each computed quantity is now a normally distributed result. This method is applied to all the :attr:`graphs` observables. The two lines generated represent :math:`\bar{o}\pm\sigma`, where :math:`o` is the observe function output, and :math:`\sigma` is the standard deviation in the mean.
 
 The highest level ensemble, ``in.ensemble(3)``, is used for parallel simulations. This requires the Matlab parallel toolbox. Either type of high-level ensemble, or both together, can be used to calculate sampling errors.
 

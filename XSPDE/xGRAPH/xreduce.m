@@ -3,7 +3,7 @@ function [datan,np,x,xlab] =  xreduce(n,datan,g)
 %   for a single xSPDE plot function in at most three grid dimensions.
 %   Input:  graph number 'n', n-th data array 'datan',parameters 'g'.
 %   Output: reduced data, points, coordinates, labels.
-%   MIT licensed by Peter D. Drummond, (2015) - see License.txt 
+%   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
 
     grd = 0;                                   %%Initial graph number 

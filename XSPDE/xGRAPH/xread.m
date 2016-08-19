@@ -5,7 +5,7 @@ function [input,data,raw] =  xread(gr_input)
 %   If input is string: 'fname', reads input and data from file 'fname'. 
 %   Output: 'input' parameter cell array, data cell array 'cdata'.
 %   Optional: 'raw' trajectories from a file. 
-%   MIT licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License.txt
+%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License.txt
 
 raw={};                                        %%initialize raw data
 data = {};                                     %%set data to cell

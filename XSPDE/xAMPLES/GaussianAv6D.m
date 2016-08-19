@@ -10,7 +10,7 @@ function [e] = GaussianAv6D()
 
 in.name =        '6+1D Schroedinger equation';
 in.dimension =   7; 
-in.points =   [11,11,11,11,11,11,11]; %%dimension: 1-4
+in.points =   [5,11,11,11,11,11,11]; %%dimension: 1-4
 in.ranges =   [10,6,6,6,6,6,6];
 in.initial =     @(w,r) exp(-0.5*(r.x{2}.^2+r.x{3}.^2+r.x{4}.^2+r.x{5}.^2+r.x{6}.^2+r.x{7}.^2));   
 in.observe{1} =  @(a,r) a.*conj(a);                         
@@ -23,7 +23,7 @@ in.images =      3;                                         %%number of images
 in.imagetype =   2;                                         %%number of images
 in.transverse =  1;                                         %%transverse plots
 in.raw        =  1;
-%in.file       =  'GaussianAv6D.mat';   %%Warning- makes large disk file!
+%in.file       =  'GaussianAv6D.mat';   %%Warning - makes large disk file!
 in.olabels =    {'I','\int I dx_1dx_2dx_5dx_6','I(k)','\int I dK'};
 in.axes{1}    =   {-1,-1,-1,-1,0,0,0};
 in.compare{2} =  @(t,~) pi^2*(1+(t/10).^2).^(-1);           %%comparison

@@ -1,5 +1,5 @@
 function input = xgpreferences (input,oldinput)  
-%   input  =  XGRPREFERENCES(input) sets default values for  graphics inputs.
+%   input  =  XGPREFERENCES(input) sets default values for  graphics inputs.
 %   Input:  'input' cell array. previous input 'oldinput'.
 %   Output: 'input' cell array with updated and default graphics values. 
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
@@ -41,7 +41,7 @@ for s = 1:sequence                               %%loop over sequence
       klabels={'\omega','k_x','k_y','k_z'};
   end
   
-  in.gversion =   xprefer(in,'gversion',0,'xGRAPH1.22');
+  in.gversion =   xprefer(in,'gversion',0,'xGRAPH2.0');
   in.graphs =     xprefer(in,'graphs',1,in.functions);
   in.transforms = xcprefer(in,'transforms',in.graphs,{zeros(1,in.dimension)});
   in.axes =       xcprefer(in,'axes',in.graphs,{num2cell(zeros(1,in.dimension))});
