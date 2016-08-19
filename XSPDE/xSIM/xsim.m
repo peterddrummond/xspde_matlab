@@ -57,7 +57,7 @@ for s=1:sequence                                 %%loop over sequence
   esp =0;                                        %%initial sampling errors
   es =0;                                         %%initial step errors
   for n=1:r.functions
-    data{s}{n}(:,3,:)=data{s}{n}(:,3,:) - data{s}{n}(:,1,:).^2;
+    data{s}{n}(:,3,:)=data{s}{n}(:,3,:) - abs(data{s}{n}(:,1,:)).^2;
     if r.ncopies > 1                               %%if ensemble averaging   
       data{s}{n}(:,3,:)=real(sqrt(data{s}{n}(:,3,:)/(r.ncopies-1))); 
       esp = esp+max(max(max(abs(data{s}{n}(:,3,:))))); %%max of sd matrix

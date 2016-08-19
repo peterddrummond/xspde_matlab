@@ -1,7 +1,7 @@
 README
 
 
-xSPDE2.0
+xSPDE2.1
 
 The xSPDE folder should contain the xSIM, xGRAPH and xAMPLES folder.
 

@@ -43,7 +43,7 @@ for s = 1:sequence                             %%Loop over sequence
        in.gpoints{n} = size(data);
        data(:,2,:) =  data(:,2,:)+data(:,1,:);
        data(:,3,:) =  data(:,3,:)+data(:,1,:);   
-       data = in.gfunction{n}(data,in);        %%get graph data
+       data = real(in.gfunction{n}(data,in));  %%get real graph data
        if  isempty(data)                       %%check if any graph data
              error('xGRAPH error: no data returned from function{%d}\n',n); 
        end                                     %%end check if graph data

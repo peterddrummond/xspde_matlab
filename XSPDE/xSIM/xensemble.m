@@ -60,11 +60,11 @@ for ns = 1:serial                                 %%loop over ensembles
           av{n} = reshape(av{n},r.d.av{n});       %%reshape average data
       end
       for n = 1:r.functions
-        f = real(r.function{n}(av,r));            %%graph data
+        f = r.function{n}(av,r);                  %%graph data
         f = reshape(f,r.d.sf{n});                 %%reshape graph data
         if nc == 2 || r.errorchecks == 1          %%if fine check
          data{seq}{n}(:,1,:) = data{seq}{n}(:,1,:) + f/r.ncopies;          
-         data{seq}{n}(:,3,:) = data{seq}{n}(:,3,:) + f.^2/r.ncopies;                                 
+         data{seq}{n}(:,3,:) = data{seq}{n}(:,3,:) + f.*conj(f)/r.ncopies;                                 
         else                                      %%else coarse calc
          data{seq}{n}(:,2,:) = data{seq}{n}(:,2,:) + f/r.ncopies;
         end                                       %%end if errorchecks

@@ -6,7 +6,7 @@ function [error,input,data,raw] = xspde(input)
 %   data cell array of average data, raw data labeled 'data' and 'raw'.
 %   licensed by Peter D. Drummond, (2015) - see License.txt 
 
-fprintf ('\nxSPDE2.0 starting\n\n');                  %%integration number
+fprintf ('\nxSPDE starting up...\n\n');          %%Start-up message
 [errorsim,input,data,raw] = xsim(input);         %%Simulation program
 errorgraph = xgraph(data,input);                 %%Graphics program   
 error = errorgraph+errorsim;                     %%calculate total error
