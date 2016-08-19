@@ -112,7 +112,7 @@ Simulation user functions
 
 :func:`step`
 
-    is the algorithm or method computes each space-time point in the lattice. This also generates the random numbers fields at each time-step. It can be user-modified by setting the handle in.step.
+    is the algorithm or method computes each space-time point in the lattice. This also generates the random numbers fields at each time-step. It can be user-modified by setting the handle in.step. The default is ``in.step = xRK4``.
 
 :func:`observe`
 
@@ -129,7 +129,11 @@ Simulation user functions
 
 :func:`da`
 
-    is called by :func:`step` to calculate derivatives at every step in the process, including the stochastic terms.
+    is called by :func:`step` to calculate derivatives at every step in the process, including the stochastic terms. Returns a vector with ``in.fields(1)`` first components.
+    
+:func:`define`
+
+    is called by :func:`step` to calculate auxiliary fields at every step in the process. Returns a vector with ``in.fields(2)`` first components.
 
 Details of the different parts of the program are given below. Note that the functions ``tic()`` and ``toc()`` are called to time each simulation.
 
@@ -317,7 +321,7 @@ Averages
 
 There are functions available in xSPDE for grid averages, spatial integrals and derivatives to handle the spatial grid. These can be used to calculate observables for plotting, but are also available for calculating stochastic derivatives as part of the stochastic equation. They operate in parallel over the local ensemble and lattice dimensions. They take a vector or scalar quantity, for example a single field component, and return an average, a space integral, and a spatial derivative respectively. In each case the first argument is the field, the second argument is a vector defining the type of operation, and the last argument is the parameter structure, ``r``. If there are only two arguments, the operation vector is replaced by its default value.
 
-Spatial grid averages can be used to obtain stochastic results with reduced sampling errors if the overall grid is homogeneous. An average is carried out using the builtin xSPDE function :func:`xave` ``(o, [av, ] r)``. 
+Spatial grid averages can be used to obtain stochastic results with reduced sampling errors if the overall grid is homogeneous. An average is carried out using the builtin xSPDE function :func:`xave` with arguments ``(o, [av, ] r)``. 
 
 This takes a vector or scalar field or observable, for example ``o = [1, n.lattice]``, defined on the xSPDE local lattice, and returns an average over the spatial lattice with the same dimension. The input is a field or observable ``o``, and an optional averaging switch ``av``. If ``av(j) > 0``, an average is taken over dimension ``j``. Space dimensions are labelled from ``j = 2 ... 4`` as elsewhere.  If the ``av`` vector is omitted, the average is taken over all space directions.  To average over the local ensemble and all space dimensions, use ``xave(o)``. Averages are returned at all lattice locations.
 
@@ -334,7 +338,7 @@ Note that :func:`xave` on its own gives identical results to those calculated in
 Integrals
 ---------
 
-Integrals over the spatial grid allow calculation of conserved or other global quantities. To take an integral over the spatial grid,  use the xSPDE function :func:`xint` ``(o, [dx, ] r)``.
+Integrals over the spatial grid allow calculation of conserved or other global quantities. To take an integral over the spatial grid,  use the xSPDE function :func:`xint` with arguments ``(o, [dx, ] r)``.
 
     This function takes a scalar or vector quantity ``o``, and returns a trapezoidal space integral over selected dimensions with vector measure ``dx``. If ``dx(j) > 0`` an integral is taken over dimension ``j``. Dimensions are labelled from ``j = 1, ...`` as in all xSPDE standards. Time integrals are ignored at present. Integrals are returned at all lattice locations. To integrate over an entire lattice, set ``dx = r.dx``, otherwise set ``dx(j) = r.dx(j)`` for selected dimensions ``j``.
 
@@ -352,7 +356,7 @@ Spectral derivatives
 
 xSPDE can support either spectral or finite difference methods for derivatives. The default spectral method used is a discrete Fourier transform, but other methods can be added, as the code is inherently extensible.
 
-The code to take a spectral derivative, using spatial Fourier transforms, is carried out using the xSPDE :func:`xd` function ``(o, [D, ] r)``.
+The code to take a spectral derivative, using spatial Fourier transforms, is carried out using the xSPDE :func:`xd` function with arguments ``(o, [D, ] r)``.
 
 This function takes a scalar or vector quantity ``o``, and returns a spectral derivative over selected dimensions with a derivative ``D``, by Fourier transforming the data.  Set ``D = r.Dx`` for a first order x-derivative, ``D = r.Dy`` for a first order y-derivative, and similarly ``D = r.Dz.*r.Dy`` for a cross-derivative in ``z`` and ``y``. Higher derivatives require powers of these, for example `D = r.Dz.^4``. For higher dimensions use numerical labels, where ``D = r.Dx`` becomes ``D = r.D{2}``, and so on. Time derivatives are ignored at present. Derivatives are returned at all lattice locations.
 
@@ -362,7 +366,7 @@ Note that :func:`xd` returns a lattice observable, as required when used in the 
 Finite difference first derivatives
 -----------------------------------
 
-The code to take a first order spatial derivative with finite difference methods is carried out using the xSPDE function :func:`xd1` ``(o, [dir, ] r)``.
+The code to take a first order spatial derivative with finite difference methods is carried out using the xSPDE function :func:`xd1` with arguments ``(o, [dir, ] r)``.
 
 This takes a scalar or vector ``o``, and returns a first derivative with an axis direction ``dir``.  Set ``dir = 2`` for an x-derivative, ``dir = 3`` for a y-derivative.  Time derivatives are ignored at present. Derivatives are returned at all lattice locations.
 
@@ -371,7 +375,7 @@ If the direction ``dir`` is omitted, an x-derivative is returned. These derivati
 Finite difference second derivatives
 ------------------------------------
 
-The code to take a second order spatial derivative with finite difference methods is carried out using the xSPDE :func:`xd2` ``(o, [dir, ] r)`` function.
+The code to take a second order spatial derivative with finite difference methods is carried out using the xSPDE :func:`xd2` with arguments ``(o, [dir, ] r)`` function.
 
 This takes a scalar or vector ``o``, and returns the second  derivative in axis direction ``dir``.  Set ``dir = 2`` for an x-derivative, ``dir = 3`` for a y-derivative.  All other properties are exactly the same as :func:`xd1`.
 
@@ -463,9 +467,9 @@ In different subroutines it may be necessary to expand out this array to more ea
 
 :: data:: a
 
-    [in.fields, in.ensembles(1), 1, in.points(2) ,... , in.points(dimension)] 
+    [in.fieldsplus, in.ensembles(1), 1, in.points(2) ,... , in.points(dimension)] 
 
-Note: Here, :attr:`fields` is the number of field components and ``in.ensembles(1)`` is the number of statistical samples processed as a parallel vector. This can be set to one to save data space, or increased to improve parallel efficiency. Provided no frequency information is needed, the time dimension ``in.points(1)`` is compressed to one during calculations. During spectral calculations, the full length of the time lattice, ``in.points(1)``, is stored, which increases memory requirements.
+Note: Here, :attr:`fieldsplus` = :attr:`fields` (1) + :attr:`fields` (2) is the total number of field components and ``in.ensembles(1)`` is the number of statistical samples processed as a parallel vector. This can be set to one to save data space, or increased to improve parallel efficiency. Provided no frequency information is needed, the time dimension ``in.points(1)`` is compressed to one during calculations. During spectral calculations, the full length of the time lattice, ``in.points(1)``, is stored, which increases memory requirements.
 
 .. data:: latt
 
@@ -488,7 +492,7 @@ Each location in the cell array stores one sample-time-space trajectory in xSPDE
 
 .. data:: field
 
-    **Array**, has dimension: ``(:attr:`fields`, :attr:`ensemble(1)`, :attr:`points`)``
+    **Array**, has dimension: ``(:attr:`fieldsplus`, :attr:`ensemble(1)`, :attr:`points`)``
 
 The main utility of raw data is for storing data-sets from large simulations for later re-analysis. It is also a platform for further development of analytic tools for third party developers, to treat statistical features not included in the functional tools provided. For example, one might need to plot histograms of distributions from this.
 

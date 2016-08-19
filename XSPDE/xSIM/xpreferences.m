@@ -6,10 +6,13 @@ function in = xpreferences (in)
   
 %%Unconditional  preference list - can be changed if required
 
-    in.version =    xprefer(in,'version',0,'xSIM2.1');
+    in.version =    xprefer(in,'version',0,'xSIM2.2');
     in.name =       xprefer(in,'name',0,'');
     in.dimension =  xprefer(in,'dimension',1,1);
-    in.fields =     xprefer(in,'fields',1,1);
+    in.fields =     xprefer(in,'fields',2,[1,0]);
+    in.defines =    in.fields(2);
+    in.fields =     in.fields(1);    
+    in.fieldsplus = in.fields+in.defines;
     in.ranges =     xprefer(in,'ranges',in.dimension,10*ones(1,in.dimension));
     in.origin =     xprefer(in,'origin',in.dimension,[0,-in.ranges(2:in.dimension)/2.]);
     in.points =     xprefer(in,'points',in.dimension,[51,35*ones(1,in.dimension-1)]);
@@ -50,13 +53,14 @@ function in = xpreferences (in)
     in.grid =       xprefer(in,'grid',0,@xgrid);
     in.prop =       xprefer(in,'prop',0,@xprop);
     in.da   =       xprefer(in,'da',0,@xda);
+    in.define   =   xprefer(in,'define',0,@xdefine);
     in.propfactor = xprefer(in,'propfactor',0,@xpropfactor);
          
 %%Conditional preference list - these preferences depend on other choices
 
     if ~isfield(in,'observe')                %%does input have no observe?
         in.olabels{1} = 'a';
-        in.observe{1} =  @(a,~) real(a);
+        in.observe{1} =  @(a,~) real(a);     %%default observe function
         if prod(in.ensembles)>1
             in.olabels{1} = '<a>';
         end 
@@ -125,6 +129,10 @@ end
 
 function da = xda(~,~,r)                     %% Default derivative
     da = zeros(r.d.a);                       %% set fields to zero
+end
+
+function define = xdefine(~,~,r)             %% Default define
+    define = zeros([r.defines,r.nlattice]);  %% set fields to zero
 end
 
 function L = xlinear(r)                      %% Default linear filter

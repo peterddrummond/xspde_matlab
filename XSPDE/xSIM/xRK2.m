@@ -5,6 +5,7 @@ function a  =  xRK2(a,xi,r)
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License 
 
 am = r.prop(a,r);                           %%in.propagates first RK2 field
+
 a = a+reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%First RK2 field
 a = r.prop(a,r);                            %%in.propagates field + deriv
 r.t=r.t+r.dtr;                              %%Increment current time      

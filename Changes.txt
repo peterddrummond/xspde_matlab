@@ -1,0 +1,24 @@
+Defined fields in xSPDE2.2;
+
+
+These are additional fields that have values defined through functions. They are otherwise normal fields, with fourier transforms, observe functions etc. To use:
+
+(1) Specify in.fields = [1,1] (for as many SDE fields and defined fields as you need)
+
+(2) Specify in.define as a function to return the defined fields ONLY. 
+
+For instance, with one define field equal to an exponential of time:
+
+in.define    =  @(a,xi,r) exp(1i*r.t); 
+
+(3) Stochastic functions like in.da, in.initial  return the stochastic fields ONLY.
+
+(4) The total number of stored fields is infields(1)+in.fields(2).
+
+(5) To reference a defined field, in this case you would use a(2,:);
+
+(6) The define fields can include noise or ordinary stochastic fields.
+
+Currently this is only available with the xMP and xRK4 algorithms.
+
+Note that xSPDE2.2 allows the use of complex observe functions. The estimated standard deviations are the rms of real and imaginary standard deviations. This data and its functions can be stored as usual. However, the final plotted lines are always the real parts of any averages or functions, and the errors are estimated most accurately if real functions are averaged.

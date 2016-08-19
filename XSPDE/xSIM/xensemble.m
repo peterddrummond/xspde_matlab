@@ -48,11 +48,10 @@ for ns = 1:serial                                 %%loop over ensembles
       if seq == 1                                 %%check if sequence = 1
           a = r.initial(w,r);                     %%initialize fields
       else                                        %%if sequence > 1
-          a = r.transfer(w,r,a,l{seq-1});         %%interface fields
+          a = r.transfer(w,r,a(1:r.fields,:),l{seq-1}); %%interface fields
       end                                         %%end check sequence =1
       a = reshape(a,r.d.a);                       %%reshape fields
       r.t=r.origin(1);                            %%initial time
-      
       %%Store the averages for the stochastic field path     
       
       [a,av,raw{seq,nc,ns}] = xpath(a,nc,r);      %%simulate path

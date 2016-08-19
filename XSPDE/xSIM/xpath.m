@@ -9,7 +9,6 @@ function [a,av,raw] = xpath(a,nc,r)
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
       %%Initialize stored data
-
 raw = 0;
 av = cell(1,r.averages);
 if r.raw||r.transformw                         %%if store fields                                     
@@ -20,7 +19,10 @@ for  n = 1:r.averages
 end
 
       %%Loop over all the time points
-
+if r.defines 
+    z = 0.0*r.noisegen(r);                     %%Calculate  noise
+    a(r.fields+1:r.fieldsplus,:) = r.define(a,z,r);
+end                                            %%define a field
 for np = 1:r.points(1);                        %%loop until time tmax
   if np > 1                                    %%If NOT first point 
       
@@ -34,7 +36,7 @@ for np = 1:r.points(1);                        %%loop until time tmax
           if (nc < r.errorchecks)              %%If low res check, even
               z = (z + z1)/2.;                 %%Average noise terms 
           end                                  %%End if low res check
-          a = r.step(a,z,r);                   %%One step integration
+          a = r.step(a,z,r);                   %One step integration
           r.t = r.t+r.dtr;                     %%Increment time
       end                                      %%End if low res  & odd
     end                                        %%End for steps
@@ -42,7 +44,7 @@ for np = 1:r.points(1);                        %%loop until time tmax
   
       %%Store data for the time point
   if r.raw||r.transformw                       %%do fields need storing?
-        a = reshape(a,r.d.fields);
+        a = reshape(a,r.d.fieldsplus);
         raw(:,:,np,:) = a(:,:,1,:);
   end                                          %%end if store data
   for n = 1:r.averages
@@ -52,9 +54,9 @@ for np = 1:r.points(1);                        %%loop until time tmax
   end
 end;                                           %%end time loop
 if r.transformw                                %%if frequency domain
-    raw_ft = fft(raw,[],3)*r.kfact(1);         %%take Fourier transform
+    raw_ft = ifft(raw,[],3)*r.kfacti(1);       %%take inverse Fourier transform
     for np = 1:r.points(1)                     %%loop until wmax
-        aw = reshape(raw_ft(:,:,np,:),r.d.a);  %%flatten field data
+        aw = reshape(raw_ft(:,:,np,:),r.d.aplus);  %%flatten field data
         r.w = r.kc{1}(np);                     %%set graphics frequencies
         for n = 1:r.averages
             if r.transforms{n}(1) == 1         %%if frequency switch on
@@ -88,12 +90,12 @@ function a  =  xgraphicsfft(a,trans,r)
 %   Input switch 'tr(i)' = 0 for space domain, = 1 for transform domain.
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
  
-a =reshape(a, r.d.fields);                      %%reshape to lattice
+a =reshape(a, r.d.fieldsplus);                      %%reshape to lattice
 for nd = 2:r.dimension                          %%loop over space dimension
     if trans(nd) >0                             %%if FFT required
         a = fft(a,[],2+nd)*r.kfact(nd);         %%take Fourier transform
     end                                         %%end if FFT required
 end                                             %%end loop over dimension
-a =reshape(a, r.d.a);                           %%reshape to flat array
+a =reshape(a, r.d.aplus);                           %%reshape to flat array
 end                                             %%end function
                 

@@ -11,14 +11,14 @@ function e = Kubo()
 % cd ~                                         %%If needed to set directory
 in.name =       'Kubo oscillator';             %%Name of simulation
 in.ensembles =  [2000,4,1];                    %%samples,ensembles,parallel
-in.steps =      2;                            %%Number of steps
-in.steps =      1;                             %%Number of steps
+in.fields = [1,0];
 in.step =       @xRK4;                         %%Use RK4 integrator
+%in.graphs =     1;
 in.initial   =  @(w,r)     1+0*w ;             %%Initialisation  handle
-in.da        =  @(a,z,r)  1i*z.*a ;            %%Derivative  handle
+in.da        =  @(a,z,r)  1i*z.*a(1,:) ;       %%Derivative  handle
 in.file  =      'Kubo.mat';                    %%Output filename
-in.compare   =  {@(t,~,~) exp(-t/2)};          %%Comparison function
-[e,in,data]       =  xsim(in);                 %%Stochastic program
+in.compare   =  {@(t,~,~) exp(-t/2)};          %Comparison function
+[e1,in,~]       =  xsim(in);                   %%Stochastic program
 in.name =      'Kubo oscillator edited title';
 e            =  xgraph(in.file,in);            %%Graphics program
 

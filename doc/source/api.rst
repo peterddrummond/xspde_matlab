@@ -72,7 +72,7 @@ Functions of a single lattice have arguments in the following order:
 -  non-field arguments;
 -  the lattice structure ``r``.
 
-The first argument, ``a``, is a real or complex vector field. This is a matrix whose first dimension is the field index. The second dimension is the lattice index.
+The first argument, ``a``, is a real or complex vector field. This is a matrix whose first dimension is the field index, with a range of 1 to :attr:`fieldsplus`, with :attr:`fieldsplus` = :attr:`fields` (1) + :attr:`fields` (2). The second dimension is the lattice index.
 
 The second argument, ``z``, if needed, is a real random noise, corresponding to :math:`\zeta` in the mathematical notation. This is a matrix whose first dimension is the noise index. The second dimension is the lattice index.
 
@@ -83,11 +83,12 @@ Functions of multiple lattice sequences take current arguments first, and the ol
 Integration arrays
 ------------------
 
-In all integration function calls, the variables used are matrices. The first dimension used is the field length :attr:`fields`. The second dimension in all field arrays is the lattice index, with a length ``n.lattice = ensembles(1) * points(2) * ... * points(dimension)``. Here ``ensembles(1)`` is the number of stochastic samples integrated as an array.
+In all integration function calls, the variables used are matrices. The first dimension used is the stochastic field length :attr:`fields` (1). The second dimension in all field arrays is the lattice index, with a length ``n.lattice = ensembles(1) * points(2) * ... * points(dimension)``. Here ``ensembles(1)`` is the number of stochastic samples integrated as an array.
 
 The field dimensions for the flattened arrays passed to xSIM integration functions are:
 
-- ``a, da, L = [r.fields, r.nlattice]``
+- ``a = [r.fieldsplus, r.nlattice]``
+- ``da, L = [r.fields(1), r.nlattice]``
 - ``v = [r.randoms(1)+r.randoms(2), r.nlattice]``
 - ``z = [r.noises(1)+r.noises(2), r.nlattice]``
 - ``r.Dx, r.x, r.kx = [1, r.nlattice]``
@@ -97,7 +98,7 @@ Data arrays
 
 Each observable used to generate graph data is defined by a function in a cell array with length :attr:`graphs`. There are two stages of averaging. First, an average over a local ensemble at a single time-point is performed using the  :func:`observe` function. Next, if more sophisticated data is required, an optional  :func:`function` is used to transform data.
 
-The first dimension ``lines`` is determined by the :func:`observe` function, although this can be changed by the data transformation  :func:`function`. It is typically one for a single-line graph, but could be greater. The last dimensions in all data arrays is the vector of time-space dimensions: ``points = [points(1), ... ,points(dimension)]``. 
+The first dimension ``lines`` is initially determined by the :func:`observe` function. This can be modifed if required  by the data transformation  :func:`function`. It is typically one for a single-line graph, but can be greater. The last dimensions in all data arrays is the vector of time-space dimensions: ``points = [points(1), ... ,points(dimension)]``. 
 
 - ``d{n} = [lines,1, points]``.
 
@@ -151,6 +152,19 @@ Note that inputs can be numbers, vectors, strings or cells arrays. To simplify t
 xSIM parameters
 ----------------
 
+
+
+.. attribute:: version
+
+    *Default:* ``'xSIM2.2'``
+
+    This sets the current version number of the  simulation program. There is typically no need to input this.
+
+    ::
+
+        in.version = 'current version name'
+        
+
 .. attribute:: name
 
     *Default:* ``' '``
@@ -173,19 +187,30 @@ xSIM parameters
 
 .. attribute:: fields
 
-    *Default:* ``1``
+    *Default:* ``[1,0]``
 
-    These are real or complex variables stored at each lattice point, and are the independent variables for integration. The fields are vectors that can have any dimension.
+    These are real or complex variables stored at each lattice point, and are the independent variables for integration. The fields are vectors that can have any dimension. The first number is the number of real or complex fields that are initialized by the :func:`initial` function and integrated using the :func:`da` derivative. The optional second number is the number of real or complex auxiliary fields specified with the :func:`define` function.
 
     ::
 
-        in.fields = 1, 2, ...
+        in.fields(1,2) = 0, 1, 2, ...
+        
+.. attribute:: fieldsplus
+
+    *Default:* ``1``
+
+    This is the total of stochastic plus defined fields. This is calculated internally: :attr:`fieldsplus` = :attr:`fields` (1) + :attr:`fields` (2).
+
+    ::
+
+        in.fieldsplus = 0, 1, 2, ...
+
 
 
 
 .. attribute:: noises
 
-    *Default:* :attr:`fields`
+    *Default:* :attr:`fields` (1)
 
     This gives the number of stochastic noises generated per lattice point, in coordinate and momentum space respectively. Set to zero (``in.noises = 0``) for no noises. This is the number of *rows* in the noise-vector. Noises can be delta-correlated or correlated in space. The second input is the dimension of noises in k-space. It can be left out if zero. This allows use of finite correlation lengths when needed, by including a frequency filter function that is used to multiply the noise in Fourier-space. The Fourier-space noise variance is the square of the filter function. Note that the first noise index, noises(1), indicates how many independent noise fields are generated, while noises(2) indicates how many of these are are fourier-transformed, filtered and then inverse fourier transformed to give correlations. These appear as extra noises, so the total is noises(1)+noises(2). The filtered noises have a finite correlation length. They are also correlated with the first noises(2) noises they are generated from. 
 
@@ -255,7 +280,7 @@ xSIM parameters
 
     *Default:* ``[0, 0, ...]``
 
-    Type of spatial boundary conditions used, set for each dimension independently, and used in the partial differential equation solutions. The default option is periodic. If ``1``,  Neumann boundaries are used, with normal derivatives set to zero.  If ``2``,  Dirichlet boundaries are used, with field values set to zero. Note that in the current xSPDE code, setting non-periodic boundaries requires the use of finite difference type derivatives, without the option of an interaction picture derivative. Using Fourier derivatives will automatically make the boundary conditions periodic.
+    Type of spatial boundary conditions used, set for each dimension independently, and used in the partial differential equation solutions. The default option, or ``0``, is periodic. If ``1``,  Neumann boundaries are used, with normal derivatives set to zero.  If ``2``,  Dirichlet boundaries are used, with field values set to zero. Note that in the current xSPDE code, setting non-periodic boundaries requires the use of finite difference type derivatives, without the option of an interaction picture derivative. Using Fourier derivatives will automatically make the boundary conditions periodic.
 
     ::
 
@@ -455,6 +480,13 @@ A stochastic equation solver requires the definition of an initial distribution 
     *Default:* :func:`xda`
 
     Calculates derivatives :math:`da` of the equation. The noise vector, ``z``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension  whose default value is :attr:`fields` if :attr:`noises` are not given. Otherwise, it has a first dimension of ``in.noises(1) + in.noises(2)``. The second type of input noise allows for spatially correlated and filtered noise specified in momentum space.
+    
+    
+    .. function::  define (a,z,r)
+
+    *Default:* :func:`xdefine`
+
+    Calculates auxiliary field values during propagation.
 
 .. function:: linear (r)
 
@@ -573,7 +605,7 @@ Together with default values, they are:
 
 .. attribute:: gversion
 
-    *Default:* ``'xGRAPH2.0'``
+    *Default:* ``'xGRAPH2.2'``
 
     This sets the current version number of the graphics program. There is typically no need to input this.
 
@@ -925,6 +957,10 @@ These functions are used as defaults for simulations and can be overridden by th
 .. function:: xda (~, ~, r)
 
     Returns a derivative array filled with zeros.
+    
+.. function:: xdefine (~, ~, r)
+
+    Returns a define array filled with zeros.
 
 .. function:: xlinear (~, r)
 
@@ -974,7 +1010,11 @@ Answers to some frequent questions, and reminders of points in this chapter are:
 
 -  Can you have several independent stochastic variables?
 
-   -  Yes, input this using ``in.fields > 1``.
+   -  Yes, input this using ``in.fields(1) > 1``.
+   
+- I need to have auxiliary fields are defined as functions of other fields.
+
+   -  No problem, input this specification using ``in.fields(2) > 0``, and define the extra fields with the :func:`define` function.
 
 -  Are higher dimensional differential equations possible?
 
@@ -982,13 +1022,13 @@ Answers to some frequent questions, and reminders of points in this chapter are:
 
 -  Can you have spatial partial derivatives?
 
-   -  Yes, provided they are linear in the fields; these are obtainable using the function :attr:`linear`.
+   -  Yes, provided they are linear in the fields; these are obtainable using the function :func:`linear`. If they are more general,  use the derivative functions :func:`xd` or or you want special, nonperiodic boundary conditions, then use the finite difference methods,  :func:`xd1`  and  :func:`xd2` .
 
 -  Can you delete the graph heading?
 
    -  Yes, this is turned off if you set :attr:`headers` to ``0``.
 
--  Why are there two lines in the graphs sometimes?
+-  Why are there two nearly parallel lines in the graphs sometimes?
 
    -  These are one standard deviation sampling error limits, generated when ``in.ensembles(2,3) > 1``.
 

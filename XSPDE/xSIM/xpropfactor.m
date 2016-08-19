@@ -22,7 +22,7 @@ if r.structD
 else
     L = reshape(r.linear(r),r.d.fields);
 end    
-if isequal(L,zeros(r.d.fields))
+if isequal(L,zeros(r.d.a))
     propagator = 1;
 else 
     propagator = exp(L*r.dt/(nc*r.ipsteps));  %%propagation factor

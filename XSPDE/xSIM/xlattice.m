@@ -11,6 +11,7 @@ function r = xlattice(r)
       r.transformw = max(r.transformw,r.transforms{i}(1));
   end                                               %%end for w-transform
   r.kfact =     r.dx/sqrt(2*pi);                    %%fft normalization
+  r.kfacti =    r.ranges/sqrt(2*pi);                %%ifft normalization
   r.dt  =       r.dx(1)/r.steps;                    %%integration step
   r.s.dx =      sqrt(1./r.dV);                      %%Transverse normalization
   r.s.dxt =     r.s.dx*sqrt(r.errorchecks/r.dt);    %%noise normalization
@@ -22,8 +23,10 @@ function r = xlattice(r)
   r.nlattice =  r.ensembles(1)*r.nspace;            %%sample*space dimensions
   r.d.r =       [1,r.nlattice];                     %%coordinate dimension
   r.d.a =       [r.fields,r.nlattice];              %%flat field dimension
+  r.d.aplus =   [r.fieldsplus,r.nlattice];          %%flat field dimension
   r.d.fields =  [r.fields,r.d.int];                 %%full field dimension
-  r.d.raw =     [r.fields,r.ensembles(1),r.points]; %%raw data  dimension
+  r.d.fieldsplus =  [r.fieldsplus,r.d.int];          %%total field 
+  r.d.raw =     [r.fieldsplus,r.ensembles(1),r.points]; %%raw data  dimension
   r.infilt =   1;                                   %%default input filter
   r.noisefilt =1;                                   %%default noise filter
   if r.dimension > 1                                %%if transverse dimensions 
@@ -35,7 +38,7 @@ function r = xlattice(r)
       r.noisefilt = reshape(Kn,[r.noises(2),r.d.int]);%%reshape filter
     end                                             %%end if k-noise 
   end                                               %% End check dimension
-  a = zeros(r.d.a);
+  a = zeros(r.d.aplus);
   r.t = 0;
   av = cell(1,r.averages);
   for n = 1:r.averages                              %%Loop  over averages

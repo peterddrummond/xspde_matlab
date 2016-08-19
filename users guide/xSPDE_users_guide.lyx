@@ -29,7 +29,16 @@
 \index_command default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref section
+\pdf_pdfusetitle true
 \papersize default
 \use_geometry false
 \use_package amsmath 1
@@ -73,7 +82,7 @@
 \begin_body
 
 \begin_layout Title
-xSPDE user's guide: v2.1
+xSPDE user's guide: v2.2
 \end_layout
 
 \begin_layout Author
@@ -1317,7 +1326,7 @@ Here
 \end_inset
 
  defines the derivative function, with 
-\begin_inset Formula $z$
+\begin_inset Formula $w$
 \end_inset
 
  the noise.
@@ -1845,7 +1854,29 @@ Spectra
 \begin_layout Standard
 Frequency spectra have many uses, especially for understanding the steady-state
  fluctuations of any physical system.
- Take the random walk equation in a complex space, 
+ The xSPDE spectral definition is:
+\begin_inset Formula 
+\[
+\tilde{a}(\omega)=\frac{1}{\sqrt{2\pi}}\int e^{-i\omega t}a(t)dt\,
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To get an output from a temporally Fourier transformed field, just set 
+\begin_inset Formula $in.transforms=1$
+\end_inset
+
+, for the particular observable you need to calculate in transform space.
+ This parameter is a cell array, and can have a different value for every
+ observable and indeed, every dimension in space-time.
+\end_layout
+
+\begin_layout Standard
+Take the random walk equation in a complex space, 
 \begin_inset Formula 
 \[
 \frac{da}{dt}=-a+w(t)
@@ -3697,12 +3728,24 @@ Free diffraction of a Gaussian wave-function in three dimensions, is given
 \end_layout
 
 \begin_layout Standard
+The xSPDE spectral definition in space-time is:
+\begin_inset Formula 
+\[
+\tilde{a}(\omega,\bm{k})=\frac{1}{\left[2\pi\right]^{D/2}}\int e^{i(\bm{k}\cdot\bm{x}-\omega t)}a(t,\bm{x})dtd\bm{x}\,
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Together with the initial condition that 
 \begin_inset Formula $a(0,x)=exp(-\left|\mathbf{x}\right|^{2}/2)$
 \end_inset
 
 , this has an exact solution for the diffracted intensity in either ordinary
- space or momentum space: 
+ space or momentum space is therefore: 
 \begin_inset Formula 
 \begin{eqnarray*}
 \left|a\left(t,\mathbf{x}\right)\right|^{2} & = & \frac{1}{\left(1+t^{2}\right)^{3/2}}exp(-\left|\mathbf{x}\right|^{2}/\left(1+t^{2}\right))\\
@@ -3712,6 +3755,14 @@ Together with the initial condition that
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+To get an output from a spatially Fourier transformed field, just set 
+\begin_inset Formula $in.transforms=[0,1,1,1]$
+\end_inset
+
+, for the particular observable you need to calculate in transform space.
 \end_layout
 
 \begin_layout Subsection*
@@ -4719,11 +4770,12 @@ a.
 \end_inset
 
 , which sets fields to zero.
+ The returned first dimension should be fields(1).
  
 \end_layout
 
 \begin_layout Description
-*observe is the initial observation function whose output is averaged over
+*observe is the initial observation function, whose output is averaged over
  the ensembles, called from 
 \series bold
 xpath
@@ -4733,15 +4785,18 @@ xpath
 \begin_inset Formula $\mathbf{xobserve}$
 \end_inset
 
-, returns the amplitudes.
+, returns the real part of the amplitudes.
  
 \end_layout
 
 \begin_layout Description
-*function is an optional function used to take arbitrary transforms or time
- integrals of the initial observe outputs, after averaging over the first
+*function is an optional function used to take arbitrary transforms of the
+ initial observe outputs, after averaging over the 
+\emph on
+first
+\emph default
  ensemble.
- The default returns the observe outputs unchanged.
+ The default returns the averages unchanged.
  
 \end_layout
 
@@ -4760,13 +4815,46 @@ xpath
 \series bold
 step
 \series default
- to calculate derivatives at every step in the process, including the stochastic
- terms.
+ to calculate derivatives of the stochastic fields at every step in the
+ process, including the stochastic terms.
  The default, 
 \begin_inset Formula $\mathbf{xstep}$
 \end_inset
 
-, sets this to zero
+, sets this to zero.
+ The returned first dimension should be fields(1).
+ All stochastic fields are accessible as 
+\begin_inset Formula $a(n,:)$
+\end_inset
+
+, where 
+\begin_inset Formula $n\leq fields(1)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+*define is called by 
+\series bold
+step
+\series default
+ to calculate any user-defined auxiliary fields.
+ The default, 
+\begin_inset Formula $\mathbf{xdefine}$
+\end_inset
+
+, sets these to zero.
+ The returned first dimension should be fields(2).
+ If auxiliary fields are used they are accessible as 
+\begin_inset Formula $a(n,:)$
+\end_inset
+
+, where 
+\begin_inset Formula $n>fields(1)$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description
@@ -4778,12 +4866,14 @@ transfer
 \series bold
  
 \series default
-where previous field values are included as input to the function.
+where previous or output stochastic field values are automatically included
+ as input to the next stage ine the intergation sequence.
  The default, 
 \begin_inset Formula $\mathbf{xtransfer}$
 \end_inset
 
-, replicates the output of the previous simulation.
+, uses the output of the previous simulation for the input to the next stage.
+ This can be changed by the user.
 \end_layout
 
 \begin_layout Description
@@ -6332,7 +6422,7 @@ xspde(in).
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="27" columns="3">
+<lyxtabular version="3" rows="28" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -6386,7 +6476,7 @@ version
 \begin_layout Plain Layout
 
 \emph on
-'xSIM2.0'
+'xSIM2.2'
 \emph default
  
 \end_layout
@@ -6458,7 +6548,10 @@ dimension
 \begin_inset Text
 
 \begin_layout Plain Layout
-1 
+\begin_inset Formula $1$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -6491,7 +6584,10 @@ fields
 \begin_inset Text
 
 \begin_layout Plain Layout
-1 
+\begin_inset Formula $[1,0]$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -6500,7 +6596,7 @@ fields
 \begin_inset Text
 
 \begin_layout Plain Layout
-Number of stochastic fields
+Number of stochastic or auxiliary fields
 \end_layout
 
 \end_inset
@@ -6524,7 +6620,10 @@ ranges
 \begin_inset Text
 
 \begin_layout Plain Layout
-10 
+\begin_inset Formula $10$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -6951,6 +7050,40 @@ File-name:
 \begin_layout Plain Layout
 
 \emph on
+boundaries
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $[0,0,0,\dots]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Boundary: '0,1,2'=periodic,Neum.,Dirich.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
 ipsteps
 \emph default
  
@@ -7012,7 +7145,7 @@ graphs
 \begin_inset Text
 
 \begin_layout Plain Layout
-Number of observables
+Maximum number of graphs
 \end_layout
 
 \end_inset
@@ -7312,7 +7445,7 @@ The most common functions, output field dimensions and calling arguments,
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="19" columns="3">
+<lyxtabular version="3" rows="22" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -7572,7 +7705,10 @@ Initialization in a sequence
 \begin_inset Text
 
 \begin_layout Plain Layout
-(a,z,dt,r)
+\begin_inset Formula $(a,z,dt,r)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7607,9 +7743,10 @@ Calculation of a time-step
 \begin_layout Plain Layout
 
 \emph on
- 
-\emph default
-(r)
+\begin_inset Formula $(r)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7642,7 +7779,10 @@ Grid calculator for lattice
 \begin_inset Text
 
 \begin_layout Plain Layout
-(a,r)
+\begin_inset Formula $(a,r)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7675,7 +7815,10 @@ Interaction picture propagator
 \begin_inset Text
 
 \begin_layout Plain Layout
-(nc,r)
+\begin_inset Formula $(nc,r)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7710,7 +7853,10 @@ Propagator array calculation
 \begin_layout Plain Layout
 
 \emph on
-(a,r)
+\begin_inset Formula $(a,r)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7743,7 +7889,10 @@ Observable function cell array
 \begin_inset Text
 
 \begin_layout Plain Layout
-{@(av,~)av{1}(:,:,:).^2,..} 
+\begin_inset Formula ${@(av,~)av{1}(:,:,:).^{2},..}$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7776,7 +7925,10 @@ Functions stored of averages
 \begin_inset Text
 
 \begin_layout Plain Layout
-(t,in) 
+\begin_inset Formula $(t,in)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7798,6 +7950,42 @@ Comparison function cell array
 \begin_layout Plain Layout
 
 \emph on
+*define
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(a,z,r)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Defines an auxiliary field
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
 randomgen
 \end_layout
 
@@ -7807,7 +7995,10 @@ randomgen
 \begin_inset Text
 
 \begin_layout Plain Layout
-(r)
+\begin_inset Formula $(r)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7838,7 +8029,10 @@ noisegen
 \begin_inset Text
 
 \begin_layout Plain Layout
-(r)
+\begin_inset Formula $(r)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7869,7 +8063,10 @@ xint
 \begin_inset Text
 
 \begin_layout Plain Layout
-(a,dx,r)
+\begin_inset Formula $(a,dx,r)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7900,7 +8097,10 @@ xave
 \begin_inset Text
 
 \begin_layout Plain Layout
-(a,av,r)
+\begin_inset Formula $(a,av,r)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -7916,7 +8116,7 @@ Averages over a spatial lattice
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -7927,11 +8127,70 @@ xd
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-(a,D,r)
+\begin_inset Formula $(a,D,r)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Spectral spatial derivative
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+xd1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(a,(dir),r)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1st derivative, finite diff.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+xd2
 \end_layout
 
 \end_inset
@@ -7940,7 +8199,19 @@ xd
 \begin_inset Text
 
 \begin_layout Plain Layout
-Takes a spatial derivative
+\begin_inset Formula $(a,(dir),r)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2nd derivative, finite diff.
 \end_layout
 
 \end_inset
@@ -8215,7 +8486,7 @@ array
 \begin_inset Text
 
 \begin_layout Plain Layout
-Grid of 
+Space grid of
 \begin_inset Formula $x,y,z$
 \end_inset
 
@@ -8268,7 +8539,7 @@ array
 \begin_inset Text
 
 \begin_layout Plain Layout
-Grid of 
+Momentum grid of 
 \begin_inset Formula $k_{x},k_{y},k_{z}$
 \end_inset
 
@@ -8321,7 +8592,7 @@ array
 \begin_inset Text
 
 \begin_layout Plain Layout
-Grid of 
+Derivative grid of 
 \begin_inset Formula $D_{x},D_{y},D_{z}$
 \end_inset
 
@@ -8374,7 +8645,7 @@ array
 \begin_inset Text
 
 \begin_layout Plain Layout
-Grid of
+Space grid of
 \emph on
 
 \begin_inset Formula $x_{1},\ldots x_{d}$
@@ -8431,7 +8702,7 @@ array
 \begin_inset Text
 
 \begin_layout Plain Layout
-Grid of
+Momentum grid of
 \emph on
  
 \begin_inset Formula $k_{1},\ldots k_{d}$
@@ -8488,7 +8759,7 @@ array
 \begin_inset Text
 
 \begin_layout Plain Layout
-Grid of
+Derivative grid of
 \emph on
  
 \begin_inset Formula $D_{2},\ldots D_{d}$

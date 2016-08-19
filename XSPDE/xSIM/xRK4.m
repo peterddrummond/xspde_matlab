@@ -3,8 +3,38 @@ function ao  =  xRK4(a,xi,r)
 %   Input: field a, lattice r, noise xi.
 %   Output: new field a. 
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
-
-if ~isequal(r.propagator,1)
+if  r.defines
+    a0 = a(1:r.fields,:);
+    if ~isequal(r.propagator,1)
+    am = r.prop(a0,r);                             %%Initialises midpoint
+    a = [a0;r.define(a,xi,r)];
+    d1 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%first derivative
+    d1 = r.prop(d1,r);                             %%first derivative
+    r.t = r.t+0.5*r.dtr;                           %%Increment current time
+    a = [am+d1;r.define(a,xi,r)];
+    d2 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%Second deriv
+    a = [am+d2;r.define(a,xi,r)];
+    d3 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%third deriv
+    r.t = r.t+0.5*r.dtr;                           %%Increment current time
+    a1 =  r.prop(am+2.*d3,r);                      %%Last field estimate
+    ao = [a1;r.define(a,xi,r)];
+    d4 = 0.5*reshape(r.da(ao,xi,r)*r.dtr,r.d.a);   %%fourth deriv
+    d1 = (d1 + 2.*(d2 + d3))/3. ;                  %%Sum IP derivatives
+    ao(1:r.fields,:) =  r.prop(am + d1,r) + d4/3.; %RK4IP final algorithm
+  else
+    d1 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%first derivative
+    r.t = r.t+0.5*r.dtr;                           %%Increment current time
+    a = [a0+d1;r.define(a,xi,r)];
+    d2 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);   %%Second deriv
+    a = [a0+d2;r.define(a,xi,r)];
+    d3 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%third deriv
+    r.t = r.t+0.5*r.dtr;                           %%Increment current time
+    ao = [a0+2.*d3;r.define(a,xi,r)];
+    d4 = 0.5*reshape(r.da(ao,xi,r)*r.dtr,r.d.a);   %%fourth deriv
+    ao(1:r.fields,:) = a0 + (d1 + 2.*(d2 + d3)+d4)/3. ;%%Sum  derivatives
+  end
+else    
+    if ~isequal(r.propagator,1)
     am = r.prop(a,r);                              %%Initialises midpoint
     d1 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%first derivative
     d1 = r.prop(d1,r);                             %%first derivative
@@ -25,4 +55,6 @@ else
     ao =  a+2.*d3;                                 %%Last field estimate
     d4 = 0.5*reshape(r.da(ao,xi,r)*r.dtr,r.d.a);   %%fourth deriv
     ao =   a + (d1 + 2.*(d2 + d3)+d4)/3. ;         %%Sum  derivatives
+    end
+end
 end                                                %%end function
