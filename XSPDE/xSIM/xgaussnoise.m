@@ -8,7 +8,6 @@ function z = xgaussnoise(r)
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
 mnoises = max(r.noises(1),r.noises(2));                 %%Independent noise 
-noises = r.noises(1)+r.noises(2);                       %%Total noise
 z = r.s.dxt*randn(mnoises,r.nlattice);                  %%Calculate  xnoise
 if r.noises(2) > 0                                      %%if k-space noise
     zk = z(1:r.noises(2),:);                            %%get some xnoise
@@ -21,6 +20,6 @@ if r.noises(2) > 0                                      %%if k-space noise
         zk = ifft(zk,[],nd);                            %%inverse FFT
     end                                                 %%end inverse loop 
     zk = reshape(zk,r.noises(2),r.nlattice);            %%reshape to flat
-    z(1+r.noises(1):noises,:) = zk;                     %%add to noise
+    z(1+r.noises(1):r.noisetot,:) = zk;                 %%add to noise
 end                                                     %%end if k-noise  
 end

@@ -23,8 +23,7 @@ The high-level xSPDE functions process the input parameters, producing simulatio
 
     This is the xSPDE graphics function. It takes computed simulation  ``data`` and ``input``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions. The ``data`` should have as many cells as ``input`` cells, for sequences. 
     If ``data = 'filename.h5'`` or ``data= 'filename.mat'``, the specified file is read both for ``input`` and ``data``. Here ``.h5`` indicates an HDF5 file, and ``.mat`` indicates a Matlab file.
-    When the``data`` input is given as a filename, input parameters in the file are replaced by any of the the new ``input`` parameters that are specified.  Any stored ``input`` can be overwritten, allowing graphs to be modified retrospectively.
-    If the ``input`` is not present, a file-name must be specified in the ``data`` field. 
+    When the ``data`` input is given as a filename, input parameters in the file are replaced by any of the the new ``input`` parameters that are specified.  Any stored ``input`` can be overwritten when the graphs are generated. This allows graphs of data to be modified retrospectively.
 
 
 
@@ -76,7 +75,7 @@ The first argument, ``a``, is a real or complex vector field. This is a matrix w
 
 The second argument, ``z``, if needed, is a real random noise, corresponding to :math:`\zeta` in the mathematical notation. This is a matrix whose first dimension is the noise index. The second dimension is the lattice index.
 
-The last function argument is the  :ref:`lattice structure <sec-parameter-structure>`, ``r``. This contains data about the integration lattice. The most important constants are :attr:`r.t`, the current time, and the space coordinates, :attr:`r.x`, :attr:`r.y`, :attr:`r.z`. Other data stored in the lattice structure is explained in later chapters.
+The last function argument is the  :ref:`lattice structure <sec-parameter-structure>`, ``r``. This contains data about the integration details and lattice, stored as ``r.name``. Important constants in the structure are :attr:`t`, the current time, and  space coordinates, :attr:`x`, :attr:`y`, :attr:`z`. Other data stored in the structure is explained in later chapters.
 
 Functions of multiple lattice sequences take current arguments first, and the oldest arguments last.
 
@@ -88,9 +87,8 @@ In all integration function calls, the variables used are matrices. The first di
 The field dimensions for the flattened arrays passed to xSIM integration functions are:
 
 - ``a = [r.fieldsplus, r.nlattice]``
-- ``da, L = [r.fields(1), r.nlattice]``
-- ``v = [r.randoms(1)+r.randoms(2), r.nlattice]``
-- ``z = [r.noises(1)+r.noises(2), r.nlattice]``
+- ``rv = [r.randoms(1)+r.randoms(2), r.nlattice]``
+- ``w = [r.noises(1)+r.noises(2), r.nlattice]``
 - ``r.Dx, r.x, r.kx = [1, r.nlattice]``
 
 Data arrays
@@ -156,7 +154,7 @@ xSIM parameters
 
 .. attribute:: version
 
-    *Default:* ``'xSIM2.2'``
+    *Default:* ``'xSIM2.3'``
 
     This sets the current version number of the  simulation program. There is typically no need to input this.
 
@@ -243,7 +241,7 @@ xSIM parameters
 
 .. attribute:: points
 
-    *Default:* ``[49, 35, ..., 35]``
+    *Default:* ``[51, 35, ..., 35]``
 
     The rectangular lattice of points plotted for each dimension are defined by a vector giving the number of points in each dimension:
 
@@ -463,26 +461,26 @@ Input functions
 
 A stochastic equation solver requires the definition of an initial distribution and a time derivative. In xSPDE, the time derivatives is divided up into a linear term including space derivatives, used to define an interaction picture, and the remaining derivatives. In addition, one must define quantities to be averaged over during the simulation, called graphs in xSPDE. These are all defined as functions, specified below.
 
-.. function::  initial (v,r)
+.. function::  initial (rv,r)
 
     *Default:* :func:`xinitial`
 
-    Initializes the fields :math:`a` for the first simulation in a sequence. The initial Gaussian random field variable, ``v``, has unit variance if :attr:`dimension` is ``1`` or else is delta-correlated in space, with variance ``1/r.dV`` (:math:`\equiv 1/(dx_2...dx_d)`) for :math:`d` space-time dimensions. If :attr:`randoms` is specified in the input, ``v`` has a first dimension of ``randoms(1) + randoms(2)``. If not specified, the default for ``randoms`` is  ``noises``, and the default of :func:`initial` is ``a = 0``.
+    Initializes the fields :math:`a` for the first simulation in a sequence. The initial Gaussian random field variable, ``rv``, has unit variance if :attr:`dimension` is ``1`` or else is delta-correlated in space, with variance ``1/r.dv`` (:math:`\equiv 1/(dx_2...dx_d)`) for :math:`d` space-time dimensions. If :attr:`randoms` is specified in the input, ``rv`` has a first dimension of ``randoms(1) + randoms(2)``. If not specified, the default for ``randoms`` is  ``noises``, and the default of :func:`initial` is ``a = 0``.
 
-.. function:: transfer(v,r,a0,r0)
+.. function:: transfer(rv,r,a0,r0)
 
     *Default:* :func:`xtransfer`
 
     Initializes the fields :math:`a` for subsequent calculations in a sequence. Otherwise, this function behaves in a similar way to :func:`initial`. The function includes the previous field ``a0`` and lattice ``r0``. The default set by :func:`xtransfer` is ``a = a0``.
 
-.. function::  da (a,z,r)
+.. function::  da (a,w,r)
 
     *Default:* :func:`xda`
 
-    Calculates derivatives :math:`da` of the equation. The noise vector, ``z``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension  whose default value is :attr:`fields` if :attr:`noises` are not given. Otherwise, it has a first dimension of ``in.noises(1) + in.noises(2)``. The second type of input noise allows for spatially correlated and filtered noise specified in momentum space.
+    Calculates derivatives :math:`da` of the equation. The noise vector, ``w``, has variance :math:`1/(dx_{1}..dx_{d})`, for dimension :math:`d \le 4`, and a first dimension  whose default value is :attr:`fields` if :attr:`noises` are not given. Otherwise, it has a first dimension of ``in.noises(1) + in.noises(2)``. The second type of input noise allows for spatially correlated and filtered noise specified in momentum space.
     
     
-    .. function::  define (a,z,r)
+    .. function::  define (a,w,r)
 
     *Default:* :func:`xdefine`
 
@@ -562,23 +560,23 @@ Advanced input functions are user-definable functions which don’t usually need
 
     Generates a set of initial random fields ``v`` to initialize the fields simulated.
 
-.. function:: step (a,z,dt,r)
+.. function:: step (a,w,dt,r)
 
     *Default:* :func:`xRK4`
 
-    Specifies the stochastic integration routine for the field ``a``, given a step in time ``dt`` and noise ``z``, together with the interaction-picture propagator :attr:`r.propagator` which is part of the lattice structure. It returns the new field ``a``. This function can be set to any of the predefined stochastic integration routines provided with xSPDE, described in the :ref:`chap-algorithms` chapter. User-written functions can also be used. The standard method, :func:`xRK4`, is a fourth-order Runge-Kutta. Another very useful alternative, :func:`xMP`, is a midpoint integrator.
+    Specifies the stochastic integration routine for the field ``a``, given a step in time ``dt`` and noise ``w``, together with the interaction-picture propagator :attr:`propagator` which is part of the lattice structure. It returns the new field ``a``. This function can be set to any of the predefined stochastic integration routines provided with xSPDE, described in the :ref:`chap-algorithms` chapter. User-written functions can also be used. The standard method, :func:`xRK4`, is a fourth-order Runge-Kutta. Another very useful alternative, :func:`xMP`, is a midpoint integrator.
 
 .. function:: prop (a,r)
 
     *Default:* :func:`xprop`
 
-    Returns the fields propagated for one step in the interaction picture, depending on the initial field ``a``, and the propagator array :attr:`r.propagator`. Note that the time-step used in :attr:`r.propagator` depends on the input time-step, the error-checking and the algorithm.
+    Returns the fields propagated for one step in the interaction picture, depending on the initial field ``a``, and the propagator array :attr:`propagator`. Note that the time-step used in :attr:`propagator` depends on the input time-step, the error-checking and the algorithm.
 
 .. function:: propfactor (nc,r)
 
     *Default:* :func:`xpropfactor`
 
-    Returns the transfer array :attr:`r.propagator`, used by the :attr:`prop` function. The time propagated is a fraction of the current integration time-step, :attr:`r.dt`. It is equal to ``1 / in.ipsteps`` of the integration time-step.
+    Returns the transfer array :attr:`propagator`, used by the :attr:`prop` function. The time propagated is a fraction of the current integration time-step, :attr:`dt`. It is equal to ``1 / ipsteps`` of the integration time-step.
 
 
 
@@ -605,7 +603,7 @@ Together with default values, they are:
 
 .. attribute:: gversion
 
-    *Default:* ``'xGRAPH2.2'``
+    *Default:* ``'xGRAPH2.3'``
 
     This sets the current version number of the graphics program. There is typically no need to input this.
 
@@ -796,147 +794,147 @@ Parameter structure
 
 Internally, xSPDE parameters and function handles are stored in a cell array, ``latt``, of structures ``r``, which is passed to functions. This includes all the data given above inside the ``in`` structure. In addition, it includes the table of computed parameters given below.
 
-User application constants and parameters should not be reserved names. No reserved name uses capitals, special symbols, or starts with :attr:`c`. Therefore,  :attr:`c`, all names starting with ``in.c``, and all names with capitals or special symbols will always be available to the user name-space in future versions of xSPDE.
+User application constants and parameters should not be reserved names. No reserved name uses capitals (except ``D``), special symbols, or starts with :attr:`c`. Therefore, all names starting with ``in.c``, special symbols or capitals - (except ``D`` for derivatives) -  will be available to the user name-space in future versions of xSPDE.
 
-A parameter structure contains information about the space-time grid and is passed to various functions, for instance :func:`da` or :func:`step`. The corresponding parameter is commonly marked as `r`.
+A parameter structure contains information about the space-time grid and is passed to various functions, for instance :func:`da` or :func:`step`. The corresponding parameter is accessed in the structure `r`, for example, `r.x`.
 
-.. attribute:: r.t
+.. attribute:: t
 
     Current value of time, :math:`t`.
 
-.. attribute:: r.x
+.. attribute:: x
 
-.. attribute:: r.y
+.. attribute:: y
 
-.. attribute:: r.z
+.. attribute:: z
 
     Coordinate grids of :math:`x`, :math:`y`, :math:`z`.
 
-.. attribute:: r.x{n}
+.. attribute:: x{n}
 
     Higher dimensions are labeled numerically as :math:`x_1`,..  :math:`x_6`, and so on. This numerical axis convention can be set even for lower dimensions if ``in.numberaxis`` is set to 1.
 
-.. attribute:: r.kx
+.. attribute:: kx
 
-.. attribute:: r.ky
+.. attribute:: ky
 
-.. attribute:: r.kz
+.. attribute:: kz
 
     Grids in momentum space: :math:`k_x`, :math:`k_y`, :math:`k_z`.
 
-.. attribute:: r.k5
+.. attribute:: k{n}
 
     Higher dimensions are labeled numerically as :math:`k_5`,  :math:`k_6`, and so on.
 
-.. attribute:: r.dt
+.. attribute:: dt
 
     Output time-step between stored points for data averages.
     
-.. attribute:: r.dtr
+.. attribute:: dtr
 
     Current reduced time-step used for integration.
 
-.. attribute:: r.dx
+.. attribute:: dx
 
     Steps in coordinate space: :math:`[t,x,y,z,x_5,..]`.
 
-.. attribute:: r.dk
+.. attribute:: dk
 
     Steps in momentum space: :math:`[\omega,k_{x},k_{y},k_{z},k_{5},..]`.
 
-.. attribute:: r.propagator
+.. attribute:: propagator
 
     Contains the propagator array for the interaction picture.
 
-.. attribute:: r.V
+.. attribute:: v
 
     Spatial lattice volume.
 
-.. attribute:: r.K
+.. attribute:: kv
 
     Momentum lattice volume.
 
-.. attribute:: r.dV
+.. attribute:: dv
 
     Spatial cell volume.
 
-.. attribute:: r.dK
+.. attribute:: dkv
 
     Momentum cell volume.
 
-.. attribute:: r.xc
+.. attribute:: xc
 
     Space-time coordinate axes (vector cells).
 
-.. attribute:: r.kc
+.. attribute:: kc
 
     Computational Fourier transform axes in :math:`[\omega,k_{x},k_{y},k_{z},k_{5},.. ]` (vector cells).
 
-.. attribute:: r.kg
+.. attribute:: kg
 
     Graphics  Fourier transform axes in :math:`[\omega,k_{x},k_{y},k_{z},k_{5},..]` (vector cells).
 
-.. attribute:: r.kranges
+.. attribute:: kranges
 
     Range in :math:`[\omega,k_{x},k_{y},k_{z},k_{5},..]` (vector).
 
-.. attribute:: r.s.dx
+.. attribute:: s.dx
 
     Initial stochastic normalization.
 
-.. attribute:: r.s.dxt
+.. attribute:: s.dxt
 
     Propagating stochastic normalization.
 
-.. attribute:: r.s.dk
+.. attribute:: s.dk
 
     Initial :math:`k` stochastic normalization.
 
-.. attribute:: r.s.dkt
+.. attribute:: s.dkt
 
     Propagating :math:`k` stochastic normalization.
 
-.. attribute:: r.nspace
+.. attribute:: nspace
 
     Number of spatial lattice points: ``in.points(2) * .. * in.points(in.dimension)``.
 
-.. attribute:: r.nlattice
+.. attribute:: nlattice
 
-    Total lattice: ``in.ensembles(1) * r.nspace``.
+    Total lattice: ``in.ensembles(1) * nspace``.
 
-.. attribute:: r.ncopies
+.. attribute:: ncopies
 
     Total copies of stochastic integrations: ``in.ensembles(2) * in.ensembles(3)``.
 
-.. attribute:: r.d.int
+.. attribute:: d.int
 
     Dimensions for lattice integration (vector).
 
-.. attribute:: r.d.a
+.. attribute:: d.a
 
     Dimensions for :math:`a` field (flattened, vector).
 
-.. attribute:: r.d.r
+.. attribute:: d.r
 
     Dimensions for coordinates (flattened, vector).
 
-.. attribute:: r.d.ft
+.. attribute:: d.ft
 
     Dimensions for field transforms (vector).
 
-.. attribute:: r.d.k
+.. attribute:: d.k
 
     Dimensions for noise transforms (vector).
 
-.. attribute:: r.d.obs
+.. attribute:: d.obs
 
     Dimensions for observations (vector).
 
-.. attribute:: r.d.data
+.. attribute:: d.data
 
     Dimensions for average data (flattened, vector).
 
-.. attribute:: r.d.raw
+.. attribute:: d.raw
 
     Dimensions for raw data (flattened, vector).
 
@@ -1006,7 +1004,7 @@ Answers to some frequent questions, and reminders of points in this chapter are:
 
 -  Can you have functions of the current time and space coordinate?
 
-   -  Yes: xSPDE functions support this using the structure ``r``, as :attr:`r.t`, :attr:`r.x`, :attr:`r.y`, :attr:`r.z`, or  :attr:`r.t`, ``r.x{1}``, and so on, for more than four space-time dimensions.
+   -  Yes: xSPDE functions support this using the structure ``r``, as :attr:`t`, :attr:`x`, :attr:`y`, :attr:`z`, or  :attr:``x{1}``, and so on, for more than four space-time dimensions.
 
 -  Can you have several independent stochastic variables?
 

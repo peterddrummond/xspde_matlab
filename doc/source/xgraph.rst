@@ -3,13 +3,58 @@ xGRAPH
 *******
 
 
-The graphics program :func:`xgraph`  inputs data from :func:`xsim` simulations, then  graphs them in a variety of multidimensional graphics formats. 
+The graphics program :func:`xgraph`  inputs data from :func:`xsim` simulations, then  graphs them in a variety of multidimensional graphics formats. This is the xSPDE graphics function, which uses inputs  ``data`` and, optionally, ``input``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions. 
+    If required, the first argument can be a data file-name. The specified file is then read both for ``input`` and ``data``. The stored input parameters in the file can be replaced by any of the the new ``input`` parameters that are specified.
+
+
+Input and data arrays
+---------------------
+
+To explain xGRAPH in full detail,
+
+-  Data inputs are stored in the ``data`` cell array.
+
+-  This describes a *sequence* of simulations, so that ``data = {dat1, dat2, ...}``.
+
+-  Each structure ``data`` describes a simulation, with separate graphs for each one.
+
+-  The main function is called using ``diff = xgraph(data[,input])``.
+
+-  The optional second input argument is to allow modification of the graphs.
+
+-  The diff output is available when there are comparisons made on the graphed data.
+
+The input data sequence ``cdata`` is a cell array with a number of individual simulation objects ``dat1,...``. Each includes all the parameters that specify the simulation, together with the generated data. If there is only one simulation, just one individual ``dat`` is needed. 
+
+Customization options
+---------------------
+
+There are a wide range of customization options available for those who wish to have the very own xGRAPH version.
+
+Customization options include functions and parameters to allow user definition of:
+
+- graphed functions of the input data
+- plot ranges and axes for each dimension   
+- plot dimensions, ie, two or thee dimensional
+- plot types and line types   
+- comparisons with user-specified functions
+- error bars
+
+The program will print out a record of its progress, then generate the specified graphs.
+
+Graphics functions
+--------------------------
+
+To allow options for taking averages, these are carried out in two stages. The first type of average is a local average, taken over any function of the locally stored ensemble of trajectories. These use the :func:observe functions, specified by the user. The default is the real values of each of the fields, stored as a vector. Multiple observe functions can be used, and they are defined as a cell array of functions.
+
+Next, any function can be taken of these local averages, using the :func:function transformations, again specified by the user. The default is the original set of local averages. This is useful if different combinations are needed of the local averages. These second level function outputs are then averaged again over a second level of ensemble averaging, if specified. This is used to obtain estimates of sampling and step-size errors in the final data outputs.
+
 
 
 Graphics transforms
 ===================
 
-All transforms defined in the observables are obtained from a cell array of vectors called :attr:`transforms`, which determines if a given coordinate axis is transformed prior to a given observable being measured. This can be turned on and off independently for each observable and axis. The coordinate axes are specified in the order of ``t,x,y,z,..``.
+All transforms defined in the observables are obtained from a cell array of vectors called :attr:`transforms`, which determines if a given coordinate axis is to be transformed prior to a given observable being measured. This can be turned on and off independently for each observable and axis. The coordinate axes are specified in the order of ``t,x,y,z,..``. This must match the :attr:`transforms` attributes used to generate the data, as no additional transform takes place.
 
 The index ordering and normalization used in the standard discrete FFT approach is efficient for interaction picture propagation, but not useful for graphing, since graphics routines prefer the momenta to be monotonic, i.e. in the order:
 
@@ -21,56 +66,14 @@ Accordingly, as explained above, all momentum indices for observable data and ax
 
 
 
-
-Averaged data
-================
-
-Observables: ``graph``
-----------------------
-
-During the calculation, observables are calculated and averaged over the ``ensembles(1)`` parallel trajectories in the :func:`xpath` function. These are determined by the functions in the :func:`observe` cell array.
-
-The number of :func:`observe` functions may be smaller or larger than the number of vector fields. The observable may be a scalar or vector. These include the averages over the ensembles, and can be visualized as a single graph with one or more lines.
-
-Next, arbitrary functional transforms can be taken, using the :attr:`function` cell array. These functions can use as their input the full set of :func:`observe` output data cell arrays. They default to the original :func:`observe` data if they are not user-defined. Functional transforms are most useful if one wishes to use functions which require knowledge of normalization or ensemble averages of lower-level data. 
-
-Each :func:`observe` function or transformation in :func:`xsim` defines a single logical  ``graph`` for the simulation output. However, the graphics function :func:`xgraph` can generate  several projections or views of the same dataset, as explained below.
-
-Combined observables: ``data``
--------------------------------
-
-These results are added to the earlier results in the cell array ``data``, to create a combined set of graphs for the simulation. Initially, both the first and second moment is stored, in order to allow calculation of the sampling error in each quantity.  These are averaged over the higher level ensembles, to allow estimates of sampling errors. Each resulting graph or average data is each stored  in an array of size
-
-.. data:: data  -  all graphics datasets from one sequence member collected in a cell array
-
-    **Cell Array**, has dimension: ``data{graphs}``, made up of a collection of arrays:
-
-#.  graph: observable or function making up a single graph
-
-    **Array**, has dimension: ``(components, errorchecks, in.points)``.
-
-In the simplest case, there is just one vector component per average. More generally, the number of components is larger than this if there is a requirement to compare different lines in one graph. Note that, unlike the propagating field, the time dimension is fully expanded.  This is necessary in order to generate outputs at each of the ``in.points(1)`` time slices. 
-
-When step-size checking is turned on using the :attr:`checks` flag set to ``1``, a low resolution field is stored for comparison with a high-resolution field of half the step-size, to obtain the time-step error. The observables which are stored have three check indices which are all included in the array. These are the high resolution means, together with error-bars due to time-steps, and estimates of high-resolution standard deviations due to sampling statistics. 
-
-The second dimension, errorchecks, is the total number of components in the data array due to error-checking.  After ensemble averaging, the second index is typically ``c = 1, 2, 3``, which is used to index over the:
-
-#. mean value,
-
-#. time-step error-bars and
-
-#. sampling errors
-
-respectively for each space-time point and each graphed function. As a result, the graphed ``data`` includes step-size error bars and plotted lines for the two estimated upper and lower standard deviations, obtained from the statistical moments.
-
-Sequenced observables: ``gdata``
+Sequenced observables: ``data``
 --------------------------------
 
-For graphics input, cell data from each simulation in a sequence is packed into successive cells of an overall cell array :data: `gdata` . This is used to store the total graphics data in a sequence of simulations. All these fields are resident in memory, and can be stored for re-use. They can be re-accessed and replotted, using the :func:`xgraph` function, if required, with array dimensions:
+For graphics input, cell data from each simulation in a sequence is packed into successive cells of an overall cell array :data: `data` . This is used to store the total graphics data in a sequence of simulations. All these fields are resident in memory, and can be stored for re-use. They can be re-accessed and replotted, using the :func:`xgraph` function, if required, with array dimensions:
 
-.. :data:: gdata - combined graphics data from entire sequence
+.. :data:: data - combined graphics data from entire sequence
 
-    **Cell Array**, has dimension: ``cdata{sequence}{graph}``.
+    **Cell Array**, has dimension: ``dat{sequence}{graph}``.
 
 #.  graph: observable or function making up a single graph
 
@@ -86,7 +89,7 @@ There are :attr:`graphs` real observables, which are determined by the number of
 Graphics function
 =================
 
-At the end of the loop, global averages and error-bars are calculated. The main functions involved are:
+
 
 :func:`xgraph` is called by xSPDE when the ensemble loops finished. The results are graphed and output if required.
 

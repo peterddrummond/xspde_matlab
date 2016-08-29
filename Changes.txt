@@ -1,7 +1,17 @@
+Improved spectral calculations in xSPDE2.3;
+
+xSPDE2.3 has an an improved spectral Fourier transform algorithm. Previously, only the field values at the edge of each time interval were used. This is slightly inaccurate, especially for noise fields, and it creates problems in accurately comparing results with different step sizes. Now the average value over each time interval is computed using a trapezoid rule, giving an estimate of the central value of the field. The N resulting central values are then Fourier transformed. In this method, the time-values that are Fourier transformed are the center values in each time interval. 
+
+This technique of estimating fields is especially useful when there are multiple steps, which xspde uses both for error-estimation and for conserving memory with very small stepsizes. Trapezoidal averaging is now turned for spectral calculations on when a Fourier transform in time is selected. 
+
+To explain this, suppose there are N points and a specified time interval (0,T). For standard, non-trapezoid data, the initial field is specified at t=0, and saved at t = 0, dt, .. T. Here dt = T/(N-1), and there are (N-1) integration steps in total. 
+
+For spectral data, (N-1) trapezoid averaged values are saved at t = dt/2,.. T-dt/2. To give N values the value saved at np = 1 is (a(0)+a(T))/2, to reduce aliasing errors and anomalies. All the N points are then Fourier transformed. The frequency interval is dw = 2.pi/Ndt.
+
+
 Defined fields in xSPDE2.2;
 
-
-These are additional fields that have values defined through functions. They are otherwise normal fields, with fourier transforms, observe functions etc. To use:
+These are now additional fields that have values defined through 'define' functions. They are otherwise normal fields, with fourier transforms, observe functions etc. To use:
 
 (1) Specify in.fields = [1,1] (for as many SDE fields and defined fields as you need)
 

@@ -54,7 +54,7 @@ and the differential equation:
 
 .. math::
 
-    \dot{a}=ia+\zeta(t).
+    \dot{a}=ia+w(t).
 
 Initial conditions and derivative
 ---------------------------------
@@ -64,9 +64,9 @@ First, make sure you type ``clear`` to clear the previous example. This is good 
 ::
 
     clear
-    in.initial = @(v,~) 1+v;
+    in.initial = @(rv,~) 1+rv;
     in.ensembles = [20,20];
-    in.da = @(a,z,~) i*a + z;
+    in.da = @(a,w,~) i*a + w;
     in.olabels = {'<a_1>'};
     xspde(in);
   
@@ -168,8 +168,8 @@ Here more parameters are needed. One real noise term is required per integration
     function e = Kubo()
         in.name = 'Kubo oscillator';
         in.ensembles = [400,16,1];
-        in.initial = @(v,r) 1+0*v;
-        in.da = @(a,z,r) i*z.*a;
+        in.initial = @(rv,r) 1+0*rv;
+        in.da = @(a,w,r) i*w.*a;
         in.olabels = {'<a_1>'};
         in.compare{1} = @(t,~) exp(-t/2);
         e = xspde(in);
@@ -179,8 +179,9 @@ Kubo error results are reported as:
 
 ::
 
-    -  Max sampling error = 1.043423e-02
-    -  Max step error = 2.258936e-02
+    -  Max sampling error = 1.065936e-02
+    -  Max step error = 5.072889e-04
+    -  Max comparison difference = 1.269069e-02
 
 Note that these are generally consistent with the graphs below, as they should be.
 
@@ -261,7 +262,7 @@ The xspde program reports the following maximum errors:
 
 ::
 
-    -  Max step error = 1.976729e-02
+    -  Max step error = 6.270515e-04
 
 The output reflects the known analytic result.
 
@@ -282,7 +283,7 @@ The xgraph program reports that comparison errors are slightly less than the ste
 
 ::
 
-    -  Max difference in 1 = 1.761991e-02
+    -  Max difference in 1 = 7.875209e-03
 
 This is not always the case, because the error checking does not check errors due to the lattice sizes. In general this needs to be carried out manually.
 
@@ -324,7 +325,7 @@ A  possible user set of parameters to simulate this is:
 
     function [e] = Gaussian()
         in.dimension = 4;
-        in.initial = @(v,r) exp(-0.5*(r.x.^2+r.y.^2+r.z.^2));
+        in.initial = @(~,r) exp(-0.5*(r.x.^2+r.y.^2+r.z.^2));
         in.da = @(a,~,~) zeros(size(a));
         in.linear = @(r) 1i*0.05*(r.Dx.^2+r.Dy.^2+r.Dz.^2);
         in.observe = {@(a,~) a.*conj(a)};
@@ -460,9 +461,9 @@ Planar inputs
         a0(1,:)  = (v(1,:)+1i*v(2,:))/sqrt(2);
         a0(2,:)  = (v(3,:)+1i*v(4,:))/sqrt(2);
     end
-    function da = D_planar(a,z,r)
-        da(1,:)  = (z(1,:)+1i*z(2,:))/sqrt(2);
-        da(2,:)  = (z(3,:)+1i*z(4,:))/sqrt(2);
+    function da = D_planar(a,w,r)
+        da(1,:)  = (w(1,:)+1i*w(2,:))/sqrt(2);
+        da(2,:)  = (w(3,:)+1i*w(4,:))/sqrt(2);
         end
     function L = Linear(r)
         lap = r.Dx.^2+r.Dy.^2;
@@ -537,7 +538,7 @@ The full input file is given below.
         in.noises = [2,0];
         in.ensembles = [100,16,1];
         in.initial = @(v,~) (v(1,:)+1i*v(2,:))/sqrt(2);
-        in.da = @(a,z,r) -a + z(1,:)+1i*z(2,:);
+        in.da = @(a,w,r) -a + w(1,:)+1i*w(2,:);
         in.observe{1} = @(a,~,~) a.*conj(a);
         in.olabels = {'|a|^2'};
         in.compare = {@(t,~) 1+0*t};
@@ -634,8 +635,8 @@ The important parameters and functions in this case are:
     function [e] = Characteristic()
         in.name = 'Characteristic'
         in.dimension = 2;
-        in.initial = @(v,r) sech(2.*(r.x+2.5));
-        in.da = @(a,z,r) 0*a;
+        in.initial = @(~,r) sech(2.*(r.x+2.5));
+        in.da = @(a,~,r) 0*a;
         in.linear = @(r) -r.Dx;
         in.olabels = {'a_1(x)'};
         in.compare = {@(t,in) sech(2.*(t-2.5))};
@@ -704,14 +705,14 @@ The full input file is given below.
         in.points = 640;
         in.ranges = 100;
         in.noises = [2,0];
-        in.ensembles = [1000,10,1];
+        in.ensembles = [100,1,10];
         in.initial = @(v,~) (v(1,:)+1i*v(2,:))/sqrt(2);
         in.da = @(a,z,r) -a + z(1,:)+1i*z(2,:);
         in.observe{1} =@(a,~) a.*conj(a);
         in.observe{2} =@(a,~) a.*conj(a);
         in.transforms ={0,1};
         in.olabels = {'|a(t)|^2', '|a(w)|^2'};
-        in.compare = {@(t,~) 1.+0*t, @(w,~)100./(pi*(1+w.^2))};
+        in.compare = {@(t,~) 1.+0*t, @(w,~)100.16./(pi*(1+w.^2))};
         e = xspde(in);
     end
 

@@ -1,12 +1,34 @@
-function in = xpreferences (in)
+function input = xpreferences (input,rawinput)
 %   in = XPREFERENCES(in) sets default values for the xspde input data.
 %   Input:  input  structure,'in'.
 %   Output: input  structure, with default values set. 
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License 
+
+ %% Compare new and old input sequence 
+
+if ~isempty(rawinput)                            %% Check rawinput exists
+    rawsequence = length(rawinput);              %% Get raw sequence length
+    for s= 1:rawsequence                         %% Loop over raw sequence 
+        in = rawinput{s};                        %% Get raw sequence input
+        fname = fieldnames(in);                  %% Get raw sequence labels
+        if s<= length(input)                     %% Check new input length
+          for j = 1:length(fname)                %% Loop over raw labels
+            label = fname{j} ;                   %% Set new label = raw
+            if ~isfield(input{s},label)          %% If no new label data 
+              input{s}.(label) = in.(label);     %% Set new input to old
+            end                                  %% End if no label data
+          end                                    %% End for loop
+        else                                     %% No new input available
+          input{s} = rawinput{s};                %% Set new input to raw
+        end                                      %% End s < = length
+    end                                          %% End sequence loop
+end                                              %% End if rawinput ~empty
   
 %%Unconditional  preference list - can be changed if required
-
-    in.version =    xprefer(in,'version',0,'xSIM2.2');
+sequence = length(input);                        %%get sequence length
+for s = 1:sequence                               %%loop over sequence 
+    in = input{s};                                %%get input structure
+    in.version =    xprefer(in,'version',0,'xSIM2.3');
     in.name =       xprefer(in,'name',0,'');
     in.dimension =  xprefer(in,'dimension',1,1);
     in.fields =     xprefer(in,'fields',2,[1,0]);
@@ -24,27 +46,21 @@ function in = xpreferences (in)
     in.iterations = xprefer(in,'iterations',1,4);
     in.order =      xprefer(in,'order',1,1);
     in.checks  =    xprefer(in,'checks',1,[1,zeros(1,in.dimension-1)]);
-    in.errorchecks =xprefer(in,'errorchecks',1,sum(in.checks)+1);       %%number of error-check cycles
-    in.ebar  =      xprefer(in,'ebar',1,in.errorchecks>1);
+    in.errorchecks =xprefer(in,'errorchecks',1,sum(in.checks)+1);%%number of error-check cycles
     in.octave =     xprefer(in,'octave',1,exist('OCTAVE_VERSION', 'builtin'));
     in.seed =       xprefer(in,'seed',1,0);
     in.file =       xprefer(in,'file',0,'');
+    in.rawdata =    xprefer(in,'rawdata',0,'');
     in.print =      xprefer(in,'print',1,1);
     in.raw   =      xprefer(in,'raw',1,0);
     in.numberaxis = xprefer(in,'numberaxis',1,0);
-    in.structD =    xprefer(in,'structD',1,0);
-%    in.structD =    xprefer(in,'structD',1,1);    %%Structure derivative
     in.errors =     3;                            %%Number of error fields
     
 %%Function  preference list - can be changed if required
 
     in.initial =    xprefer(in,'initial',0,@xinitial);
     in.transfer =   xprefer(in,'transfer',0,@xtransfer);
-    if in.structD 
-        in.linear=      xprefer(in,'linear',0,@xStructlinear);%%Deprecated
-    else 
-        in.linear=      xprefer(in,'linear',0,@xlinear);
-    end
+    in.linear=      xprefer(in,'linear',0,@xlinear);
     in.noisegen =   xprefer(in,'noisegen',0,@xgaussnoise);
     in.randomgen =  xprefer(in,'randomgen',0,@xgaussrandom);
     in.nfilter =    xprefer(in,'nfilter',0,@xnfilter);
@@ -102,11 +118,11 @@ function in = xpreferences (in)
     
     in.dx =  in.ranges./max(1,in.points-1);  %%n-th plotted step in x
     in.dk =  2.0*pi./(in.points.*in.dx);     %%n-th step-size in k
-    in.dV  = prod(in.dx(2:in.dimension));    %%lattice cell volume
-    in.dK  = prod(in.dk(2:in.dimension));    %%k-space volume
+    in.dv  = prod(in.dx(2:in.dimension));    %%lattice cell volume
+    in.dkv = prod(in.dk(2:in.dimension));    %%k-space volume
     in.nspace = prod(in.points(2:in.dimension));%%Transverse lattice size
-    in.V =   in.dV*in.nspace;                %%lattice volume
-    in.K  =  in.dK*in.nspace;                %%k-space volume
+    in.v =   in.dv*in.nspace;                %%lattice volume
+    in.kv =  in.dkv*in.nspace;               %%k-space volume
     for n = 1:in.dimension                   %%loop over  dimension 
       p = (0:in.points(n)-1);                %% index vector
       in.xc{n} = in.origin(n) + p*in.dx(n);  %%n-th x-axis
@@ -114,6 +130,8 @@ function in = xpreferences (in)
       p = p - in.points(n)/2;                %%n-th shifted k-index
       in.kc{n} = p*in.dk(n);                 %%n-th propagation k-coords
     end;                                     %%end loop over dimension
+    input{s} = in;                           %%get input structure
+end                                          %%end sequence loop 
 end                                          %%end xpreferences function 
 
 
@@ -135,14 +153,14 @@ function define = xdefine(~,~,r)             %% Default define
     define = zeros([r.defines,r.nlattice]);  %% set fields to zero
 end
 
-function L = xlinear(r)                      %% Default linear filter
-    L = zeros(r.d.a);                        %% Default is zero response
+function l = xlinear(r)                      %% Default linear filter
+    l = zeros(r.d.a);                        %% Default is zero response
 end
 
-function Kn = xnfilter(r)                    %% Default stochastic filters
-    Kn = ones(r.noises(2),r.nlattice);       %% Default noise filter
+function kn = xnfilter(r)                    %% Default stochastic filters
+    kn = ones(r.noises(2),r.nlattice);       %% Default noise filter
 end
 
-function Kr = xrfilter(r)                    %% Default stochastic filters
-    Kr = ones(r.randoms(2),r.nlattice);      %% Default input filter
+function kr = xrfilter(r)                    %% Default stochastic filters
+    kr = ones(r.randoms(2),r.nlattice);      %% Default input filter
 end

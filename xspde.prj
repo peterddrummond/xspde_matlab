@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="1617166877" file="/Users/pdrummond/Dropbox/2016/Computers/xspde_matlab2.2/xspde.prj" location="/Users/pdrummond/Dropbox/2016/Computers/xspde_matlab2.2" name="xspde" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="1617166877" file="/Users/pdrummond/Desktop/xspde_matlab/xspde.prj" location="/Users/pdrummond/Desktop/xspde_matlab" name="xspde" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>xspde</param.appname>
     <param.authnamewatermark>Peter D Drummond</param.authnamewatermark>
     <param.email>peterddrummond@gmail.com</param.email>
@@ -9,7 +9,7 @@
 It is a complete stochastic toolbox for constructing simulations, in an arbitrary number of space dimensions. Any number of real or complex fields can be treated, and there are many options for graphical output of the resulting averages and correlations. 
 The modular design of xSPDE can be changed to suit different applications.</param.description>
     <param.screenshot>${PROJECT_ROOT}/doc/source/Figures/Internationalist_Star.png</param.screenshot>
-    <param.version>2.2</param.version>
+    <param.version>2.3</param.version>
     <param.output>${PROJECT_ROOT}/xspde.mltbx</param.output>
     <param.products.name />
     <param.products.id />
@@ -70,7 +70,7 @@ The modular design of xSPDE can be changed to suit different applications.</para
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="/Users/pdrummond/Dropbox/2016/Computers/xspde_matlab2.2" name="xspde.mltbx" optional="false">/Users/pdrummond/Dropbox/2016/Computers/xspde_matlab2.2/xspde.mltbx</file>
+      <file location="/Users/pdrummond/Desktop/xspde_matlab" name="xspde.mltbx" optional="false">/Users/pdrummond/Desktop/xspde_matlab/xspde.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>

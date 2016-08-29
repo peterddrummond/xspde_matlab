@@ -1,20 +1,20 @@
-function [input,data,raw] =  xread(gr_input)
+function [input,data,raw] =  xread(old_input)
 %   [input,cdata,raw]  = XREAD(input) reads xSPDE data files. 
 %   Input:  'filename' from input  
 %   If input is cell array, reads data in file 'input{1}.file'. 
 %   If input is string: 'fname', reads input and data from file 'fname'. 
 %   Output: 'input' parameter cell array, data cell array 'cdata'.
 %   Optional: 'raw' trajectories from a file. 
-%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License.txt
+%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License
 
 raw={};                                        %%initialize raw data
 data = {};                                     %%set data to cell
 saved = 0;                                     %%saved  = 0 for new input 
-if ischar(gr_input)                            %%if input is character
-        fname=gr_input;                        %%store label
+if ischar(old_input)                           %%if input is character
+        fname=old_input;                       %%store label
         saved = 1;                             %%saved  = 1 for saved input 
 else                                           %%end check if data is label
-        input = xmakecell(gr_input);
+        input = xmakecell(old_input);
         fname = input{1}.file;                 %%store label
 end                                            %%end if data is character
 hflag = xreadname(fname);                      %%check filename is OK
@@ -27,7 +27,7 @@ if hflag == 0                                  %%if filename  Matlab type
         fprintf('Warning in xread: file %s is not an xSPDE file\n', fname);
     end
     if saved == 0                              %% if new input required
-        input = gr_input;                      %%use graphics input 
+        input = old_input;                      %%use graphics input 
     end                                        %%end if  saved flag = 0
     return;                                    %%return to xgraph
 end                                            %%end test Matlab filename
@@ -51,7 +51,7 @@ for s = 1:sequence                             %%loop over sequence
     input{s} = in;
 end                                            %%end loop sequence
     if saved == 0                              %% if saved flag = 0
-        input = gr_input;                      %%use graphics input 
+        input = old_input;                      %%use graphics input 
     end                                        %%end if  saved flag = 0
 end
 
@@ -102,12 +102,10 @@ function [res] = xh5attributes(filename, path)
     end            
 end
 
-%Version 1.03   xread returns an error flag on read error
-
 function [res] = xcut_off_path(str)
 %   XCUT_OFF_PATH(str) removes path data from an HDF5 group name
 %   Output: HDF5 group name without path data. 
-%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License.txt
+%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License
     C = strsplit(str,'/');
     res = C{size(C,2)};
 end
@@ -118,7 +116,7 @@ function [hflag] = xreadname(filename)
 %   Returns hflag = 1 if file is an HDF5 file, '.h5';
 %   Returns hflag = 0 if file is a matlab file, '.mat';
 %   Returns error1 if file does not exist or invalid.
-%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License.txt
+%   Licensed by Peter D. Drummond & Simon Kiesewetter (2015) - see License
  
 hflag = -1;
 [~,~,ext] = fileparts(filename);
@@ -136,5 +134,3 @@ else
   end
 end
 end
-
-%Version 1.03   xreadname has improved error message printing

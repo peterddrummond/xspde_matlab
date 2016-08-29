@@ -10,10 +10,11 @@ function r = xlattice(r)
   for i=1:r.averages                                %%check for w-transform
       r.transformw = max(r.transformw,r.transforms{i}(1));
   end                                               %%end for w-transform
-  r.kfact =     r.dx/sqrt(2*pi);                    %%fft normalization
-  r.kfacti =    r.ranges/sqrt(2*pi);                %%ifft normalization
+  r.kfact =     r.dx/sqrt(2*pi);                    %%fft (k) normalization
+  r.kfacti =    r.ranges(1)/sqrt(2*pi);             %%ifft (w) normalize
+  %Note insert correction to phase: exp(iw(t_0+dt/2))
   r.dt  =       r.dx(1)/r.steps;                    %%integration step
-  r.s.dx =      sqrt(1./r.dV);                      %%Transverse normalization
+  r.s.dx =      sqrt(1./r.dv);                      %%Transverse normalize
   r.s.dxt =     r.s.dx*sqrt(r.errorchecks/r.dt);    %%noise normalization
   r.s.dkt =     r.s.dxt*sqrt(r.nspace);             %%k-noise normalization
   r.s.dk  =     r.s.dx*sqrt(r.nspace);              %%input k-noise factor
@@ -21,6 +22,8 @@ function r = xlattice(r)
   r.npoints  =  prod(r.points);                     %%total points
   r.d.int =     [r.ensembles(1),1,r.d.space];       %%integration dimensions
   r.nlattice =  r.ensembles(1)*r.nspace;            %%sample*space dimensions
+  r.noisetot =  r.noises(1)+r.noises(2);            %%Total noise
+  r.d.noises =  [r.noisetot,r.nlattice];            %%Noise dimension
   r.d.r =       [1,r.nlattice];                     %%coordinate dimension
   r.d.a =       [r.fields,r.nlattice];              %%flat field dimension
   r.d.aplus =   [r.fieldsplus,r.nlattice];          %%flat field dimension

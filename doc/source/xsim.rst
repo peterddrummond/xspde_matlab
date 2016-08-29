@@ -21,14 +21,14 @@ xSPDE includes a built-in multidimensional graphics tool, xGRAPH, treated in the
 Sequences
 ---------
 
-In many types of application, a sequence of stochastic equations requires simulation. In these cases the final field value after integration of one equation becomes the initial value of the next equation in the sequence. 
+In many types of application, a sequence of stochastic equations requires simulation. In these cases the final field value after integration of one equation becomes the initial value of the next equation in the sequence. At the end of each simulation loop, global averages and error-bars are calculated and stored for output.
 
 Sequences therefore are the basic concept used in both the input of parameters to xSPDE, and the storage of data generated.
 
 Input and data arrays
 ---------------------
 
-To explain xSPDE in full detail,
+To explain xSIM in full detail,
 
 -  Simulation inputs are stored in the ``input`` cell array.
 
@@ -36,13 +36,19 @@ To explain xSPDE in full detail,
 
 -  Each structure ``in`` describes a simulation, whose output fields are the input of the next.
 
--  The main function is called using ``data = xspde(input)``.
+-  The main function is called using ``[maxerror, input, data, rawdata] = xsim([data,] input)``.
 
 -  Averages are recorded sequentially in the ``data`` cell array.
 
 -  Raw trajectory data is stored in the ``raw`` cell array if required.
 
-The sequence ``input`` has a number of individual simulation objects ``in``. Each includes parameters that specify the simulation, with functions that give the equations and observables. If there is only one simulation, just one individual specification ``in`` is needed. In addition, xSPDE generates graphs with its own graphics program.
+The sequence ``input`` has a number of individual simulation objects ``in``. Each includes parameters that specify the simulation, with functions that give the equations and observables. If there is only one simulation, just one individual specification ``in`` is needed. All outputs can be saved to disk storage if required.
+
+The optional [data,] input is only used when there is previous raw data that needs analysis. If this is present, no new simulation takes place. Any ``observe`` functions in the new ``input`` will be employed to take further averages over the existing raw data. This allows re-analysis of large simulation data-sets without more simulations.
+
+The returned input structure is available to the user to give the data file-name, in case xSIM needs to store data with a new file-name. For data security, it will not overwrite existing data.
+
+If xSIM is called within xSPDE, then it will generate graphs with its own graphics program xGRAPH. Otherwise, data can be stored then graphed laler using xGRAPH.
 
 Customization options
 ---------------------
@@ -62,7 +68,59 @@ Customization options include functions the allow user definition of:
 
 **There are four internal options for stochastic integration methods, but arbitrary user specification is also possible.**
 
-The program will print out a record of its progress, then generate the specified graphs.
+The xSIM program will print out a record of its progress.
+
+
+
+Averaged data
+================
+
+Observables and functions
+--------------------------
+
+To allow options for taking averages, these are carried out in two stages. The first type of average is a local average, taken over any function of the locally stored ensemble of trajectories. These use the :func:observe functions, specified by the user. The default is the real values of each of the fields, stored as a vector. Multiple observe functions can be used, and they are defined as a cell array of functions.
+
+Next, any function can be taken of these local averages, using the :func:function transformations, again specified by the user. The default is the original set of local averages. This is useful if different combinations are needed of the local averages. These second level function outputs are then averaged again over a second level of ensemble averaging, if specified. This is used to obtain estimates of sampling and step-size errors in the final data outputs.
+
+This is explained below in more detail.
+
+Observe functions
+-----------------
+
+During the calculation, observables are calculated and averaged over the ``ensembles(1)`` parallel trajectories in the :func:`xpath` function. These are determined by the functions in the :func:`observe` cell array.
+
+The number of :func:`observe` functions may be smaller or larger than the number of vector fields. The observable may be a scalar or vector. These include the averages over the ensembles, and can be visualized as a single graph with one or more lines.
+
+Next, arbitrary functional transforms can be taken, using the :attr:`function` cell array. These functions can use as their input the full set of :func:`observe` output data cell arrays. They default to the original :func:`observe` data if they are not user-defined. Functional transforms are most useful if one wishes to use functions which require knowledge of normalization or ensemble averages of lower-level data. 
+
+Each :func:`observe` function or transformation in :func:`xsim` defines a single logical  ``graph`` for the simulation output. However, the graphics function :func:`xgraph` can generate  several projections or views of the same dataset, as explained below.
+
+Combined observables: ``data``
+-------------------------------
+
+These results are added to the earlier results in the cell array ``data``, to create a combined set of graphs for the simulation. Initially, both the first and second moment is stored, in order to allow calculation of the sampling error in each quantity.  These are averaged over the higher level ensembles, to allow estimates of sampling errors. Each resulting graph or average data is each stored  in an array of size
+
+.. data:: data  -  all graphics datasets from one sequence member collected in a cell array
+
+    **Cell Array**, has dimension: ``data{graphs}``, made up of a collection of arrays:
+
+#.  graph: observable or function making up a single graph
+
+    **Array**, has dimension: ``(components, errorchecks, in.points)``.
+
+In the simplest case, there is just one vector component per average. More generally, the number of components is larger than this if there is a requirement to compare different lines in one graph. Note that, unlike the propagating field, the time dimension is fully expanded.  This is necessary in order to generate outputs at each of the ``in.points(1)`` time slices. 
+
+When step-size checking is turned on using the :attr:`checks` flag set to ``1``, a low resolution field is stored for comparison with a high-resolution field of half the step-size, to obtain the time-step error. The observables which are stored have three check indices which are all included in the array. These are the high resolution means, together with error-bars due to time-steps, and estimates of high-resolution standard deviations due to sampling statistics. 
+
+The second dimension, errorchecks, is the total number of components in the data array due to error-checking.  After ensemble averaging, the second index is typically ``c = 1, 2, 3``, which is used to index over the:
+
+#. mean value,
+
+#. time-step error-bars and
+
+#. sampling errors
+
+respectively for each space-time point and each graphed function. As a result, the output ``data`` ready for graphing with xGRAPH includes step-size error bars and plotted lines for the two estimated upper and lower standard deviations, obtained from the statistical moments.
 
 
 Stochastic flowchart
@@ -139,8 +197,8 @@ Details of the different parts of the program are given below. Note that the fun
 
 The xSPDE data and arrays that are user accessible are parameters ``r``, fields ``a``,  average observables ``data``, and raw trajectories ``rawdata``. Apart from the parameters, which are Matlab structures, all fields and data are arrays. 
 
-Indices in arrays
-=================
+Data arrays and ensembles 
+=========================
 
 There is a unified index model in all xSPDE arrays. However, in the internal calculations of derivatives and observables, these indices are flattened to give a matrix, as explained below. In all cases, the underlying  xSPDE array index ordering is kept exactly the same:
 
@@ -201,7 +259,7 @@ xSPDE flattened arrays
 When the fields, noises or coordinates are integrated by the xSPDE integration functions, they are flattened to a matrix. The first index is the field index, and the combined second index covers all the rest. It is simply more convenient when calculating derivatives and observables in xSIM, to use these flattened arrays or matrices. They are obtained by combining indices :math:`(e,j)` into a flattened second index :math:`J`. This is faster and more compact notationally. Hence, when used in xSPDE functions, the fields are indexed as :math:`a(i,J)`. 
 
 Ensembles
-================
+---------
 
 Ensembles are used for averaging over stochastic trajectories. They come in three layers: local, serial and parallel, in order to optimize simulations for memory and for parallel operations. The ``in.ensembles(1)`` local  trajectories are used for array-based parallel ensemble averaging, indexed by :math:`e_1`. These trajectories are stored in one array, to allow fast on-chip parallel processing. 
 
@@ -209,21 +267,13 @@ Distinct stochastic trajectories are also organized at a higher level into a set
 
 This hierarchical organization allows allows flexibility in allocating memory and optimizing parallel processing. It is usually faster to have larger values of ``in.ensembles(1)``, but more memory intensive. Using larger values of ``in.ensembles(2)`` is slower, but requires less memory.  Using larger values of ``in.ensembles(3)`` is fast, but requires the Matlab parallel toolbox, and uses both threads and memory resources. It is generally not effective to increase ``in.ensembles(3)`` above the maximum number of available computational cores.
 
-In summary, the ensembles are defined as follows:
+In summary, the stochastic ensembles are defined as follows:
 
-Local ensemble
---------------
+#. Local ensemble: The first or local ensemble contains ``ensembles(1)`` trajectories stored on the xSPDE internal lattice and processed using matrix operations. These are averaged using vector instructions, and indexed locally with the :math:`e_1` index.
 
-The first or local ensemble contains ``ensembles(1)`` trajectories stored on the xSPDE internal lattice and processed using matrix operations. These are averaged using vector instructions, and indexed locally with the :math:`e_1` index.
+#. Serial ensemble: The second or serial ensemble contains ``ensembles(2)`` of the local ensembles, processed in a sequence to conserve memory. 
 
-Serial and parallel ensembles
------------------------------
-
-The second or serial ensemble contains ``ensembles(2)`` of the local ensembles, processed in a sequence to conserve memory. 
- 
-The third or parallel ensemble contains ``ensembles(3)`` of the serial ensembles processed in parallel using different threads to allow multi-core and multi-CPU parallel operations.
-
-The serial and parallel ensembles are logically equivalent, and give identical results. They are indexed by the combined :math:`e_2` cell index in raw data.
+#. Parallel ensemble: The third or parallel ensemble contains ``ensembles(3)`` of the serial ensembles processed in parallel using different threads to allow multi-core and multi-CPU parallel operations. The serial and parallel ensembles are logically equivalent, and give identical results. They are indexed by the combined :math:`e_2` cell index in raw data.
 
 
 Coordinates, integrals and derivatives
@@ -281,6 +331,8 @@ The :math:`j`-th coordinate grid starts at :math:`-r_{j}/2` and ends at :math:`r
 Momentum grid
 --------------
 
+All fields can be transformed into Fourier space for taking averages in the :func:`observe` function. This is achieved with the user-defined :attr:`transforms` cell array. This is a cell array of vector switches. For any graph and dimension where :attr:`transforms` is set to unity, the corresponding Fourier transform is taken.
+
 The momentum space graphs and spectral methods all use a Fourier transform definition so that, for :math:`d` dimensions:
 
 .. math::
@@ -299,11 +351,11 @@ The momentum range is therefore
 
     K_{j}=\left(N_{j}-1\right)dk_{j},
 
-while the momentum lattice starts at :math:`-k_{j}/2` and ends at :math:`k_{j}/2` , so that when graphing the data:
+while the momentum lattice starts at :math:`-K_{j}/2` and ends at :math:`K_{j}/2` , so that when graphing the data:
 
 .. math::
 
-    k_{j}\left(n\right)=-K_{j}/2+(N_{j}-1)dk_{j}.
+    k_{j}\left(n\right)=-K_{j}/2+(j-1)dk_{j}.
     
 However, due to the standard definitions of discrete Fourier transforms, the order used during computation and stored in the data arrays is different, namely:
 
@@ -333,7 +385,7 @@ For example, to average over the entire ensemble plus space lattice and indicate
 
     in.pdimension = 1
 
-Note that :func:`xave` on its own gives identical results to those calculated in the :func:`observe` functions. Its utility comes when more complex combinations or functions of ensemble averages are required.
+Note that :func:`xave` on its own gives identical results to those calculated in the :func:`observe` functions. Its utility comes when more complex combinations or functions of ensemble averages are required. If the :attr:`transforms` switch is set, then momentum space averages are returned.
 
 Integrals
 ---------
@@ -348,20 +400,22 @@ As with averages, the xSPDE program allows the user to remove unwanted higher di
 
     in.pdimension = 2
 
-If momentum-space integrals are needed, use the transform switch to make sure that the field is Fourier transformed, and input :attr:`r.dk` instead of :attr:`r.dx`. Note that :func:`xint` returns a lattice observable, as required when used in the :func:`observe` function. If the integral is used in another function, note that it returns a matrix of dimension ``[1, lattice]``.
+If momentum-space integrals are needed, use the :attr:`transforms` switch to make sure that the field is Fourier transformed, and input :attr:`dk` instead of :attr:`dx`. Note that :func:`xint` returns a lattice observable, as required when used in the :func:`observe` function. If the integral is used in another function, note that it returns a matrix of dimension ``[1, lattice]``.
 
 
-Spectral derivatives
---------------------
 
-xSPDE can support either spectral or finite difference methods for derivatives. The default spectral method used is a discrete Fourier transform, but other methods can be added, as the code is inherently extensible.
 
-The code to take a spectral derivative, using spatial Fourier transforms, is carried out using the xSPDE :func:`xd` function with arguments ``(o, [D, ] r)``.
+Derivatives in equations
+------------------------
+
+xSPDE can support either spectral or finite difference methods for derivatives. The default spectral method used is a discrete Fourier transform, but other methods can be added, as the code is inherently extensible. These derivatives are obtained through function calls.
+
+The code to take a spectral derivative, using spatial Fourier transforms, is carried out using the xSPDE :func:`xd` function with arguments ``(o, [D, ] r)``. This can be used both in calculating derivatives for equations, and for averages or observables if they are needed.
 
 This function takes a scalar or vector quantity ``o``, and returns a spectral derivative over selected dimensions with a derivative ``D``, by Fourier transforming the data.  Set ``D = r.Dx`` for a first order x-derivative, ``D = r.Dy`` for a first order y-derivative, and similarly ``D = r.Dz.*r.Dy`` for a cross-derivative in ``z`` and ``y``. Higher derivatives require powers of these, for example `D = r.Dz.^4``. For higher dimensions use numerical labels, where ``D = r.Dx`` becomes ``D = r.D{2}``, and so on. Time derivatives are ignored at present. Derivatives are returned at all lattice locations.
 
 If the derivative ``D`` is omitted, a first order x-derivative is returned.
-Note that :func:`xd` returns a lattice observable, as required when used in the :func:`observe` function. If the integral is used in another function, note that it returns a matrix of dimension ``[1, lattice]``.
+Note that :func:`xd` returns a lattice observable, as required when used in the :func:`observe` function. If the integral is used in another function, it returns a matrix of dimension ``[1, lattice]``.
 
 Finite difference first derivatives
 -----------------------------------
@@ -385,16 +439,12 @@ This takes a scalar or vector ``o``, and returns the second  derivative in axis 
 Interaction picture and Fourier transforms
 ==========================================
 
-
-
 The xSPDE algorithms all allow the use of a sequence of interaction pictures. Each successive interaction picture is referenced to :math:`t=t_{n}`, for the n-th step starting at :math:`t=t_{n}`, so :math:`\boldsymbol{a}_{I}(t_{n})=\boldsymbol{a}(t_{n})\equiv\boldsymbol{a}_{n}`. It is possible to solve stochastic partial differential equations in xSPDE using explicit derivatives, but this is often less efficient. 
 
-
-A conventional fast Fourier transform (FFT) is employed for the interaction picture (IP) transformations used in computations, as this is fast and simple. In one dimension, this is given by a sum over indices starting with zero, rather than the Matlab convention of one. Hence, if :math:`\tilde{m}=m-1`:
+A conventional discrete Fourier transform (DFT) using a fast Fourier transform method is employed for the interaction picture (IP) transformations used in computations, as this is fast and simple. In one dimension, this is given by a sum over indices starting with zero, rather than the Matlab convention of one. Hence, if  :math:`\tilde{m}=m-1`:
 
 .. math::
-
-    \tilde{a}_{\tilde{n}}=\mathcal{F}\left(a\right)=\sum_{\tilde{m}=0}^{N-1}a_{\tilde{m}}\exp\left[-2\pi i\tilde{m}\tilde{n}/N\right]
+ A_{\tilde{n}}=\mathcal{F}\left(a\right)=\sum_{\tilde{m}=0}^{N-1}a_{\tilde{m}}\exp\left[-2\pi i\tilde{m}\tilde{n}/N\right]
 
 Suppose the spatial grid spacing is :math:`dx`, and the number of grid points is :math:`N`, then the maximum range from the first to last point is:
 
@@ -412,7 +462,7 @@ The IP Fourier transform can be written in terms of an FFT as
 
 .. math::
 
-    \tilde{\boldsymbol{a}}\left(\boldsymbol{k}_{\boldsymbol{n}}\right)=\prod_{j}\left[\sum_{\tilde{m}_{j}}\exp\left[-i\left(dk_{j}dx_{j}\right)\tilde{m}_{j}\tilde{n}_{j}\right]\right]
+    \boldsymbol{A}\left(\boldsymbol{k}_{\boldsymbol{n}}\right)=\prod_{j}\left[\sum_{\tilde{m}_{j}}\exp\left[-i\left(dk_{j}dx_{j}\right)\tilde{m}_{j}\tilde{n}_{j}\right]\right]
 
 The inverse FFT Fourier transforms automatically divide by the correct factors of :math:`\prod_{j}N_{j}` to ensure invertibility. Note also that due to the periodicity of the exponential function, negative momenta are obtained if we consider an ordered lattice such that:
 
@@ -423,10 +473,19 @@ The inverse FFT Fourier transforms automatically divide by the correct factors o
     k_{j} & = (j-1-N)dk\,\,(j>N/2)
     \end{aligned}
     
+This Fourier transform is multiplied by an appropriate factor to propagate in the interaction picture, than an inverse Fourier transform is applied. While it is for interaction picture transforms, an additional scaling factor is applied to obtain transformed fields in averages.
 
+In other words, in the averages
+
+.. math::
+
+ \tilde{a}_{n} = \frac{dt}{\sqrt{2\pi}} A_{\tilde{n}'}
+ 
+where the indexing change indicates that graphed momenta are stored from negative to positive values. Note also that for frequency spectra a positive sign is used in the frequency exponent, to agree with physics conventions.
+ 
     
-Derivatives
------------
+Interaction picture derivatives
+-------------------------------
 
 For calculating derivatives in the interaction picture, the notation :math:`D` indicates a derivative. To explain, one integrates by parts:
 
@@ -443,6 +502,51 @@ Here ``r.Dx`` returns an array of momenta in cyclic order in dimension :math:`d`
 - :math:`\boldsymbol{\nabla}^{2}=\nabla_{x}^{2}+\nabla_{y}^{2}\rightarrow` ``r.Dx.^2+r.Dy.^2``
 
 Note that the dot in the notation of ``.^`` is needed to take the square of each element in the array.
+
+Spectra in the time-domain
+--------------------------
+
+For calculating a spectrum in the time-domain, the method of inputting a :attr:`transforms` switch is used, with ``transforms{n}(1) = 1`` to turn on Fourier transforms in the time domain for the n-th observable. This requires much more dedicated internal memory.
+
+To conserve memory, one can use more internal :attr:`steps` combined with less :attr:`points`. In order to ensure that spectral results are independent of memory conservation strategies, xSPDE uses a technique of trapezoidal averaging when calculating frequency spectra.
+
+With this method, all fields are averaged internally using trapezoidal integration in time over any internal steps, to give the average midpoint value.  After this, the resulting step-averaged fields are then Fourier transformed.
+
+For example, in the simplest case of just one internal step, with no error-checking, this means that the field used to calculate a spectrum is:
+
+.. math::
+
+    \bar{a}_{j}=\left({a}_{j-1}+{a}_{j}\right)/2,
+    
+which corresponds to the time in the spectral Fourier transform, of:
+    
+.. math::
+
+    \bar{t}_{j}=\left({t}_{j-1}+{t}_{j}\right)/2.
+    
+For an error-checking calculation with two internal :attr:`steps`, there are four successive valuations: :math:`a_{j1}`, :math:`a_{j2}`, :math:`a_{j3}`, :math:`a_{j}`, with the last value the one plotted at :math:`t_{j}`. In this case, for spectral calculations one averages according to:
+    
+.. math::
+
+ \bar{a}_{j}=\left({a}_{j-1}+2({a}_{j1}+{a}_{j2}+{a}_{j3})+{a}_{j}\right)/8.
+ 
+When there are even larger numbers of internal steps, either from error-checking or from using the internal :attr:`steps` parameter, one proceeds similarly by carrying out a trapezoidal average over all internal steps. 
+    
+In addition, one must define the first field :math:`\bar{a}_{1}`. Due to the cyclic nature of discrete Fourier transforms, this is also logically the last field value.  Hence, this is set equal to the corresponding cyclic average of the first and last field value, in order to reduce aliasing errors at high frequencies in the resulting spectrum:
+    
+.. math::
+
+    \bar{a}_{1}=\frac{1}{2} \left({a}_{N}+{a}_{1}\right),
+
+which corresponds to a time in the spectral Fourier transform of:
+    
+.. math::
+
+    \bar{t}_{1} = {t}_{1}-dt/2 \equiv {t}_{N}+dt/2.   
+    
+This aliasing of virtual times, one higher and one lower than any integration time, is a consequence of the discrete Fourier transform method. It also means that the effective total integration time in the Fourier transform definition is :math:`T_{eff} = T+dt = 2\pi/d\omega`, where :math:`T` is the total integration time, and :math:`dt` is the time interval between integration points.
+
+
 
 Fields
 ======
@@ -473,12 +577,12 @@ Note: Here, :attr:`fieldsplus` = :attr:`fields` (1) + :attr:`fields` (2) is the 
 
 .. data:: latt
 
-    This includes a propagation array :attr:`r.propagator`, used in the interaction picture calculations. There are two momentum space propagators, for coarse and fine steps respectively, which are computed when they are needed.
+    This includes a propagation array :attr:`propagator`, used in the interaction picture calculations. There are two momentum space propagators, for coarse and fine steps respectively, which are computed when they are needed.
 
-Raw data
---------
+Raw data output
+---------------
 
-If required, by using the switch :attr:`raw` set to one,  xSPDE can store every trajectory generated. This is raw, unprocessed data, so there is no graph index. This raw data is stored in a cell array :data:`rawdata`. The array is written to disk using the Matlab file-name, on completion, provided a file name is input.
+If required, by using the switch :attr:`raw` set to one,  xSPDE can store every trajectory generated. This is raw, unprocessed data, so there is no graph index. This raw data output is stored in a cell array :data:`rawdata`. The array is written to disk using the Matlab file-name, on completion, provided a file name is input, and is also available as an xSIM function output.
 
 The cell indices are: sequence index, error-checking index, ensemble index.
 

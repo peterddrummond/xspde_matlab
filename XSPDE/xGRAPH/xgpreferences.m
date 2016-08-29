@@ -1,6 +1,6 @@
     function input = xgpreferences (input,oldinput)  
 %   input  =  XGPREFERENCES(input) sets default values for  graphics inputs.
-%   Input:  'input' cell array. previous input 'oldinput'.
+%   Input:  'input' cell array; previous input 'oldinput'.
 %   Output: 'input' cell array with updated and default graphics values. 
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
@@ -25,14 +25,15 @@ if ~isempty(oldinput)                            %% Check  oldinput ~empty
 end                                              %% End if oldinput ~empty
 
                           %% Obtain the number of graph functions 
-                          
+
+input = xpreferences(input,'');                  %%get missing inputs                          
 sequence = length(input);                        %%get sequence length
 lines = {'-k','--k',':k','-.k','-ok','--ok',':ok','-.ok','-+k','--+k'};
 for s = 1:sequence                               %%loop over sequence 
-  in = xpreferences(input{s});                   %%get input structure
-  
+ 
                   %% Set the graphics default parameters
-                       
+  
+  in = input{s};                     
   if in.numberaxis || in.dimension > 4
       xlabels={'x_1','x_2','x_3','x_4','x_5','x_6','x_7','x_8','x_9'};
       klabels={'k_1','k_2','k_3','k_4','k_5','k_6','k_7','k_8','k_9'};
@@ -41,7 +42,7 @@ for s = 1:sequence                               %%loop over sequence
       klabels={'\omega','k_x','k_y','k_z'};
   end
   
-  in.gversion =   xprefer(in,'gversion',0,'xGRAPH2.2');
+  in.gversion =   xprefer(in,'gversion',0,'xGRAPH2.3');
   in.graphs =     xprefer(in,'graphs',1,in.functions);
   in.transforms = xcprefer(in,'transforms',in.graphs,{zeros(1,in.dimension)});
   in.axes =       xcprefer(in,'axes',in.graphs,{num2cell(zeros(1,in.dimension))});

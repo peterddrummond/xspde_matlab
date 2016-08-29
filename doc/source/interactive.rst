@@ -33,12 +33,12 @@ Next, enter the xspde parameters (see :ref:`chap-api`) into the command window, 
 
     in.label1 = <parameter1>
     in.label2 = ...
-    in.da = @(a,z,r) <expression for da/dt>
+    in.da = @(a,w,r) <expression for da/dt>
     xspde(in)
 
 - The notation ``in.label = parameter`` creates a field in the structure ``in`` (which is created dynamically, if it has not been defined before).
 - The notation ``@(..)`` is the Matlab shorthand for an anonymous function.
-- The parameters passed to the :func:`da` function are: ``a``, the stochastic variable; ``z``,  the random noise; and ``r``, the input structure with additional coordinates and parameters.
+- The parameters passed to the :func:`da` function are: ``a``, the stochastic variable; ``w``,  the random noise; and ``r``, the input structure with additional coordinates and parameters.
 - :func:`xspde` is called with the input structure as the only argument.
 - parameters or functions that are omitted are replaced with default values.
 - a sequence of simulations requires an input list: `{in1,in2..}`.
@@ -56,15 +56,15 @@ The first example is the simplest possible stochastic equation:
 
 .. math::
 
-    \dot{a}=\zeta(t),
+    \dot{a}=w(t),
 
 with a complete xSPDE script in Matlab below, and output in :numref:`fig-simplest-case-wiener`.
 
 ::
 
-    in.da = @(a,z,r) z; xspde(in);
+    in.da = @(a,w,r) w; xspde(in);
 
-- Here :func:`da` defines the derivative function, with ``z`` being the noise.
+- Here :func:`da` defines the derivative function, with ``w`` being the noise.
 - The last argument of xspde user functions is ``r``, containing the parameters required for the simulation.
 
 .. _fig-simplest-case-wiener:
@@ -81,7 +81,7 @@ Next we treat a model for the quantum noise of a single mode laser:
 
     \dot{a}=\left(1-\left|a\right|^{2}\right)a+b\zeta(t),
 
-where :math:`\zeta=\left(\zeta_{1}+i\zeta_{2}\right)`, so that:
+where :math:`\zeta=\left(w_{1}+iw_{2}\right)`, so that:
 
 .. math::
 
@@ -95,7 +95,7 @@ Here the coefficient :math:`b` describes the quantum noise of the laser, and is 
     in.noises = 2;
     in.observe = @(a,r) abs(a)^2;
     in.olabels = '|a|^2';
-    in.da = @(a,z,r) (1-abs(a)^2)*a+0.01*(z(1)+i*z(2));
+    in.da = @(a,w,r) (1-abs(a)^2).*a+0.01*(w(1)+i*w(2));
     xspde(in)
 
 .. _fig-laser:
@@ -148,15 +148,15 @@ where :math:`\left\langle dw^{2}\right\rangle =dt`. Since the noise is multiplic
 
 .. math::
 
-    \dot{a}=\left(\mu-\sigma^{2}/2\right)a+\sigma a\,\zeta(t).
+    \dot{a}=\left(\mu-\sigma^{2}/2\right)a+\sigma a\,w(t).
 
 An interactive xSPDE script in Matlab is given below with an output graph in :numref:`fig-black-scholes`, for the case of a volatile stock with :math:`\mu=0.1`, :math:`\sigma=1`. Note the spiky behaviour, typical of multiplicative noise, and also of the risky stocks in the small capitalization portions of the stock market.
 
 ::
 
     clear
-    in.initial = @(v,r) 1;
-    in.da = @(a,z,r) -0.4*a+a*z;
+    in.initial = @(rv,r) 1;
+    in.da = @(a,w,r) -0.4*a+a*w;
     xspde(in)
 
 .. _fig-black-scholes:
@@ -249,7 +249,7 @@ the ``.*`` notation is used in functions here, as fields require element-wise mu
     in.linear = @(r) i*0.01*(r.Dx.^2+r.Dy.^2);
     in.observe = @(a,~) abs(a).^2;
     in.olabels = '|a|^2';
-    in.da = @(a,z,~) (1-abs(a(1,:)).^2).*a+0.001*(z(1,:)+i*z(2,:));
+    in.da = @(a,w,~) (1-abs(a(1,:)).^2).*a+0.001*(w(1,:)+i*w(2,:));
     xspde(in)
 
 Here:

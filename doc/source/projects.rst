@@ -73,7 +73,7 @@ To demonstrate this, try adding some more trajectories, points and an output lab
 
 ::
     clear
-    in.da = @(a,z,r) z;
+    in.da = @(a,w,r) w;
     in.ensembles = [500,20];
     in.points = 101;
     in.olabels = '<a_1>';
@@ -137,8 +137,8 @@ To simulate this, one can use a file, :download:`Kubo.m <Kubo/Kubo.m>`, which al
     function [e] = Kubo()
         in.name = 'Kubo oscillator';
         in.ensembles = [400,16];
-        in.initial = @(v,~) 1+0*v;
-        in.da = @(a,z,r) i*a.*z;
+        in.initial = @(rv,~) 1+0*rv;
+        in.da = @(a,w,r) i*a.*w;
         in.olabels = {'<a_1>'};
         e = xspde(in);
     end
@@ -157,8 +157,8 @@ Here we note that:
 - ``Kubo`` defines the parameters and function handles, then runs the simulation.
 - :attr:`name` gives a name to identify the project.
 - :attr:`ensembles` specifies 400 samples in a parallel vector, repeated 16 times in series.
-- :func:`initial` initializes the input to ones; the noise ``v`` is used as it has the same lattice dimension as the ``a`` field.
-- :func:`da` is the function, :math:`da/dt=ia\zeta`, that specifies the equation being integrated.
+- :func:`initial` initializes the input to ones; the noise ``rv`` is used as it has the same lattice dimension as the ``a`` field.
+- :func:`da` is the function, :math:`da/dt=iaw`, that specifies the equation being integrated.
 - :attr:`olabels` is a cell array with a label for the variable ``a`` that is averaged.
 - :func:`xspde` runs the simulation and graphics program using data from the ``in`` structure.
 

@@ -82,7 +82,7 @@
 \begin_body
 
 \begin_layout Title
-xSPDE user's guide: v2.2
+xSPDE user's guide: v2.3
 \end_layout
 
 \begin_layout Author
@@ -296,8 +296,9 @@ Running xSPDE interactively
 \end_layout
 
 \begin_layout Standard
-To simulate a stochastic equation interactively, first make sure Matlab
- path is pointing to the xSPDE folder.
+To simulate a stochastic equation, first make sure that either the Matlab
+ xSPDE toolbox is installed, or else the Matlab path is pointing to the
+ xSPDE folder and subfolders.
  If not, proceed as follows:
 \end_layout
 
@@ -858,7 +859,7 @@ integer vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Hierarchy of stochastic trajectories
+Numbers of stochastic trajectories
 \end_layout
 
 \end_inset
@@ -902,7 +903,7 @@ a
 \begin_inset Text
 
 \begin_layout Plain Layout
-Observable function 
+Observable function(s) 
 \end_layout
 
 \end_inset
@@ -1115,7 +1116,7 @@ integer cell array
 \begin_inset Text
 
 \begin_layout Plain Layout
-Movie images in time per observable
+Movie images in time per 2D observable
 \end_layout
 
 \end_inset
@@ -1245,6 +1246,42 @@ The first example is the simplest possible stochastic equation:
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+This is carried out numerically and graphed using 
+\begin_inset Formula $N=points(1)$
+\end_inset
+
+ points.
+ Since the first time point stored is always the initial value, there are
+ 
+\begin_inset Formula $N-1$
+\end_inset
+
+ integration steps, each of length 
+\begin_inset Formula $dt=ranges(1)/(N-1)$
+\end_inset
+
+.
+ As a result, the graphs have discrete steps, and more detail is obtained
+ if more time steps are used.
+ The default value is 
+\begin_inset Formula $N=51$
+\end_inset
+
+, which is in the 
+\begin_inset Formula $xpreferences$
+\end_inset
+
+ file.
+ This is adjustable by the user.
+ It can also be changed for a simulation, by inputting a new value of 
+\begin_inset Formula $points$
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Subsection*
@@ -1556,8 +1593,8 @@ Mathematical exercise:
 \end_layout
 
 \begin_layout Itemize
-If you like mathematics; as an offline exercise, try to solve the equivalent
- diffusion equation for the probability P to find the variance 
+If you like mathematics, then as an offline exercise, try to solve the equivalen
+t diffusion equation for the probability P to find the variance 
 \begin_inset Formula $\left\langle a^{2}\right\rangle $
 \end_inset
 
@@ -1645,7 +1682,25 @@ Most lasers have more than
 \begin_inset Formula $100$
 \end_inset
 
- photons, and hence less noise!
+ photons, and hence less noise! 
+\end_layout
+
+\begin_layout Standard
+For this exercise, small error-bars will display on the graph.
+ These are calculated from the difference between using steps of size 
+\begin_inset Formula $dt$
+\end_inset
+
+ and steps of size 
+\begin_inset Formula $dt/2$
+\end_inset
+
+.
+ They only appear if greater than a minimum relative size, typically 
+\begin_inset Formula $1\%$
+\end_inset
+
+ of the graph size, which can be set by the user.
 \begin_inset Separator latexpar
 \end_inset
 
@@ -1867,25 +1922,30 @@ Frequency spectra have many uses, especially for understanding the steady-state
 
 \begin_layout Standard
 To get an output from a temporally Fourier transformed field, just set 
-\begin_inset Formula $in.transforms=1$
+\begin_inset Formula $in.transforms\{n\}=1$
 \end_inset
 
-, for the particular observable you need to calculate in transform space.
- This parameter is a cell array, and can have a different value for every
- observable and indeed, every dimension in space-time.
+, for the particular observable (
+\begin_inset Formula $n$
+\end_inset
+
+) you need to calculate in transform space.
+ This parameter is a cell array.
+ It can have a different value for every observable and for every dimension
+ in space-time if you have space dimensions as well.
 \end_layout
 
 \begin_layout Standard
-Take the random walk equation in a complex space, 
+As an example, take the random walk equation in a complex space, 
 \begin_inset Formula 
 \[
-\frac{da}{dt}=-a+w(t)
+\frac{da}{dt}=-a+\zeta(t)
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $w(t)=w_{1}(t)+iw_{2}(t)$
+\begin_inset Formula $\zeta(t)=w_{1}(t)+iw_{2}(t)$
 \end_inset
 
 .
@@ -1915,20 +1975,51 @@ For sufficiently long time-intervals, the solution in frequency space -
 
 \end_inset
 
-The expectation value of the noise spectrum, in the large 
-\begin_inset Formula $T$
-\end_inset
-
+The expectation value of the noise spectrum, in the long time-intervals
  limit, is therefore: 
 \begin_inset Formula 
 \begin{eqnarray*}
 \left\langle \left|\tilde{a}(\omega)\right|^{2}\right\rangle  & = & \frac{1}{2\pi\left(1+\omega^{2}\right)}\int\int e^{-i\omega(t-t')}\left\langle \zeta(t)\zeta^{*}(t')\right\rangle dtdt'\,.\\
- & = & \frac{T}{\pi\left(1+\omega^{2}\right)}
+ & = & \frac{T_{eff}}{\pi\left(1+\omega^{2}\right)}
 \end{eqnarray*}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The final result is obtained from the fact that the first integral vanishes
+ unless 
+\begin_inset Formula $t=t'$
+\end_inset
+
+, since for small steps, 
+\begin_inset Formula $\left\langle \zeta(t)\zeta^{*}(t')\right\rangle \rightarrow2\delta\left(t-t'\right)$
+\end_inset
+
+.
+ Next, the second time integral is carried out numerically as a sum which
+ has 
+\begin_inset Formula $N$
+\end_inset
+
+ points of interval 
+\begin_inset Formula $dt$
+\end_inset
+
+.
+ Owing to definition of 
+\begin_inset Formula $dt$
+\end_inset
+
+, the `effective' time duration for the Fourier tranform time integrals
+ is 
+\begin_inset Formula $T_{eff}=Ndt=ranges(1)\times N/(N-1)$
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Subsection*
@@ -2072,7 +2163,7 @@ initial
 \emph default
  function is a random field, used optionally to initialize the stochastic
  variable.
- You can transform any field in any dimension, with any number of resulting
+ You can transform any field in any dimension, for any number of resulting
  averages.
  See Chapter 6 for details.
  
@@ -4488,8 +4579,11 @@ Challenge problem #2
 \end_layout
 
 \begin_layout Standard
-Counter-intuitively, a random potential prevents normal wave-packet spreading
- in quantum-mechanics.
+Counter-intuitively, a random potential 
+\emph on
+prevents
+\emph default
+ normal wave-packet spreading in quantum-mechanics.
  This is Anderson localization: a famous property of quantum mechanics in
  a random potential.
  A typical experimental method is to confine an ultra-cold Bose-Einstein
@@ -4766,7 +4860,7 @@ a.
 \series default
 \emph default
  The default is 
-\begin_inset Formula $\mathbf{xinitialise}$
+\begin_inset Formula $\mathbf{xinitial}$
 \end_inset
 
 , which sets fields to zero.
@@ -5004,6 +5098,14 @@ propfactor returns the interaction picture propagation factors.
 Arrays and errors
 \end_layout
 
+\begin_layout Standard
+Knowing the details of array indexing inside xSPDE isn't usually necessary.
+ Yet it becomes important if you want to write your own functions to extend
+ xSPDE, interface xSPDE with other functions, or read and write xSPDE data
+ files with external programs.
+ It also helps to understand how the program works.
+\end_layout
+
 \begin_layout Subsection
 Array indexing
 \end_layout
@@ -5014,8 +5116,8 @@ In xSPDE, the space-time dimension
 \end_inset
 
  is unlimited.
- All data, including fields and average results is stored in arrays of implicit
- or explicit rank 
+ All data, including grid coordinates, fields and average results is stored
+ in real or complex numerical arrays of implicit or explicit rank 
 \begin_inset Formula $2+d$
 \end_inset
 
@@ -5024,18 +5126,35 @@ In xSPDE, the space-time dimension
 \begin_inset Formula $(i,e,\mathbf{j})$
 \end_inset
 
-.
- The first is a field index (
+, where: 
+\end_layout
+
+\begin_layout Itemize
+The first index is a field index (
 \begin_inset Formula $i$
 \end_inset
 
 ).
- The second is an ensembles/checks index (
+ In some cases - like coordinates - the first index is always 
+\begin_inset Formula $i=1$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+The second index is an ensembles/checks index (
 \begin_inset Formula $e/c$
 \end_inset
 
 ).
- The 
+ For fields, this is used to store field trajectories.
+ For output data, it is used to store means and error estimates.
+\end_layout
+
+\begin_layout Itemize
+The remaining 
 \begin_inset Formula $d$
 \end_inset
 
@@ -5051,11 +5170,15 @@ In xSPDE, the space-time dimension
 \begin_inset Formula $d$
 \end_inset
 
--dimensional index, and 
-\begin_inset Formula $\bm{j}'=[1,j_{2},\ldots]$
+-dimensional index
+\end_layout
+
+\begin_layout Itemize
+To conserve memory, transient arrays during calculations use 
+\begin_inset Formula $\bm{j}=[1,j_{2},\ldots]$
 \end_inset
 
- indicates a 
+ , which indicates a 
 \begin_inset Formula $d$
 \end_inset
 
@@ -5065,26 +5188,37 @@ In xSPDE, the space-time dimension
 
 \begin_layout Standard
 When the fields, noises or coordinates are integrated by the xSIM integration
- functions, the field and data arrays are always flattened to a matrix for
- reasons of convenience in defining mathematical operations.
+ functions, the field and data arrays are always flattened to a matrix.
+ This is for reasons of convenience in defining mathematical operations.
  The first index is the field or line index, and the combined second index
  covers all the rest.
- This is not done in externally stored data, nor in xGRAPH, which operates
- on the full data arrays.
+ This is only done internally, but not in externally stored data, nor in
+ xGRAPH, which operates on the full data arrays.
 \end_layout
 
 \begin_layout Standard
-Inside a sequence, data arrays are cell arrays with an additional graph
- index 
+Stored data uses heterogenous cell arrays to package numerical arrays with
+ additional high level indices.
+ The first is always the sequence index, 
+\begin_inset Formula $s$
+\end_inset
+
+.
+ Raw data also requires indices for checks and hih level ensembles.
+ Inside a sequence, data cell arrays have an additional graph index 
 \begin_inset Formula $n$
 \end_inset
 
 .
  This distinguishes the different averages generated for output graphs and
  data.
- The following information is not required to use xSPDE, but it helps to
- give insight to how data is stored, and how to customize and extend the
- code.
+ 
+\end_layout
+
+\begin_layout Standard
+The following detailed information is not required to use xSPDE, but it
+ helps to give insight to how data is stored, and how to customize and extend
+ the code.
  There are several different types of arrays used.
  These are as follows:
 \end_layout
@@ -5144,7 +5278,7 @@ a
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(i,e,\bm{j}')$
+\begin_inset Formula $(i,e,\bm{j})$
 \end_inset
 
 
@@ -5180,7 +5314,7 @@ w
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(i,e,\bm{j}')$
+\begin_inset Formula $(i,e,\bm{j})$
 \end_inset
 
 
@@ -5214,7 +5348,7 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(1,e,\bm{j}')$
+\begin_inset Formula $(1,e,\bm{j})$
 \end_inset
 
 
@@ -5337,7 +5471,7 @@ Graph data
 \end_layout
 
 \begin_layout Standard
-In detail, these are as follows:
+In summary, the xSPDE arrays are as follows:
 \end_layout
 
 \begin_layout Itemize
@@ -5346,7 +5480,7 @@ In detail, these are as follows:
 Field
 \series default
  arrays 
-\begin_inset Formula $a(i,e,\bm{j}')$
+\begin_inset Formula $a(i,e,\bm{j})$
 \end_inset
 
  - these have a field index, an ensemble index 
@@ -5366,7 +5500,7 @@ Random
 noise
 \series default
  arrays 
-\begin_inset Formula $w(i,e,\bm{j}')$
+\begin_inset Formula $w(i,e,\bm{j})$
 \end_inset
 
  - these are like field arrays.
@@ -5380,7 +5514,7 @@ noise
 Coordinate
 \series default
  arrays 
-\begin_inset Formula $x(1,e,\bm{j}')$
+\begin_inset Formula $x(1,e,\bm{j})$
 \end_inset
 
  - these arrays are the values of coordinates at grid-points, with labels
@@ -5517,8 +5651,8 @@ k index
 \begin_inset Formula $o$
 \end_inset
 
- is a user-generated graphics output index, which may not correspond to
- a field index.
+ is a user-generated graphics line index.
+ This may or may not correspond to a field index: it is a user option.
 \end_layout
 
 \begin_layout Itemize
@@ -5526,39 +5660,21 @@ k index
 \series bold
 Graphics
 \series default
- arrays 
+ data arrays 
 \begin_inset Formula $g\{s\}\{n\}(o,c,\mathbf{j})$
 \end_inset
 
- - these store the complete sequence of data that is plotted, and may have
- further functional transformations when processed in 
+ - these store the complete sequence of 
+\emph on
+data
+\emph default
+ that is plotted, and may have further functional transformations when processed
+ in 
 \series bold
 xgraph
 \series default
 , if required.
-\end_layout
-
-\begin_layout Standard
-There may be quite different first dimensions between fields, noises and
- output data, and they are specified using different input parameters.
- The output line index 
-\begin_inset Formula $o$
-\end_inset
-
- in a graphics or data array describes different lines on a graph.
- Similarly, the local ensemble index 
-\begin_inset Formula $e$
-\end_inset
-
- in a field array has a different range to 
-\begin_inset Formula $c$
-\end_inset
-
-, the check index, in a data array.
-\end_layout
-
-\begin_layout Standard
-Graphics cell data has high-level cell indices 
+ Graphics cell data requires high-level cell indices 
 \begin_inset Formula $\{s\}$
 \end_inset
 
@@ -5576,10 +5692,31 @@ Graphics cell data has high-level cell indices
 \begin_inset Formula $n$
 \end_inset
 
-, each with multiple averages.
+.
+ Each graph may have multiple averages, giving different liines for comparisons.
  These are then combined into a sequence, each with different graphs, and
  therefore need more indices.
  
+\end_layout
+
+\begin_layout Standard
+Although the indices always occur in the same order, the fields, noises
+ and output data can have different first dimensions.
+ They are specified using different input parameters.
+ The output line index 
+\begin_inset Formula $o$
+\end_inset
+
+ in a graphics or data array describes different lines on a graph.
+ Similarly, the local ensemble index 
+\begin_inset Formula $e$
+\end_inset
+
+ in a field array has a different range to 
+\begin_inset Formula $c$
+\end_inset
+
+, the check index, in a data array.
 \end_layout
 
 \begin_layout Subsection
@@ -6380,13 +6517,19 @@ in.c
 \emph on
 in.
 \emph default
-A...' are always available to users of xSPDE.
- Note that use of globals is 
+A...' - except the reserved '
+\emph on
+D
+\emph default
+' for derivatives - are always available to users.
+ Use of globals is 
 \series bold
 not
 \series default
- recommended, as it is incompatible with the Matlab parallel toolbox.
- 
+ recommended.
+ It is incompatible with the Matlab parallel toolbox.
+ Graphics data can be included, but it is simply stored for the graphics
+ program to use.
 \end_layout
 
 \begin_layout Subsection
@@ -6476,7 +6619,7 @@ version
 \begin_layout Plain Layout
 
 \emph on
-'xSIM2.2'
+'xSIM2.3'
 \emph default
  
 \end_layout
@@ -7121,9 +7264,7 @@ IP transforms per time-step
 \begin_layout Plain Layout
 
 \emph on
-graphs
-\emph default
- 
+numberaxis
 \end_layout
 
 \end_inset
@@ -7132,11 +7273,7 @@ graphs
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\emph on
-1
-\emph default
- 
+0
 \end_layout
 
 \end_inset
@@ -7145,7 +7282,7 @@ graphs
 \begin_inset Text
 
 \begin_layout Plain Layout
-Maximum number of graphs
+Forces use of numerical axis labels
 \end_layout
 
 \end_inset
@@ -7445,7 +7582,7 @@ The most common functions, output field dimensions and calling arguments,
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="22" columns="3">
+<lyxtabular version="3" rows="21" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -7902,42 +8039,6 @@ Observable function cell array
 
 \begin_layout Plain Layout
 Functions stored of averages
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
-*compare
-\emph default
- 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $(t,in)$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Comparison function cell array
 \end_layout
 
 \end_inset
@@ -8972,7 +9073,7 @@ Reduced, internal time-step
 \begin_layout Plain Layout
 
 \emph on
-V
+v
 \emph default
  
 \end_layout
@@ -9018,7 +9119,7 @@ Spatial lattice volume
 \begin_layout Plain Layout
 
 \emph on
-K
+kv
 \emph default
  
 \end_layout
@@ -9064,7 +9165,7 @@ Momentum lattice volume
 \begin_layout Plain Layout
 
 \emph on
-dV
+dv
 \emph default
  
 \end_layout
@@ -9110,7 +9211,7 @@ Spatial cell volume
 \begin_layout Plain Layout
 
 \emph on
-dK
+dkv
 \emph default
  
 \end_layout
@@ -9785,7 +9886,7 @@ Dimensions for coordinates (flattened)
 \begin_layout Plain Layout
 
 \emph on
-d.ft
+d.aplus
 \emph default
  
 \end_layout
@@ -9818,7 +9919,7 @@ vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dimensions for field transforms
+Dimensions for integrated plus defined fields
 \end_layout
 
 \end_inset
@@ -10077,7 +10178,7 @@ generated average data from
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="16" columns="3">
+<lyxtabular version="3" rows="18" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -10131,7 +10232,7 @@ gversion
 \begin_layout Plain Layout
 
 \emph on
-'xGRAPH2.0'
+'xGRAPH2.3'
 \emph default
  
 \end_layout
@@ -10143,6 +10244,41 @@ gversion
 
 \begin_layout Plain Layout
 Current version number 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+in.olabels{n}
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+'a'
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Cell array of function labels
 \end_layout
 
 \end_inset
@@ -10596,7 +10732,7 @@ Points plotted for each axis
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -10609,7 +10745,7 @@ glabels{n}
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -10622,11 +10758,48 @@ glabels{n}
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Graph-specific axis labels
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+graphs
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Maximum number of graphs
 \end_layout
 
 \end_inset

@@ -12,14 +12,20 @@ function [error,input,data,raw] = xsim(input)
 tic();                                           %%set timer
 
 input = xmakecell(input);                        %%make input a cell
-sequence = length(input);                        %%find sequence length
+rawdata =    xprefer(input{1},'rawdata',0,'');
+rawinput = {};                                   %%initialize raw input
+if rawdata ~=  ''                                %%If data is character
+    [rawinput,~,raw] = xread(rawdata);           %%Input rawdata from file 
+end                                              %%End if rawdata 
+rawinput = xmakecell(rawinput);                  %%change rawinput to cell
+input = xpreferences(input,rawinput);            %%get 'input' defaults
+sequence = length(input);                        %%get sequence length
 data = cell(sequence);                           %%allocate data as cell
-l = cell(sequence);                              %%allocate l as cell
+l = cell(sequence);                              %%allocate lattice as cell
 
 %%Loop over sequence to initialize data sets
 
 for s=1:sequence                                 %%loop over sequence
-  input{s} = xpreferences(input{s});             %%set input defaults
   l{s} = xlattice(input{s});                     %%initialise lattice
   if input{s}.seed >=0  && ~input{s}.octave      %%check if not octave
     sd = RandStream('CombRecursive','Seed',1);   %%define RNG type

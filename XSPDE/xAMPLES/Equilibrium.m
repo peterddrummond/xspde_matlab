@@ -21,6 +21,6 @@ in.observe{1} =   @(a,~) a.*conj(a);             %%Observe  handle
 in.observe{2} =   @(a,~) a.*conj(a);             %%Observe  handle
 in.transforms = {0,1};                           %%Transform to frequency
 in.olabels =   {'|a(t)|^2','|a(\omega)|^2'};     %%labels for observables
-in.compare =   {@(t,~) 1.+0*t, @(w,~)100./(pi*(1+w.^2))};%%Comparisons
+in.compare =   {@(t,~) 1.+0*t, @(w,~)(100.16)./(pi*(1+w.^2))};%%Comparisons
 e            = xspde(in);                        %%Stochastic program
 end                                              %%end of function                                           
