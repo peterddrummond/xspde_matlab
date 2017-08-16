@@ -28,7 +28,7 @@ end                                              %% End if rawinput ~empty
 sequence = length(input);                        %%get sequence length
 for s = 1:sequence                               %%loop over sequence 
     in = input{s};                                %%get input structure
-    in.version =    xprefer(in,'version',0,'xSIM2.3');
+    in.version =    xprefer(in,'version',0,'xSIM2.4');
     in.name =       xprefer(in,'name',0,'');
     in.dimension =  xprefer(in,'dimension',1,1);
     in.fields =     xprefer(in,'fields',2,[1,0]);
@@ -102,7 +102,8 @@ for s = 1:sequence                               %%loop over sequence
       in.functions = in.averages;            %%Plots set to averages
       in.function{in.functions} =[];         %%Set last plot function
   end                                        %%End averages vs plot
-  in.gpoints = xcprefer(in,'gpoints',in.functions,{[1,in.errors,in.points]});
+  in.ftransforms =xcprefer(in,'transforms',in.functions,in.transforms);
+  %in.gpoints = xcprefer(in,'gpoints',in.functions,{[1,in.errors,in.points]});
   for n = 1:in.functions                     %% Loop over graphs
     if  isempty(in.function{n})
       if  n<=in.averages
@@ -118,18 +119,21 @@ for s = 1:sequence                               %%loop over sequence
     
     in.dx =  in.ranges./max(1,in.points-1);  %%n-th plotted step in x
     in.dk =  2.0*pi./(in.points.*in.dx);     %%n-th step-size in k
+    in.dk(1) =  2.0*pi/in.ranges(1);         %%step-size in w
     in.dv  = prod(in.dx(2:in.dimension));    %%lattice cell volume
     in.dkv = prod(in.dk(2:in.dimension));    %%k-space volume
     in.nspace = prod(in.points(2:in.dimension));%%Transverse lattice size
     in.v =   in.dv*in.nspace;                %%lattice volume
     in.kv =  in.dkv*in.nspace;               %%k-space volume
+    in.points2 = floor(in.points/2);
     for n = 1:in.dimension                   %%loop over  dimension 
       p = (0:in.points(n)-1);                %% index vector
-      in.xc{n} = in.origin(n) + p*in.dx(n);  %%n-th x-axis
-      p = mod(p+in.points(n)/2,in.points(n));%%n-th cyclic k-index
-      p = p - in.points(n)/2;                %%n-th shifted k-index
-      in.kc{n} = p*in.dk(n);                 %%n-th propagation k-coords
+      in.xc{n} = in.origin(n) + p*in.dx(n);  %%n-th x-coords
+      in.kc{n} = (p-in.points2(n))*in.dk(n); %%n-th k-coords
+      in.kp{n} = ifftshift(in.kc{n});        %%n-th propagation k-coords
     end;                                     %%end loop over dimension
+    nt2 = floor((in.points(1)-1)/2);
+    in.kc{1} = in.dk(1)*(-nt2:-nt2+in.points(1)-1);
     input{s} = in;                           %%get input structure
 end                                          %%end sequence loop 
 end                                          %%end xpreferences function 

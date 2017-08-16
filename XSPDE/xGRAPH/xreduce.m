@@ -15,13 +15,12 @@ function [datan,np,x,xlab] =  xreduce(n,datan,g)
     mx(3) = np(3);                             %%index default: time axis
     xlab = g.glabels{n};                       %%get x or k label
 
-    %Loop over dimension to find data axes to plot
+    %Loop over dimension to find data axes to plot 
     
     for nd = 1:dimension                       %%Loop over dimension
         datan = reshape(datan,np);             %%reshape data 
-        if g.transforms{n}(nd)                 %%If transform switch
-            x{nd} =  fftshift(g.kc{nd});       %%get graphics k coords
-            datan = fftshift(datan,nd+2);      %%shift data k coords        
+        if g.gtransforms{n}(nd) 
+            x{nd} =  g.kc{nd};                 %%get graphics k coords
         end                                    %%end if transform switch
         if length (g.axes{n}{nd}) == 1         %%if only one index wanted
             if g.axes{n}{nd} == 0              %%if default index range
@@ -47,6 +46,6 @@ function [datan,np,x,xlab] =  xreduce(n,datan,g)
         datan = datan(:,:,:,g.axes{n}{nd},:);  %%reduce points
         np(nd+2) = length(g.axes{n}{nd});      %%reset points count
     end                                        %%end loop over dimension
-    np = [np(1:2),np(2+ax(1:grd))];             %%adjust points plotted
+    np = [np(1:2),np(2+ax(1:grd))];            %%adjust points plotted
     datan = reshape(datan,np);                 %%reshape data
 end

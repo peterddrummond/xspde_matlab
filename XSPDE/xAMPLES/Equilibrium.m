@@ -10,9 +10,9 @@ function e = Equilibrium()
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
 in.name =      'Equilibrium spectrum';           %%name for simulation
-in.points =    640;                              %%points in time
+in.points =    101;                              %%points in time
 in.ranges =    100;                              %%range in time
-in.seed =      240;                              %%set the random seed
+in.seed =      241;                              %%set the random seed
 in.noises =    [2,0];                            %%xnoises per point
 in.ensembles = [100,5,1];                        %%samples,ensembles
 in.initial =   @(w,~) (w(1,:)+1i*w(2,:))/sqrt(2);%%Initialisation 
@@ -21,6 +21,6 @@ in.observe{1} =   @(a,~) a.*conj(a);             %%Observe  handle
 in.observe{2} =   @(a,~) a.*conj(a);             %%Observe  handle
 in.transforms = {0,1};                           %%Transform to frequency
 in.olabels =   {'|a(t)|^2','|a(\omega)|^2'};     %%labels for observables
-in.compare =   {@(t,~) 1.+0*t, @(w,~)(100.16)./(pi*(1+w.^2))};%%Comparisons
+in.compare =   {@(t,~) 1.+0*t, @(w,~)in.ranges(1)./(pi*(1+w.^2))};%%Comparisons
 e            = xspde(in);                        %%Stochastic program
 end                                              %%end of function                                           

@@ -1,3 +1,12 @@
+Improved spectral calculations in xSPDE2.4
+
+xSPDE2.4 further improves xSPDE2.3 spectral calculations for input-output problems that involve discontinuous noise. The spectral calculation algorithm now accounts better for the fact that there are N-1 independent noise terms for N time points. Temporal Fourier transforms are now taken over the N-1 midpoints between each point. To give arrays the same length in time and frequency, the periodicity of the FFT is used to estimate one extra high-frequency point, with N total outputs. This improves accuracy in input-output calculations by removing a small error of O(1/N). 
+
+This technique is slightly different to the method used in xSPE2.3, which added an extra time point using interpolation. Testing the output has demonstrated that 2.4 is significantly more precise. An additional batchtest is added to illustrate and test for this behaviour in input-output spectra.
+
+There is an internal change made in all Fourier calculations. The array orderings of Fourier transformed fields in calculated averages are all given in 'graphics order', ie, from low to high frequency, rather than in `FFT order' with zero frequency first. This means that the graphics program does not have to use fftshift to re-order Fourier indices. The change makes it simpler to graph and interpret spectral data using other graphics programs. This re-ordering takes place in all averaged data, including observe functions, and it is also included in the w,k coordinate data.
+
+
 Improved spectral calculations in xSPDE2.3;
 
 xSPDE2.3 has an an improved spectral Fourier transform algorithm. Previously, only the field values at the edge of each time interval were used. This is slightly inaccurate, especially for noise fields, and it creates problems in accurately comparing results with different step sizes. Now the average value over each time interval is computed using a trapezoid rule, giving an estimate of the central value of the field. The N resulting central values are then Fourier transformed. In this method, the time-values that are Fourier transformed are the center values in each time interval. 
@@ -27,7 +36,7 @@ in.define    =  @(a,xi,r) exp(1i*r.t);
 
 (5) To reference a defined field, in this case you would use a(2,:);
 
-(6) The define fields can include noise or ordinary stochastic fields.
+(6) Defined fields can include noise or ordinary stochastic fields.
 
 Currently this is only available with the xMP and xRK4 algorithms.
 

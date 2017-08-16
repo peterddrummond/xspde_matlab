@@ -12,6 +12,7 @@ function [e] = Characteristic()                          %%name of function
 in.name      =  'Characteristic';                      %%simulation name 
 in.dimension =  2;                                     %%dimension: 2 
 in.initial =    @(w,r)        sech(2.*(r.x+2.5));      %%Initialisation 
+in.print =2; 
 in.linear =     @(r)         -r.Dx;                   %%First derivative
 in.olabels =    {'a'; 'a^2'};                          %%observe labels
 in.observe{1} = @(a,r)         a ;                      %%First observe

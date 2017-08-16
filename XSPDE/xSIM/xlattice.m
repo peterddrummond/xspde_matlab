@@ -29,20 +29,16 @@ function r = xlattice(r)
   r.d.aplus =   [r.fieldsplus,r.nlattice];          %%flat field dimension
   r.d.fields =  [r.fields,r.d.int];                 %%full field dimension
   r.d.fieldsplus =  [r.fieldsplus,r.d.int];          %%total field 
-  r.d.raw =     [r.fieldsplus,r.ensembles(1),r.points]; %%raw data  dimension
+  r.d.raw =     [r.fieldsplus,r.ensembles(1),r.points];%%raw data  dimension
+  r.d.ft =     [r.fieldsplus,r.ensembles(1),r.points(1)-1,r.nspace]; 
   r.infilt =   1;                                   %%default input filter
   r.noisefilt =1;                                   %%default noise filter
   if r.dimension > 1                                %%if transverse dimensions 
     r = r.grid(r);                                  %%get grid-points
-    if (r.noises(2)+r.randoms(2)) > 0               %%if k-noise required
-      Kr =  r.rfilter(r);                           %%get k random filters
-      Kn =  r.nfilter(r);                           %%get k noise filters
-      r.infilt = reshape(Kr,[r.randoms(2),r.d.int]); %%reshape input filter
-      r.noisefilt = reshape(Kn,[r.noises(2),r.d.int]);%%reshape filter
-    end                                             %%end if k-noise 
   end                                               %% End check dimension
   a = zeros(r.d.aplus);
   r.t = 0;
+  r.w = 0;
   av = cell(1,r.averages);
   for n = 1:r.averages                              %%Loop  over averages
       so = size(r.observe{n}(a,r));                 %%Size of observe data

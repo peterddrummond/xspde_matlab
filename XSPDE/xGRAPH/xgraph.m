@@ -63,5 +63,5 @@ for s = 1:sequence                             %%Loop over sequence
      end                                       %%end if graph wanted
   end                                          %%end loop over graphs
 end                                            %%end sequence
-fprintf('xGRAPH sequence completed, time = %f \n\n',toc()); %%time taken
+fprintf('xGRAPH sequence completed, time = %f \n',toc()); %%time taken
 end                                            %%end graphics function

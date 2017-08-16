@@ -82,7 +82,11 @@
 \begin_body
 
 \begin_layout Title
-xSPDE user's guide: v2.3
+xSPDE, The Stochastic Toolbox 
+\end_layout
+
+\begin_layout Title
+User's Guide v2.4
 \end_layout
 
 \begin_layout Author
@@ -118,7 +122,7 @@ name "chap:Introduction"
 \end_layout
 
 \begin_layout Standard
-The xSPDE software toolbox is an e
+The xSPDE stochastic toolbox is an e
 \series bold
 x
 \series default
@@ -297,8 +301,8 @@ Running xSPDE interactively
 
 \begin_layout Standard
 To simulate a stochastic equation, first make sure that either the Matlab
- xSPDE toolbox is installed, or else the Matlab path is pointing to the
- xSPDE folder and subfolders.
+ xSPDE toolbox is installed, or the Matlab path is pointing to the xSPDE
+ folder and subfolders.
  If not, proceed as follows:
 \end_layout
 
@@ -358,7 +362,7 @@ The notation
 \end_inset
 
  inputs a value to the 
-\begin_inset Formula $\mathtt{in.}$
+\begin_inset Formula $\mathtt{in}$
 \end_inset
 
  data structure 
@@ -374,7 +378,7 @@ You don't have to save the data if you just want an immediate plot
 
 \begin_layout Itemize
 The notation 
-\begin_inset Formula $\mathtt{in.da=}\mathtt{@(a,w,r)}\,\,[derivative]=$
+\begin_inset Formula $\mathtt{in.da=}\mathtt{@(a,w,r)}\,\,[derivative]=..$
 \end_inset
 
  defines an inline function, 
@@ -476,7 +480,7 @@ The most common xSPDE parameters are:
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="16" columns="4">
+<lyxtabular version="3" rows="17" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -538,7 +542,7 @@ in.fields
 \begin_inset Text
 
 \begin_layout Plain Layout
-integer 
+integer vector
 \end_layout
 
 \end_inset
@@ -583,7 +587,7 @@ in.noises
 \begin_inset Text
 
 \begin_layout Plain Layout
-integer 
+integer vector
 \end_layout
 
 \end_inset
@@ -778,6 +782,50 @@ function
 
 \begin_layout Plain Layout
 The stochastic derivative
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+in.define
+\emph default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+function 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+ 0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Defined field definition
 \end_layout
 
 \end_inset
@@ -1162,7 +1210,7 @@ vector cells
 \begin_inset Text
 
 \begin_layout Plain Layout
-Output Fourier transforms in [t,x,y,z]
+Fourier transforms in [t,x,y,z]
 \end_layout
 
 \end_inset
@@ -2839,6 +2887,169 @@ Kubo project
 \begin_layout Standard
 To get started on more complex programs, we next simulate the Kubo oscillator,
  which is an oscillator with a random frequency: 
+\begin_inset Formula 
+\begin{equation}
+\dot{a}=iaw
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Exercises
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Simulate the Kubo oscillator using a file, 
+\begin_inset Formula $Kubo.m$
+\end_inset
+
+, with two ensembles to allow sampling error estimates.
+ The error vector 
+\begin_inset Formula $error$
+\end_inset
+
+ gives the time-step error plus the sampling error.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Box Doublebox
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+function [error] = Kubo() 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.name = 'Kubo oscillator';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.ensembles = [400,16]; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.initial = @(v,r) 1+0*v;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.da = @(a,w,r) i*a.*w;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.olabels = '<a_1>';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.file = 'kubo.mat';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+[error,in]=xsim(in); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+xgraph(in.file);
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+end
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial value of 1 is modified by adding 
+\begin_inset Formula $0*v$
+\end_inset
+
+.
+ This is necessary, so that it returns an array whose first dimension equals
+ the ensemble size.
+ 
+\end_layout
+
+\begin_layout Standard
+This function is designed to generate a data file, 
+\family typewriter
+kubo.mat
+\family default
+.
+ If you run this more than once without deleting the earlier file, you will
+ get a warning and a new file-name, 
+\family typewriter
+kubo1.mat
+\family default
+, which is stored in the in structure.
+ Under these circumstance, xgraph will graph the data in the most recent
+ file saved, with the new file-name.
+ This occurs because xSPDE will 
+\series bold
+not
+\series default
+ overwrite old files, to protect your previous data.
+ 
+\end_layout
+
+\begin_layout Standard
+You can also include modified graphics parameters as a second input when
+ running 
+\family typewriter
+xgraph, 
+\family default
+just in case the first graphs you generate need changes.
+\end_layout
+
+\begin_layout Section
+Open system
+\end_layout
+
+\begin_layout Standard
+We next simulate the driven quantum oscillator with a vacuum noise input
+ and output
 \begin_inset Formula 
 \begin{equation}
 \dot{a}=iaw

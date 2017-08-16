@@ -17,12 +17,8 @@ end                                            %%end if field stored
 for  n = 1:r.averages
     av{n} = zeros(r.d.av{n});
 end
-
+a(r.fields+1:r.fieldsplus,:) = r.define(a,zeros(r.d.noises),r);
       %%Loop over all the time points
-if r.defines 
-    z = 0.0*r.noisegen(r);                     %%Calculate  noise
-    a(r.fields+1:r.fieldsplus,:) = r.define(a,z,r);
-end                                            %%define a field
 totsteps = r.steps*r.errorchecks;
 for np = 1:r.points(1);                        %%loop until time tmax
   if np > 1                                    %%If NOT first point 
@@ -37,6 +33,7 @@ for np = 1:r.points(1);                        %%loop until time tmax
           if (nc < r.errorchecks)              %%If low res check, even
               z = (z + z1)/2.;                 %%Average noise terms 
           end                                  %%End if low res check
+          a=[a(1:r.fields,:);r.define(a,z,r)];
           a = r.step(a,z,r);                   %One step integration
           r.t = r.t+r.dtr;                     %%Increment time
       end                                      %%End if low res  & odd
@@ -70,20 +67,4 @@ end                                            %%no transform needed
 o1 = r.observe{n}(a,r);                        %%Get stochastic observable
 av = mean(reshape(o1,r.d.obs{n}),2);           %%Take average
 end                                            %%end function
-
-function a  =  xgraphicsfft(a,trans,r)            
-%   a = XGRAPHICSFFT(a,r,tr) selectively transforms spatial lattice fields.
-%   Input is the 'a' field, returned field 'a' is transformed.
-%   Input parameters in the 'r' structure including fft phase arrays.
-%   Input switch 'tr(i)' = 0 for space domain, = 1 for transform domain.
-%   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
- 
-a =reshape(a, r.d.fieldsplus);                      %%reshape to lattice
-for nd = 2:r.dimension                          %%loop over space dimension
-    if trans(nd) >0                             %%if FFT required
-        a = fft(a,[],2+nd)*r.kfact(nd);         %%take Fourier transform
-    end                                         %%end if FFT required
-end                                             %%end loop over dimension
-a =reshape(a, r.d.aplus);                           %%reshape to flat array
-end                                             %%end function
                 

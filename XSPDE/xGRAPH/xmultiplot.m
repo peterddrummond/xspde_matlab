@@ -42,6 +42,7 @@ function err =  xmultiplot(n,datan,g)
     xheader(head,xlab{1},olab,' ');            %%xspde 2D plot title 
          
     % plot comparison function data vs 1D grid 
+    
       
     if ~isempty(g.compare{n})                  %%If comparison results
         da_x = g.compare{n}(x{1},g);           %%get comparison results

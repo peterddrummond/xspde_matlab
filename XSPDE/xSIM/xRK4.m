@@ -3,58 +3,34 @@ function ao  =  xRK4(a,xi,r)
 %   Input: field a, lattice r, noise xi.
 %   Output: new field a. 
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
-if  r.defines
-    a0 = a(1:r.fields,:);
-    if ~isequal(r.propagator,1)
-    am = r.prop(a0,r);                             %%Initialises midpoint
-    a = [a0;r.define(a,xi,r)];
-    d1 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%first derivative
-    d1 = r.prop(d1,r);                             %%first derivative
-    r.t = r.t+0.5*r.dtr;                           %%Increment current time
-    a = [am+d1;r.define(a,xi,r)];
-    d2 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%Second deriv
-    a = [am+d2;r.define(a,xi,r)];
-    d3 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%third deriv
-    r.t = r.t+0.5*r.dtr;                           %%Increment current time
-    a1 =  r.prop(am+2.*d3,r);                      %%Last field estimate
-    ao = [a1;r.define(a,xi,r)];
-    d4 = 0.5*reshape(r.da(ao,xi,r)*r.dtr,r.d.a);   %%fourth deriv
-    d1 = (d1 + 2.*(d2 + d3))/3. ;                  %%Sum IP derivatives
-    ao(1:r.fields,:) =  r.prop(am + d1,r) + d4/3.; %RK4IP final algorithm
-  else
-    d1 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%first derivative
-    r.t = r.t+0.5*r.dtr;                           %%Increment current time
-    a = [a0+d1;r.define(a,xi,r)];
-    d2 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);   %%Second deriv
-    a = [a0+d2;r.define(a,xi,r)];
-    d3 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%third deriv
-    r.t = r.t+0.5*r.dtr;                           %%Increment current time
-    ao = [a0+2.*d3;r.define(a,xi,r)];
-    d4 = 0.5*reshape(r.da(ao,xi,r)*r.dtr,r.d.a);   %%fourth deriv
-    ao(1:r.fields,:) = a0 + (d1 + 2.*(d2 + d3)+d4)/3. ;%%Sum  derivatives
-  end
-else    
-    if ~isequal(r.propagator,1)
-    am = r.prop(a,r);                              %%Initialises midpoint
-    d1 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%first derivative
-    d1 = r.prop(d1,r);                             %%first derivative
-    r.t = r.t+0.5*r.dtr;                           %%Increment current time         
-    d2 = 0.5*reshape(r.da(am+d1,xi,r)*r.dtr,r.d.a);%%Second deriv
-    d3 = 0.5*reshape(r.da(am+d2,xi,r)*r.dtr,r.d.a);%%third deriv
-    r.t = r.t+0.5*r.dtr;                           %%Increment current time
-    ao =  r.prop(am+2.*d3,r);                      %%Last field estimate
-    d4 = 0.5*reshape(r.da(ao,xi,r)*r.dtr,r.d.a);   %%fourth deriv
-    d1 = (d1 + 2.*(d2 + d3))/3. ;                  %%Sum IP derivatives
-    ao =  r.prop(am + d1,r) + d4/3.;               %%RK4IP final algorithm
-else
-    d1 = 0.5*reshape(r.da(a,xi,r)*r.dtr,r.d.a);    %%first derivative
-    r.t = r.t+0.5*r.dtr;                           %%Increment current time         
-    d2 = 0.5*reshape(r.da(a+d1,xi,r)*r.dtr,r.d.a); %%Second deriv
-    d3 = 0.5*reshape(r.da(a+d2,xi,r)*r.dtr,r.d.a); %%third deriv
-    r.t = r.t+0.5*r.dtr;                           %%Increment current time
+
+dt = 0.5*r.dtr;
+if  ~r.defines && isequal(r.propagator,1)          %%simplest case
+    d1 = reshape(r.da(a,xi,r)*dt,r.d.a);           %%first derivative
+    r.t = r.t+dt;                                  %%Increment current time         
+    d2 = reshape(r.da(a+d1,xi,r)*dt,r.d.a);        %%Second deriv
+    d3 = reshape(r.da(a+d2,xi,r)*dt,r.d.a);        %%third deriv
+    r.t = r.t+dt;                                  %%Increment current time
     ao =  a+2.*d3;                                 %%Last field estimate
-    d4 = 0.5*reshape(r.da(ao,xi,r)*r.dtr,r.d.a);   %%fourth deriv
+    d4 = reshape(r.da(ao,xi,r)*dt,r.d.a);          %%fourth deriv
     ao =   a + (d1 + 2.*(d2 + d3)+d4)/3. ;         %%Sum  derivatives
-    end
+else
+    am = r.prop(a(1:r.fields,:),r);
+    d1 = reshape(r.da(a,xi,r)*dt,r.d.a);           %%first derivative
+    d1 = r.prop(d1,r);                             %%first derivative
+    r.t = r.t+dt;                                  %%Increment current time
+    a(1:r.fields,:)=am+d1;
+    a = [a(1:r.fields,:);r.define(a,xi,r)];
+    d2 = reshape(r.da(a,xi,r)*dt,r.d.a);           %%Second deriv
+    a(1:r.fields,:)=am+d2;
+    a = [a(1:r.fields,:);r.define(a,xi,r)];
+    d3 = reshape(r.da(a,xi,r)*dt,r.d.a);           %%third deriv
+    r.t = r.t+dt;                                  %%Increment current time
+    a(1:r.fields,:) =  r.prop(am+2.*d3,r);         %%Last field estimate
+    a = [a(1:r.fields,:);r.define(a,xi,r)];
+    d4 = reshape(r.da(a,xi,r)*dt,r.d.a);           %%fourth deriv
+    d1 = (d1 + 2.*(d2 + d3))/3. ;                  %%Sum IP derivatives
+    a(1:r.fields,:) = r.prop(am + d1,r) + d4/3.;   %final algorithm
+    ao = [a(1:r.fields,:);r.define(a,xi,r)];
 end
 end                                                %%end function

@@ -42,9 +42,9 @@ for s = 1:sequence                               %%loop over sequence
       klabels={'\omega','k_x','k_y','k_z'};
   end
   
-  in.gversion =   xprefer(in,'gversion',0,'xGRAPH2.3');
+  in.gversion =   xprefer(in,'gversion',0,'xGRAPH2.4');
   in.graphs =     xprefer(in,'graphs',1,in.functions);
-  in.transforms = xcprefer(in,'transforms',in.graphs,{zeros(1,in.dimension)});
+  in.gtransforms = xcprefer(in,'ftransforms',in.graphs,{zeros(1,in.dimension)});
   in.axes =       xcprefer(in,'axes',in.graphs,{num2cell(zeros(1,in.dimension))});
   in.minbar =     xcprefer(in,'minbar',in.graphs,{0.01});
   in.lines =      xcprefer(in,'lines',in.graphs,{lines});
@@ -74,7 +74,7 @@ for s = 1:sequence                               %%loop over sequence
     end
     for nd = 1:in.dimension                      %% Loop over dimension
        if isempty(in.glabels{n}{nd})
-           if in.transforms{n}(nd)
+           if in.gtransforms{n}(nd)
               in.glabels{n}{nd}=klabels{nd};
            else
               in.glabels{n}{nd}=xlabels{nd};

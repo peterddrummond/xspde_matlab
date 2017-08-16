@@ -54,14 +54,14 @@ for ns = 1:serial                                 %%loop over ensembles
       a = reshape(a,r.d.a);                       %%reshape fields
       r.t=r.origin(1);                            %%initial time
       %%Store the averages for the stochastic field path     
-       if r.transformw
+      if r.transformw
            [a,av,raw{seq,nc,ns}] = xpathw(a,nc,r);%%simulate path
-       else
+      else
            [a,av,raw{seq,nc,ns}] = xpath(a,nc,r); %%simulate path
-       end 
+      end 
       for n = 1:r.averages
           av{n} = reshape(av{n},r.d.av{n});       %%reshape average data
-      end
+      end                                         %%end averages loop
       for n = 1:r.functions
         f = r.function{n}(av,r);                  %%graph data
         f = reshape(f,r.d.sf{n});                 %%reshape graph data
@@ -71,7 +71,7 @@ for ns = 1:serial                                 %%loop over ensembles
         else                                      %%else coarse calc
          data{seq}{n}(:,2,:) = data{seq}{n}(:,2,:) + f/r.ncopies;
         end                                       %%end if errorchecks
-      end                                         %%end averages loop
+      end                                         %%end functions loop
     end;                                          %%end sequence loop
   end                                             %%end errorchecks loop 
 end;                                              %%end ensemble loop
