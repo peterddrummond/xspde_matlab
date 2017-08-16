@@ -7,7 +7,7 @@ function a  =  xgraphicsfft(a,trans,r)
  
 a =reshape(a,r.d.fieldsplus);                   %%reshape to lattice
 for nd = 2:r.dimension                          %%loop over space dimension
-    if trans(nd) >0                             %%if FFT required
+    if trans(nd-1) >0                           %%if FFT required
         a = fftshift(fft(a,[],2+nd)*r.kfact(nd),2+nd);%%Fourier transform
     end                                         %%end if FFT required
 end                                             %%end loop over dimension

@@ -28,10 +28,10 @@ t_0 = r.origin(1);
      
     %%Loop over all the time points
 
-for np = 1:nt;                        %%loop until time tmax 
+for np = 1:nt                                  %%loop until time tmax 
   if np >1
     astore = zeros(r.d.aplus);                 %%initialize stored field 
-    for step = 1:totsteps;                     %%loops over step 
+    for step = 1:totsteps                      %%loops over step 
       z = r.noisegen(r);                       %%Calculate  noise
       if (nc<r.errorchecks)&&(step>2*floor(step/2)) %%If low res  & odd
           z1 = z;                              %%Stores noise, no step 
@@ -55,7 +55,8 @@ for np = 1:nt;                        %%loop until time tmax
  if r.raw         
       astore = reshape(a,r.d.fieldsplus);
       raw(:,:,np,:) = astore(:,:,1,:);         %%Save raw trajectories
- end                                           %%End if raw
+ end
+
  for n = 1:r.averages
      if r.transforms{n}(1) == 0                %%if frequency switch off
         av{n}(:,:,np,:) = xdata(a,n,r);        %%store time-domain data

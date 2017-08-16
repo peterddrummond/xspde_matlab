@@ -8,7 +8,7 @@ function oc = xdata(a,n,r)
  
 tr = r.transforms{n}(2:r.dimension);           %%space transform switch
 if sum(tr)>0                                   %%if transform needed
-    a = xgraphicsfft(a,r,tr);                  %%Fourier transform
+    a = xgraphicsfft(a,tr,r);                  %%Fourier transform
 end                                            %%no transform needed   
 o1 = r.observe{n}(a,r);                        %%Get x observable    
 if r.ensembles(1) > 0
