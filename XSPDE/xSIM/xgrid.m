@@ -28,7 +28,10 @@ if r.numberaxis||d>4
 else
     [r.x,r.y,r.z] =    deal(x{2:4});            %%cell of x-grids
     [r.kx,r.ky,r.kz] = deal(kp{2:4});           %%cell of k-propagate-grids   
-
+    if r.print == 2
+        rx =r.x
+        kx = r.kx
+    end
 end
 
 if (r.noises(2)+r.randoms(2)) > 0               %%if k-noise required
@@ -51,4 +54,5 @@ else
     r.Dy  =  1i* r.Dy;
     r.Dz  =  1i* r.Dz;
 end
+
 end

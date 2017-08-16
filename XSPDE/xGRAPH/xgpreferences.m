@@ -42,7 +42,7 @@ for s = 1:sequence                               %%loop over sequence
       klabels={'\omega','k_x','k_y','k_z'};
   end
   
-  in.gversion =   xprefer(in,'gversion',0,'xGRAPH2.4');
+  in.gversion =   xprefer(in,'gversion',0,'xGRAPH2.5');
   in.graphs =     xprefer(in,'graphs',1,in.functions);
   in.gtransforms = xcprefer(in,'ftransforms',in.graphs,{zeros(1,in.dimension)});
   in.axes =       xcprefer(in,'axes',in.graphs,{num2cell(zeros(1,in.dimension))});
@@ -59,7 +59,8 @@ for s = 1:sequence                               %%loop over sequence
   
   if ~isfield(in,'gfunction')                    %% If no label data
       in.gfunction{in.graphs} = [];
-  end 
+  end
+  npoints=prod(in.points);
   for n = 1:in.graphs                            %% Loop over graphs
     if  isempty(in.gfunction{n})
       in.gfunction{n} = @(d,~) d;                %% Return default average
@@ -72,6 +73,8 @@ for s = 1:sequence                               %%loop over sequence
     if isfield(in,'klabels')
         klabels = in.klabels;
     end
+    data = in.gfunction{n}(ones(1,in.errors,npoints),in);
+    xfcheck('gfunction',n,data,[1,in.errors,npoints]);
     for nd = 1:in.dimension                      %% Loop over dimension
        if isempty(in.glabels{n}{nd})
            if in.gtransforms{n}(nd)
@@ -83,6 +86,8 @@ for s = 1:sequence                               %%loop over sequence
       if isempty(in.xfunctions{n}{nd})
           in.xfunctions{n}{nd} = @(x,~) x;       %% Return default
       end                                        %% End if undefined
+      xc = in.xfunctions{n}{nd}(in.xc{nd},in);
+      xfcheck('xfunctions',[n,nd],xc,[1,in.points(nd)]);
     end                                          %% End loop over dimension
   end                                            %% End loop over data 
   

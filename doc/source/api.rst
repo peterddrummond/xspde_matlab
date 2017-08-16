@@ -276,13 +276,12 @@ xSIM parameters
     
 .. attribute:: boundaries
 
-    *Default:* ``[0, 0, ...]``
+    *Default:* ``[0, 0, …;0, 0, …]``
 
-    Type of spatial boundary conditions used, set for each dimension independently, and used in the partial differential equation solutions. The default option, or ``0``, is periodic. If ``1``,  Neumann boundaries are used, with normal derivatives set to zero.  If ``2``,  Dirichlet boundaries are used, with field values set to zero. Note that in the current xSPDE code, setting non-periodic boundaries requires the use of finite difference type derivatives, without the option of an interaction picture derivative. Using Fourier derivatives will automatically make the boundary conditions periodic.
-
+    Type of spatial boundary conditions used, set for each dimension independently, and used in the partial differential equation solutions. To follow standard xspde indexing standards, the first index is time, for which the boundary settings are not relevant. The first row of settings is the lower boundary type, the second row the upper boundary type. The default option, or ``0``, is periodic. If ``-1``,  Neumann boundaries are used, with normal derivatives set to zero.  If ``1``,  Dirichlet boundaries are used, with field values set to zero.  Note that in the current xSPDE code, setting non-periodic boundaries requires the use of finite difference type derivatives, without the option of an interaction picture derivative. Using Fourier derivatives will automatically make both the boundary conditions periodic. 
     ::
 
-        in.boundaries = [0, in.boundaries(2), in.boundaries(3)..] >= 0
+        in.boundaries = [-1, in.boundaries(2), in.boundaries(3)..] = -1,0,1
 
     Dimensions for setting the boundary conditions are numbered starting from the time dimension, for consistency with numbering conventions elsewhere. However, only the space dimension boundaries are used here, for :math:`j > 1`.
 
@@ -296,8 +295,7 @@ xSIM parameters
 
         in.transforms{n} = [t(1), ..., t(4)] >= 0
 
-    There is one transform vector per observable. The ``j``-th index, ``t(j)``, indicates a Fourier transform on the ``j``-th axis. The normalization of the Fourier transform is such that the :math:`k=0` value in momentum space corresponds to the integral over space, with an additional factor of :math:`1/\sqrt{2\pi}`. This gives a Fourier integral which is symmetrically normalized in ordinary and momentum space. The Fourier transform that is graphed is such that
-    :math:`k=0` is the *central* value.
+    There is one transform vector per observable. The ``j``-th index, ``t(j)``, indicates a Fourier transform on the ``j``-th axis if set to one, starting with the time axis. The default value is zero, indicating no transform. The normalization of the Fourier transform is such that the :math:`k=0` value in momentum space corresponds to the integral over space, with an additional factor of :math:`1/\sqrt{2\pi}` in each transformed dimension. This gives a Fourier integral which is symmetrically normalized in ordinary and momentum space. The Fourier transform that is graphed is such that :math:`k=0` is the *central* value.
 
 .. attribute:: olabels
 
@@ -359,7 +357,7 @@ More advanced input parameters, which don’t usually need to be changed from de
 
 .. attribute:: order
 
-    *Default:* ``1``
+    *Default:* ``0``
 
     This is the extrapolation order, which is **only** used if ``in.checks = 1``. The program uses the estimated convergence order to extrapolate to zero step-size, with reduced estimated error-bars. If ``in.order = 0``, no extrapolation is used, which is the most conservative input. The default order is usually acceptable, especially when combined with the default midpoint algorithm, see next section. While any non-negative order can be input, the theoretical orders of the four preset methods used *without* stochastic noise terms are: ``1`` for :func:`xEuler`; ``2`` for :func:`xRK2`; ``2`` for :func:`xMP`; ``4`` for :func:`xRK4`. Allowed values are:
 
@@ -391,7 +389,7 @@ More advanced input parameters, which don’t usually need to be changed from de
 
     *Default:* number of functional transformations
 
-    This gives the number of graphs computed, which are functions of the observables. The default is the length of the cell array of observe functions. Normally, this is not initialized, as the default is typically used. 
+    This gives the maximum number of graphs computed, which are functions of the observables. The default is the length of the cell array of observe functions. Normally, this is not initialized, as the default is typically used. 
 
     ::
 
@@ -522,7 +520,7 @@ Advanced input functions are user-definable functions which don’t usually need
     
 .. function:: xint (o, [dx, ] r)
 
-    This function takes a scalar or vector quantity ``o``, and returns a  space integral over selected dimensions with vector measure ``dx``. If ``dx(j) > 0`` an integral is taken over dimension ``j``. Space dimensions are labelled from ``j = 2, ...`` as elsewhere. Time integrals are ignored at present.  To integrate over an entire lattice, set ``dx = r.dx``, otherwise set ``dx(j) = r.dx(j)`` for selected dimensions ``j``.  Integrals are returned at all lattice locations.
+    This function takes a scalar or vector quantity ``o``, and returns a  space integral over selected dimensions with vector measure ``dx``. If ``dx(j) > 0`` an integral is taken over dimension ``j``. Space dimensions are labelled from ``j = 2, ...`` as elsewhere. Time integrals are ignored at present.  To integrate over an entire lattice, set ``dx = r.dx``, otherwise set ``dx(j) = r.dx(j)`` for selected dimensions ``j``.  If the input array is fourier transformed, by using the ``transforms`` attribute in the ``observe`` function, then one must set ``dx(j) = r.dk(j)`` for transformed dimensions ``j``, to get correctly normalised results. If the ``dx`` vector is omitted, the integral is taken over all space directions, assuming no Fourier transforms. Integrals are returned at all lattice locations to give a fixed array size for observables.  
 
 
 .. function:: xd (o, [D, ] r)
@@ -603,7 +601,7 @@ Together with default values, they are:
 
 .. attribute:: gversion
 
-    *Default:* ``'xGRAPH2.3'``
+    *Default:* ``'xGRAPH2.5'``
 
     This sets the current version number of the graphics program. There is typically no need to input this.
 
@@ -651,6 +649,14 @@ Together with default values, they are:
     ::
 
         in.font{n} > 0
+        
+.. attribute::  esample
+
+    *Default:* ``{1, 1 ...}``
+        
+    This sets the type and size of sampling errors that are plotted.  If esample = 0, no sampling error lines are plotted, just the mean. If esample = -n, :math:`\pm n\sigma`  sampling errors are included in the errorbars. If esample = n, upper and lower :math:`\pm n\sigma`  sampling error lines are plotted. In all cases, the magnitude of esample sets the number of standard deviations used.
+    
+           in.esample{n} = e
 
 .. attribute:: minbar
 

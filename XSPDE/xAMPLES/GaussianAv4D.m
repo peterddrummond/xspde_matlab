@@ -13,7 +13,7 @@ cd ~
 in.name =        '4+1D Schroedinger equation';
 in.dimension =   5;
 in.noises =      2;
-in.points =      [21,21,21,21,21];                         
+in.points =      [7,15,15,15,15];                         
 in.initial =     @(w,r) exp(-0.5*(r.x{2}.^2+r.x{3}.^2+r.x{4}.^2+r.x{5}.^2));  
 in.observe{1} =  @(a,r) a.*conj(a);                         %%observable 1
 in.observe{2} =  @(a,r) xave(a.*conj(a));                   %%observable 2

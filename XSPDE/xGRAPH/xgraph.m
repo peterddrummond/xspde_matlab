@@ -28,27 +28,27 @@ for s = 1:sequence                             %%Loop over sequence
   in = input{s};                               %%inputs for sequence s
   fprintf ('%s sequence %d: %s\n',in.gversion,s,in.name);%%version name
   if in.print >1                               %%if print switch is verbose
-    display('xGRAPH data');                    %%display lattice data
+    fprintf('xGRAPH data\n');                  %%display lattice data
     display(in);                               %%display lattice data
-  end;                                         %%end if print switch
+  end                                          %%end if print switch
   
 %  Loop over a set of graph functions
   
-  for n =1:in.graphs                             %%Loop over graphs
+  for n =1:in.graphs                           %%Loop over graphs
      if in.pdimension{n} > 0 && in.dimension > 0
-       if in.print >2                            %%if graphics print switch 
+       if in.print >2                          %%if graphics print switch 
          fprintf ('Plot %d: %s\n',n,in.gname{n});%%plot name
-       end;                                      %%end if print switch
+       end                                    %%end if print switch
        data = cdata{s}{n};
-       in.gpoints{n} = size(data);
+       in.gpoints{n} = size(data);             %%Get n-th input data size 
        data(:,2,:) =  data(:,2,:)+data(:,1,:);
-       data(:,3,:) =  data(:,3,:)+data(:,1,:);   
+       data(:,3,:) =  data(:,3,:)+data(:,1,:); %%change errors to lines   
        data = real(in.gfunction{n}(data,in));  %%get real graph data
        if  isempty(data)                       %%check if any graph data
              error('xGRAPH error: no data returned from function{%d}\n',n); 
        end                                     %%end check if graph data
        data(:,2,:) =  abs(data(:,2,:)-data(:,1,:));
-       data(:,3,:) =  abs(data(:,3,:)-data(:,1,:));  
+       data(:,3,:) =  abs(data(:,3,:)-data(:,1,:));%%change lines to errors   
        if  isempty(data)                       %%check if any graph data
            error('No data at function{%d}\n',n); 
        end                                     %%end check if graph data
@@ -63,5 +63,7 @@ for s = 1:sequence                             %%Loop over sequence
      end                                       %%end if graph wanted
   end                                          %%end loop over graphs
 end                                            %%end sequence
-fprintf('xGRAPH sequence completed, time = %f \n',toc()); %%time taken
+timer = toc();
+fprintf('xGRAPH sequence completed, time = %f \n',timer); %%time taken
+ec = [ec,timer];
 end                                            %%end graphics function

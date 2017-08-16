@@ -1,7 +1,9 @@
 function d  =  xd1(o,varargin) 
 %   a = XD1(o,dir,r) calculates a first spatial derivative of a field component 
-%   uses finite differences with default case of in.boundary = 0 (periodic)
-%   derivatives at boundary set to zero if in.boundary > 0
+%   Boundary conditions are defined at either end: (1,2) sequentially
+%   (a) in.boundaries{dir}(1)   = 0 gives the default, periodic 
+%   (b) in.boundaries{dir}(1,2) = -1 gives Neumann vanishing derivative
+%   (c) in.boundaries{dir}(1,2) = 1 gives Dirichlet, vanishing field 
 %   Input: field a, [derivative direction,] lattice r.
 %   Output: derivative  d. 
 %   If no input direction specified, takes derivative in x direction
@@ -23,7 +25,7 @@ o = reshape(o,shape);                    %%Unflatten lattice
 d = zeros(shape);
 dx1 = 2*r.dx(dir);
 d(:,2:end-1,:) = (o(:,3:end,:)-o(:,1:end-2,:))/dx1;
-if r.boundaries(dir) == 0                %%test for periodic case
+if r.boundaries(dir,1) == 0                %%test for periodic case
    d(:,1,:) = (o(:,2,:)-o(:,end,:))/dx1;
    d(:,end,:) = (o(:,1,:)-o(:,end-1,:))/dx1;
 end

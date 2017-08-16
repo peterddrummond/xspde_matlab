@@ -1,8 +1,15 @@
 function [datan,np,x,xlab] =  xreduce(n,datan,g) 
 %   err = xreduce(n,datan,g) reduces multidimensional data files
-%   for a single xSPDE plot function in at most three grid dimensions.
+%   for a single xSPDE plot function in AT MOST three grid dimensions.
 %   Input:  graph number 'n', n-th data array 'datan',parameters 'g'.
-%   Output: reduced data, points, coordinates, labels.
+%   The g.axes data is used to define the data reduction
+%   If: g.axes{n}{nd}<0, the corresponding axis is not plotted
+%   If an axis is not plotted, a single default point is used
+%   If: g.axes{n}{nd}>=0, the axis is plotted, up to three as a maximum
+%   Output: reduced data array            'datan', 
+%           reduced data dimension vector 'np', 
+%           coordinate cells for plots    'x', 
+%           axis labels for plots         'xlab' .
 %   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
 

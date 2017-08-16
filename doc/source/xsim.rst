@@ -36,7 +36,7 @@ To explain xSIM in full detail,
 
 -  Each structure ``in`` describes a simulation, whose output fields are the input of the next.
 
--  The main function is called using ``[maxerror, input, data, rawdata] = xsim([data,] input)``.
+-  The main function is called using ``[error, input, data, rawdata] = xsim([rawdata,] input)``.
 
 -  Averages are recorded sequentially in the ``data`` cell array.
 
@@ -46,9 +46,9 @@ The sequence ``input`` has a number of individual simulation objects ``in``. Eac
 
 The optional [data,] input is only used when there is previous raw data that needs analysis. If this is present, no new simulation takes place. Any ``observe`` functions in the new ``input`` will be employed to take further averages over the existing raw data. This allows re-analysis of large simulation data-sets without more simulations.
 
-The returned input structure is available to the user to give the data file-name, in case xSIM needs to store data with a new file-name. For data security, it will not overwrite existing data.
+The returned ``error`` is a vector: the first component is the maximum error found, the second component is the elapsed time. The returned ``input`` structure is available to the user to give the data file-name, in case xSIM needs to store data with a new file-name. For data security, it will not overwrite existing data.
 
-If xSIM is called within xSPDE, then it will generate graphs with its own graphics program xGRAPH. Otherwise, data can be stored then graphed laler using xGRAPH.
+If xSIM is called within xSPDE, it will generate graphs with its own graphics program xGRAPH. Otherwise, data can be stored then graphed later using xGRAPH.
 
 Customization options
 ---------------------
@@ -68,7 +68,7 @@ Customization options include functions the allow user definition of:
 
 **There are four internal options for stochastic integration methods, but arbitrary user specification is also possible.**
 
-The xSIM program will print out a record of its progress.
+User-defined functions have to return specified array sizes, compatible with the internal arrays in xSIM. These sizes are checked by xSIM prior to a simulation. The xSIM program will print out a record of its progress.
 
 
 
@@ -80,7 +80,7 @@ Observables and functions
 
 To allow options for taking averages, these are carried out in two stages. The first type of average is a local average, taken over any function of the locally stored ensemble of trajectories. These use the :func:observe functions, specified by the user. The default is the real values of each of the fields, stored as a vector. Multiple observe functions can be used, and they are defined as a cell array of functions.
 
-Next, any function can be taken of these local averages, using the :func:function transformations, again specified by the user. The default is the original set of local averages. This is useful if different combinations are needed of the local averages. These second level function outputs are then averaged again over a second level of ensemble averaging, if specified. This is used to obtain estimates of sampling and step-size errors in the final data outputs.
+Next, any function can be taken of these local averages, using the :func:function transformations, again specified by the user. The default is the original set of local averages. This is useful if different combinations, such as normalised ratios are needed, or to combine the averages at different times. These second level function outputs are then averaged again over a second level of ensemble averaging, if specified. This is used to obtain estimates of sampling and step-size errors in the final data outputs.
 
 This is explained below in more detail.
 
@@ -89,9 +89,10 @@ Observe functions
 
 During the calculation, observables are calculated and averaged over the ``ensembles(1)`` parallel trajectories in the :func:`xpath` function. These are determined by the functions in the :func:`observe` cell array.
 
-The number of :func:`observe` functions may be smaller or larger than the number of vector fields. The observable may be a scalar or vector. These include the averages over the ensembles, and can be visualized as a single graph with one or more lines.
+The number of :func:`observe` functions may be smaller or larger than the number of vector fields. The observable may be a scalar or vector. These include the averages over the ensembles, and can be visualized as a single graph with one or more lines. The :func:`observe` functions use for input and output the flat or 
+matrix type internal arrays.
 
-Next, arbitrary functional transforms can be taken, using the :attr:`function` cell array. These functions can use as their input the full set of :func:`observe` output data cell arrays. They default to the original :func:`observe` data if they are not user-defined. Functional transforms are most useful if one wishes to use functions which require knowledge of normalization or ensemble averages of lower-level data. 
+Next, arbitrary functional transforms can be taken, using the :attr:`function` cell array. These functions can use as their input the full set of :func:`observe` output data cell arrays, including a time index. They default to the original :func:`observe` data if they are not user-defined. Functional transforms are most useful if one wishes to use functions which require knowledge of normalization or ensemble averages of lower-level data. There can be more :attr:`function` definitions than :func:`observe` functions if needed. 
 
 Each :func:`observe` function or transformation in :func:`xsim` defines a single logical  ``graph`` for the simulation output. However, the graphics function :func:`xgraph` can generate  several projections or views of the same dataset, as explained below.
 
@@ -166,7 +167,7 @@ Simulation user functions
 
 :func:`initial`
 
-    is used to initialize each integration in time. This is a user-defined function, which can involve random numbers if there is an initial probability distribution. This creates a stochastic field on the lattice, called ``a``. Initialization functions can use coordinates, ``r.x``, ``r.y``, ``r.z``, or for larger dimensions, using numerical lattice labels ``r.x{1}``, ``r.x{2}``, ``r.x{3}``, ``r.x{4}``. Numerical labels can be used for any number of dimension if the switch ``numberaxis=1``. The default is :func:`xinitial`, which sets fields to zero.
+    is used to initialize each integration in time. This is a user-defined function, which can involve random numbers if there is an initial probability distribution. This creates a stochastic field on the lattice, called ``a``. Initialization functions can use coordinates, ``r.t``,``r.x``, ``r.y``, ``r.z``, or for larger dimensions, using numerical lattice labels ``r.x{1}``, ``r.x{2}``, ``r.x{3}``, ``r.x{4}``. Numerical labels can be used for any number of dimension if the switch ``numberaxis=1``. The default is :func:`xinitial`, which sets fields to zero.
 
 :func:`step`
 
@@ -178,7 +179,7 @@ Simulation user functions
     
 :func:`function`
 
-    is a cell array of functions used when graphs are needed that are functions of the observed averages. The default value is simply ``d{n}``. This is further averaged over higher ensembles to obtain sampling error estimates. Note that the input of :func:`function` is the complete data cell array, ``d``, which includes all the averages for all the observe functions available.
+    is a cell array of functions used when graphs are needed that are functions of the observed averages. The default value is simply ``d{n}``. This is further averaged over higher ensembles to obtain sampling error estimates. Note that the input of :func:`function` is the complete data cell array, ``d``, which includes all the space-time averages for all the observe functions available.
 
 
 :func:`linear`
@@ -229,34 +230,36 @@ If required, ``rawdata`` ensemble data consisting of all the trajectories ``a`` 
 
 All calculated data, including fields, observables and graphics results, is stored in arrays of implicit or explicit rank (2+d), where d is the space-time dimension given in the input. The first index is a field index :math:`(i)`, the second a statistics/errors index :math:`(e)`, while the remaining indices :math:`j\equiv j_{1},\ldots j_{d}\equiv j_{1},\mathbf{j}` are for time and space. The space-time dimension d is unlimited. 
 
+xSPDE flattened arrays
+----------------------
+
+When the fields, noises or coordinates are integrated by the xSPDE integration functions, they are flattened to a matrix. The first index is the field index, and the combined second index covers all the rest. It is more convenient when calculating derivatives and observables in xSIM, to use these flattened arrays or matrices. They are obtained by combining indices :math:`(e,j)` into a flattened second index :math:`J`. This is faster and more compact notationally. Hence, when used in xSPDE functions, the fields are indexed as :math:`a(i,J)`. 
+
 xSPDE array types
 -----------------
 
 There are several different types of arrays used. These are as follows:
 
-• Field arrays,   :math:`a(i,e_1,1,\mathbf{j})` - these have an ensemble index of up to :math:`e_1=ensembles(1)`, but just a single, i.e., present time-point for efficiency.
+• Field arrays,   :math:`a(i,e_1,1,\mathbf{j})` - these have an ensemble index of up to :math:`e_1=ensembles(1)`, but just a single point in time for efficiency.  The fields are flattened to give :math:`a(i,J)`.
 
-• Random and noise arrays,  :math:`w(i,e_1,1,\mathbf{j})` - these are like field arrays, except that they contain random numbers for the stochastic equations.
+• Random and noise arrays,  :math:`w(n,e_1,1,\mathbf{j})` - these are like field arrays, except that they contain random numbers for the stochastic equations. Random and noise fields are flattened to give :math:`w(n,J)`, where `n` ranges over the available number of noise variables.
 
-• Coordinate arrays :math:`x\{l\}(1,e_1,1,\mathbf{j})` - these store the values of coordinates at grid-points, depending on the axis :math:`l=2,\ldots d` .
+• Coordinate arrays :math:`r.x\{l\}(1,e_1,1,\mathbf{j})` - these store the values of coordinates at grid-points, depending on the axis :math:`l=2,\ldots d` , and are part of the main internal data structure, `r`. These only have a single first index. Coordinates are flattened to give :math:`r.x\{l\}(1,J)`. For less than four total dimensions, this notation is replaced by :math:`r.t`,:math:`r.x(1,J)`,:math:`r.y(1,J)`,:math:`r.z(1,J)`. There is a similar array in momentum space, :math:`k\{l\}(1,J)`.
 
-• Raw arrays,  :math:`r\{s,c,e_2\}(i,e_1,j)` - like fields, but with all points stored. Use with care, as they take up large amounts of memory. Note that when output or saved, these have additional cell indices: :math:`s=1,\ldots S` is the sequence number, :math:`c=1,2` for the error-checking of the time-step :math:`e_2=1,2` for the combined serial and parallel ensemble index. To keep track of all the data, an error-check and two ensemble indices are needed here.
+• Raw arrays,  :math:`r\{s,c,e_2\}(i,e_1,j)` - like fields, but with all points stored. Use with care, as they take up large amounts of memory! Here, we use the notation that :math:`j=j_1,j_2,\ldots j_d` for :math:`d` space-time dimensions. Note that when output or saved, these have additional cell indices: :math:`s=1,\ldots S` is the sequence number, :math:`c=1,2` for the error-checking of the time-step :math:`e_2=1,2` for the combined serial and parallel ensemble index. To keep track of all the data, an error-check and two ensemble indices are needed here.
 
-• Data arrays,  :math:`d\{n\}(i,c,j)` - these store the averages, or arbitrary functions of them, with an error-checking index :math:`c=1,2,3`, to store checking data at all time points. No ensemble index is needed, as these are ensemble averages, so the second index is used to store the checking data at this stage in the code. If the data is transformed, the :math:`j` index gives the index in Fourier space.
+• Data arrays,  :math:`d\{n\}(i,c,j)` - these store the averages, or arbitrary functions of them, with an error-checking index :math:`c=1,2,3`, to store checking data at all time points. No ensemble index is needed, as these are ensemble averages, so the second index is used to store the checking data at this stage in the code. Here :math:`j=j_1,j_2,\ldots j_d` space-time points. Next, if the data is transformed, the :math:`j` index gives the index in Fourier space-time, as indicated by the :attr:`transforms` flag.
 
-• Graphics arrays,  :math:`g\{n\}(i,c,j)`  - these store the data that is plotted, and can include further functional transformations if required.
+• Graphics arrays,  :math:`g\{n\}(i,c,j)`  - these store the data that is actually plotted, and can include further functional transformations if required.
 
-The field index :math:`i` in a graphics or data array describes different lines on a graph. There can be quite different first dimensions between fields, noises and output data, as they are specified using different parameters. If only a single output graph is wanted, the observe cell index is not needed.
+The first or field index :math:`i` in a graphics or data array describes different lines on a graph. There can be different first dimensions between fields, noises and output data, as they are specified using different parameters. For only a single output graph, the cell index is not needed.
 
-All outputs have an extra high-level cell index :math:`\{n\}` called the graph or function index. This corresponds to the index :math:`\{n\}` of the observe function used to generate averages. One can have several data arrays in a larger cell arrays to make a number of distinct output graphs labelled :math:`n`, each with multiple averages. Sequences generate separate graphics arrays.
+All outputs have an extra high-level cell index :math:`\{n\}` called the graph or function index. This corresponds to the index :math:`\{n\}` of the observe function used to generate averages. One can have several data arrays in a larger cell arrays to make a number of distinct output graphs labelled :math:`n`, each with multiple averages. Sequences generate separate graphics arrays in sequence.
 
 More details of ensembles, grids and the internal lattice are given below. Note that the term ``lattice`` is used to refer to the total internal field storage. This combines the local ensemble and the spatial grid together. 
 
 
-xSPDE flattened arrays
-----------------------
 
-When the fields, noises or coordinates are integrated by the xSPDE integration functions, they are flattened to a matrix. The first index is the field index, and the combined second index covers all the rest. It is simply more convenient when calculating derivatives and observables in xSIM, to use these flattened arrays or matrices. They are obtained by combining indices :math:`(e,j)` into a flattened second index :math:`J`. This is faster and more compact notationally. Hence, when used in xSPDE functions, the fields are indexed as :math:`a(i,J)`. 
 
 Ensembles
 ---------
@@ -283,6 +286,15 @@ Coordinates, integrals and derivatives
 Time and space
 --------------
 
+The default space-time grid
+ for plotted output data is rectangular, with 
+
+::
+
+    dx(i) = in.ranges(i) / (in.points(i) + in.boundaries(i))
+
+The time index is ``1``, and the space index ``i`` ranges from ``2`` to :attr:`dimension`. The maximum space-time dimension is ``in.dimension = 4``, while ``in.ranges(i)`` is the time and space duration of the simulation, and ``in.points(i)`` is the total number of plotted points in the ``i``-th direction. The input ``in.boundaries=-1,0,1`` changes the lattice locations and steps to the most suitable for the given type of space boundary. The offsets are ``-1`` for Neumann or vanishing derivative  boundaries (also used for time), ``0`` for periodic boundaries (the default value) and ``1`` for Dirichlet or vanishing field  boundaries. 
+
 
 
 Time is advanced in basic integration steps that are equal to or smaller than ``dx(1)``, for purposes of controlling and reducing errors:
@@ -293,16 +305,9 @@ Time is advanced in basic integration steps that are equal to or smaller than ``
 
 Here, :attr:`steps` is the minimum number of steps used per plotted point, and ``nc = 1, 2`` is the check number. If ``nc = 1``, the run uses coarse time-divisions. If ``nc = 2`` the steps are halved in size for error-checking. Error-checking can be turned off if not required.
 
-The xSPDE space and momentum grid can have any dimension, provided there is enough memory. Using more than six to ten total dimensions causes large time requirements and is not very practical.
+The xSPDE space and momentum grid can have any dimension, provided there is enough memory. However, default label values are limited to ten. Using more than six to ten total dimensions causes large time and storage requirements and is usually not very practical.
 
-The default spatial grid
- for plotted output data is rectangular, with 
 
-::
-
-    dx(i) = in.ranges(i) / (in.points(i) - 1)
-
-The time index is ``1``, and the space index ``i`` ranges from ``2`` to :attr:`dimension`. The maximum space-time dimension is ``in.dimension = 4``, while ``in.ranges(i)`` is the time and space duration of the simulation, and ``in.points(i)`` is the total number of plotted points in the ``i``-th direction.
 
 
 
@@ -310,11 +315,11 @@ The time index is ``1``, and the space index ``i`` ranges from ``2`` to :attr:`d
 Space grid
 -------------
 
-We define the grid cell size :math:`dx_{j}` in the :math:`j`-th dimension in terms of maximum range :math:`R_{j}` and the number of points :math:`N_{j}:`
+We define the grid cell size :math:`dx_{j}` in the :math:`j`-th dimension in terms of maximum range :math:`r_{j}`, the number of points :math:`n_{j}:`, and the boundary value :math:`r_{j}`, as:
 
 .. math::
 
-    dx_{j}=\frac{R_{j}}{N_{j}-1}.
+    dx_{j}=\frac{r_{j}}{n_{j}+b_{j}}.
 
 Each grid starts at a value defined by the vector :attr:`origin`. Using the default values, the time grid starts at :math:`t=0` and ends at :math:`t=T=r_{1}`, for :math:`n=1,\ldots N_{j}`:
 
@@ -322,11 +327,11 @@ Each grid starts at a value defined by the vector :attr:`origin`. Using the defa
 
     t\left(n\right)=(n-1)dt.
 
-The :math:`j`-th coordinate grid starts at :math:`-r_{j}/2` and ends at :math:`r_{j}/2` , so that, for :math:`n=1,\ldots N_{j}`:
+Unless there is an offset origin , the :math:`j`-th coordinate grid starts at :math:`-r_{j}/2` and ends at :math:`r_{j}/2` , so that, for :math:`n=1,\ldots n_{j}`:
 
 .. math::
 
-    x_{j}\left(n\right)=-R_{j}/2+(n-1)dx_{j}.
+    x_{j}\left(n\right)=-r_{j}/2+(n-1)dx_{j}.
 
 Momentum grid
 --------------

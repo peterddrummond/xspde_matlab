@@ -82,11 +82,11 @@
 \begin_body
 
 \begin_layout Title
-xSPDE, The Stochastic Toolbox 
+xSPDE: The Stochastic Toolbox 
 \end_layout
 
 \begin_layout Title
-User's Guide v2.4
+User's Guide v2.5
 \end_layout
 
 \begin_layout Author
@@ -1951,7 +1951,7 @@ Simulation of the stochastic equation describing a laser turning on.
 \end_layout
 
 \begin_layout Section
-Spectra
+Fourier transforms and spectra
 \end_layout
 
 \begin_layout Standard
@@ -2047,27 +2047,44 @@ The final result is obtained from the fact that the first integral vanishes
 \end_inset
 
 .
- Next, the second time integral is carried out numerically as a sum which
- has 
-\begin_inset Formula $N$
-\end_inset
-
- points of interval 
-\begin_inset Formula $dt$
-\end_inset
-
-.
- Owing to definition of 
-\begin_inset Formula $dt$
-\end_inset
-
-, the `effective' time duration for the Fourier tranform time integrals
- is 
-\begin_inset Formula $T_{eff}=Ndt=ranges(1)\times N/(N-1)$
-\end_inset
-
-.
  
+\end_layout
+
+\begin_layout Standard
+The time integral is carried out numerically as a sum which has 
+\begin_inset Formula $N=points(1)$
+\end_inset
+
+ time points of interval 
+\begin_inset Formula $dt$
+\end_inset
+
+.
+ The definition of 
+\begin_inset Formula $dt$
+\end_inset
+
+ is therefore 
+\begin_inset Formula $dt=T/(N-1)$
+\end_inset
+
+, where 
+\begin_inset Formula $T=ranges(1)$
+\end_inset
+
+.
+ The `effective' time duration for the Fourier transform time integrals
+ is 
+\begin_inset Formula $T_{eff}=Ndt=T\times N/(N-1)=T+dt$
+\end_inset
+
+.
+ This corresponds to a midpoint rule integration, which technically is over
+ the interval 
+\begin_inset Formula $[-dt/2,T+dt/2]$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection*
@@ -3444,7 +3461,7 @@ A stochastic partial differential equation or
 \uwave off
 \noun off
 \color none
-
+ 
 \begin_inset Formula $\bm{x}$
 \end_inset
 
@@ -3461,7 +3478,11 @@ A stochastic partial differential equation or
 \noun default
 \color inherit
 .
- The total dimension 
+ The total 
+\emph on
+dimension
+\emph default
+ 
 \begin_inset Formula $d$
 \end_inset
 
@@ -3487,7 +3508,11 @@ Here
 \end_inset
 
  is a real or complex vector or vector field.
- The initial conditions are arbitrary functions.
+ The 
+\emph on
+initial
+\emph default
+ conditions are arbitrary functions.
  
 \begin_inset Formula $\mathbf{A}\left[\mathbf{a}\right]$
 \end_inset
@@ -3504,8 +3529,11 @@ Here
 \begin_inset Formula $\underline{\mathbf{L}}\left[\bm{\nabla}\right]$
 \end_inset
 
- is a matrix of linear terms and derivatives, diagonal in the vector indices,
- and 
+ is a matrix of 
+\emph on
+linear
+\emph default
+ terms including derivatives, diagonal in the vector indices, and 
 \begin_inset Formula $\mathbf{w}=\left[\bm{w}^{x},\bm{w}^{k}\right]$
 \end_inset
 
@@ -3522,7 +3550,17 @@ Here
 \end_layout
 
 \begin_layout Standard
-Transverse boundary conditions are assumed periodic.
+Transverse 
+\emph on
+boundaries
+\emph default
+ are of three types: Neumann (vanishing derivative), periodic, or Dirichlet
+ (vanishing field).
+ These are indicated using 
+\begin_inset Formula $boundaries=-1,0,1$
+\end_inset
+
+.
  The term 
 \begin_inset Formula $\underline{\mathbf{L}}\left[\bm{\nabla}\right]$
 \end_inset
@@ -3545,6 +3583,190 @@ Transverse boundary conditions are assumed periodic.
  and use of an interaction picture.
  Note that it depends on momentum space coordinates, and this involves Fourier
  transforms.
+\end_layout
+
+\begin_layout Section
+Coordinates and Fourier transforms in space
+\end_layout
+
+\begin_layout Standard
+The spatial interval used is from a preset 
+\emph on
+origin
+\emph default
+ 
+\begin_inset Formula $\bm{o}$
+\end_inset
+
+, and has predetermined 
+\emph on
+ranges
+\emph default
+ 
+\begin_inset Formula $\mathbf{r}$
+\end_inset
+
+.
+ In the x-dimension, the problem is solved on a transverse interval of 
+\begin_inset Formula $x=[o_{2},o_{2}+r_{2}]$
+\end_inset
+
+.
+ Note that all dimensions are numbered starting with the time dimension
+ as 
+\begin_inset Formula $i=1$
+\end_inset
+
+.
+ In order to discretize the problem for solution the 
+\begin_inset Formula $n_{i}$
+\end_inset
+
+ lattice 
+\emph on
+points
+\emph default
+ are fitted into the spatial interval so that 
+\begin_inset Formula $dx_{i}=r_{i}/(n_{i}-1)$
+\end_inset
+
+, ie:
+\begin_inset Formula 
+\begin{equation}
+x_{i}=o_{i}+(n_{i}-1)dx_{i}\,.
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Details of boundaries are as follows:
+\end_layout
+
+\begin_layout Description
+Neumann: For vanishing 
+\emph on
+derivative
+\emph default
+ boundaries, use 
+\begin_inset Formula $in.boundaries=-1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Periodic: For periodic boundaries - which is the default case - use 
+\begin_inset Formula $in.boundaries=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Dirichlet: For vanishing 
+\emph on
+field
+\emph default
+ boundaries, 
+\begin_inset Formula $in.boundaries=1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+These are specified independently in different columns for each dimension
+ - starting with time - and in different rows for the lower and upper coordinate
+ boundary, such as 
+\begin_inset Formula $[0,1,1;0,1,1]$
+\end_inset
+
+.
+ Note that in current versions of xspde, the equations are always initial
+ value problems, so the first dimension specification is not used.
+ The default option is periodic boundaries if 
+\begin_inset Formula $in.boundaries$
+\end_inset
+
+ is not specified.
+\end_layout
+
+\begin_layout Standard
+The xSPDE spectral definition in space-time is:
+\begin_inset Formula 
+\begin{equation}
+\tilde{a}(\omega,\bm{k})=\frac{1}{\left[2\pi\right]^{d/2}}\int e^{i(\bm{k}\cdot\bm{x}-\omega t)}a(t,\bm{x})dtd\bm{x}\,
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is translated into a sum over the lattice points using a discrete Fourier
+ transform at the lattice points 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+, so that: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\tilde{a}(\omega_{i},\bm{k}_{i})=\frac{dtd\mathbf{x}}{\left[2\pi\right]^{d/2}}\sum_{j_{1}\ldots j_{d}}\exp\left[i\left(\bm{k}_{\bm{i}}\cdot\bm{x}_{\bm{j}}-\omega_{i_{1}}t_{j_{1}}\right)\right]a(t_{j_{1}},\bm{x}_{\bm{j}})\,
+\end{equation}
+
+\end_inset
+
+The momenta 
+\begin_inset Formula $k_{i}$
+\end_inset
+
+ have an interval of
+\begin_inset Formula 
+\begin{equation}
+dk_{i}=\frac{2\pi}{n_{i}dx_{i}}
+\end{equation}
+
+\end_inset
+
+with 
+\begin_inset Formula $k_{i}$
+\end_inset
+
+ values given for even n by: 
+\begin_inset Formula 
+\begin{equation}
+k_{i}=\left(1-\frac{n_{i}}{2}\right)dk_{i},\ldots\frac{n_{i}}{2}dk_{i}
+\end{equation}
+
+\end_inset
+
+and for odd n by:
+\begin_inset Formula 
+\begin{equation}
+k_{i}=\frac{1-n_{i}}{2}dk_{i},\ldots\frac{n_{i}-1}{2}dk_{i}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+k_{i}=\frac{1-n_{i}}{2}dk_{i},\ldots\frac{n_{i}-1}{2}dk_{i}
+\end{equation}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -4033,7 +4255,7 @@ Free diffraction of a Gaussian wave-function in three dimensions, is given
 The xSPDE spectral definition in space-time is:
 \begin_inset Formula 
 \[
-\tilde{a}(\omega,\bm{k})=\frac{1}{\left[2\pi\right]^{D/2}}\int e^{i(\bm{k}\cdot\bm{x}-\omega t)}a(t,\bm{x})dtd\bm{x}\,
+\tilde{a}(\omega,\bm{k})=\frac{1}{\left[2\pi\right]^{d/2}}\int e^{i(\bm{k}\cdot\bm{x}-\omega t)}a(t,\bm{x})dtd\bm{x}\,
 \]
 
 \end_inset
@@ -4060,7 +4282,8 @@ Together with the initial condition that
 \end_layout
 
 \begin_layout Standard
-To get an output from a spatially Fourier transformed field, just set 
+To get an output from a spatially fourier transformed field in three-dimensions,
+ but without a fourier transform in time, just set 
 \begin_inset Formula $in.transforms=[0,1,1,1]$
 \end_inset
 
@@ -4255,8 +4478,8 @@ This has an exact solution for the noise intensity in either ordinary space
  or momentum space: 
 \begin_inset Formula 
 \begin{eqnarray*}
-\left\langle \left|a_{j}\left(t,\mathbf{x}\right)\right|^{2}\right\rangle  & = & (1+t)/\Delta V\\
-\left\langle \left|\tilde{a}_{j}\left(t,\mathbf{k}\right)\right|^{2}\right\rangle  & = & (1+t)/\Delta V_{k}\\
+\left\langle \left|a_{j}\left(t,\mathbf{x}\right)\right|^{2}\right\rangle  & = & (1+t)/dV\\
+\left\langle \left|\tilde{a}_{j}\left(t,\mathbf{k}\right)\right|^{2}\right\rangle  & = & (1+t)/dV_{k}\\
 \left\langle \tilde{a}_{1}\left(t,\mathbf{k}\right)\tilde{a}_{2}^{*}\left(t,\mathbf{k}\right)\right\rangle  & = & 0
 \end{eqnarray*}
 
@@ -4267,44 +4490,27 @@ This has an exact solution for the noise intensity in either ordinary space
 
 \begin_layout Standard
 Here, the noise is delta-correlated, and 
-\begin_inset Formula $\Delta V$
+\begin_inset Formula $dV$
 \end_inset
 
 , 
-\begin_inset Formula $\Delta V_{k}$
+\begin_inset Formula $dV_{k}$
 \end_inset
 
  are the cartesian space and momentum space lattice cell volumes respectively.
  Suppose that 
-\begin_inset Formula $N=N_{x}N_{y}$
+\begin_inset Formula $n=n_{x}n_{y}$
 \end_inset
 
- is the total number of spatial points, and 
-\begin_inset Formula $V=R_{x}R_{y}$
+ is the total number of spatial points, and there are 
+\begin_inset Formula $n_{x(y)}$
 \end_inset
 
-, where there are 
-\begin_inset Formula $N_{x(y)}$
-\end_inset
-
- points in the x(y)-direction, with a total range of 
-\begin_inset Formula $R_{x(y)}$
-\end_inset
-
-.
- Then, 
-\begin_inset Formula $\Delta x=R_{x}/N_{x}$
-\end_inset
-
- ,
-\begin_inset Formula $\Delta k_{x}=2\pi/R_{x}$
-\end_inset
-
- , so that: 
+ points in the x(y)-direction, so then: 
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta V & = & \Delta x\Delta y=\frac{V}{N}\\
-\Delta V_{k} & = & \Delta k_{x}\Delta k_{y}=\frac{(2\pi)^{2}}{V}.
+dV & = & dxdy\\
+dV_{k} & = & dk_{x}dk_{y}=\frac{(2\pi)^{2}}{ndV}.
 \end{eqnarray*}
 
 \end_inset
@@ -5333,7 +5539,13 @@ In xSPDE, the space-time dimension
 \end_inset
 
 .
- The index ordering is always 
+ During the stochastic simulation, these arrays are flattened to matrices,
+ to shorten the Matlab code in the user functions.
+ 
+\end_layout
+
+\begin_layout Standard
+The index ordering is always 
 \begin_inset Formula $(i,e,\mathbf{j})$
 \end_inset
 
@@ -5355,7 +5567,7 @@ The first index is a field index (
 \end_layout
 
 \begin_layout Itemize
-The second index is an ensembles/checks index (
+The second index is an ensembles or checks index (
 \begin_inset Formula $e/c$
 \end_inset
 
@@ -5402,9 +5614,12 @@ When the fields, noises or coordinates are integrated by the xSIM integration
  functions, the field and data arrays are always flattened to a matrix.
  This is for reasons of convenience in defining mathematical operations.
  The first index is the field or line index, and the combined second index
- covers all the rest.
- This is only done internally, but not in externally stored data, nor in
- xGRAPH, which operates on the full data arrays.
+ covers all the rest: 
+\begin_inset Formula $(i,e,\mathbf{j})\rightarrow(i,J)$
+\end_inset
+
+ This is done internally, but not in externally stored data, nor in xGRAPH,
+ which operates on the full data arrays.
 \end_layout
 
 \begin_layout Standard
@@ -5785,8 +6000,8 @@ Raw
 \begin_inset Formula $r\{s,c,f\}(i,e,\mathbf{j})$
 \end_inset
 
- - like fields, except with all time points stored.
- These are used optionally, as they take up large amounts of memory.
+ These are like fields, except with all time points stored.
+ They are used optionally, as they take up large amounts of memory.
  These are saved in cell arrays with indices 
 \begin_inset Formula $s$
 \end_inset
@@ -6276,8 +6491,7 @@ Examples:
 \begin_inset Formula $axes\{4\}=\{0,1:4:51,0\}$
 \end_inset
 
- - For function 4, plot every time point, every 4-th x point, and al the
- y-points.
+ - For function 4, plot every time point, every 4-th x point, and all y-points.
 \end_layout
 
 \begin_layout Standard
@@ -6296,7 +6510,11 @@ The
 pdimension
 \emph default
  input can also be used to reduce dimensionality, as this sets the maximum
- effective plotted dimension.
+ effective 
+\emph on
+plotted dimension
+\emph default
+.
  For example, 
 \begin_inset Formula $pdimension\{1\}=1$
 \end_inset
@@ -6306,8 +6524,11 @@ pdimension
 \begin_inset Formula $t,x,y,z$
 \end_inset
 
- may be replaced by corresponding higher dimensions if there are axes that
- are suppressed.
+ may be replaced by corresponding higher dimensions if there are 
+\emph on
+axes
+\emph default
+ that are suppressed.
  Slices can be taken at any desired point, not just the midpoint.
  Using the standard notation of, for example, 
 \begin_inset Formula $axes\{1\}=\{6:3:81\}$
@@ -6322,9 +6543,24 @@ The graphics results depend on the resulting
 \series bold
 effective
 \series default
- dimension.
- Since the plot has to include a data axis, the plot will be typically one
- dimension higher than the underlying space-time lattice: 
+ dimension, which is equal to the actual space-time dimension unless there
+ is an 
+\emph on
+axes
+\emph default
+ suppression, described above.
+ Since the plot has to include a data axis, the plot itself will have an
+ extra data axis, as well as the space-time lattice 
+\emph on
+dimension
+\emph default
+ axes.
+ 
+\end_layout
+
+\begin_layout Standard
+We can plot only three axes directly using standard graphics tools.
+ The strategy to deal with the higher dimensionality is as follows:
 \end_layout
 
 \begin_layout Description
@@ -6830,7 +7066,7 @@ version
 \begin_layout Plain Layout
 
 \emph on
-'xSIM2.3'
+'xSIM2.5'
 \emph default
  
 \end_layout
@@ -6950,7 +7186,7 @@ fields
 \begin_inset Text
 
 \begin_layout Plain Layout
-Number of stochastic or auxiliary fields
+Number of [integrated,defined] fields
 \end_layout
 
 \end_inset
@@ -7263,7 +7499,7 @@ order
 \begin_layout Plain Layout
 
 \emph on
-1
+0
 \emph default
  
 \end_layout
@@ -7413,7 +7649,7 @@ boundaries
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $[0,0,0,\dots]$
+\begin_inset Formula $[0,0,0;0,0,0]$
 \end_inset
 
 
@@ -7425,7 +7661,7 @@ boundaries
 \begin_inset Text
 
 \begin_layout Plain Layout
-Boundary: '0,1,2'=periodic,Neum.,Dirich.
+Boundary: '-1,0,1'=Neum,periodic,Dirich: per boundary.
 \end_layout
 
 \end_inset
@@ -7493,7 +7729,7 @@ numberaxis
 \begin_inset Text
 
 \begin_layout Plain Layout
-Forces use of numerical axis labels
+If 1, forces use of numerical axis labels
 \end_layout
 
 \end_inset
@@ -7517,7 +7753,7 @@ print
 \begin_inset Text
 
 \begin_layout Plain Layout
-1 
+0 
 \end_layout
 
 \end_inset
@@ -7662,7 +7898,7 @@ transforms
 \begin_inset Text
 
 \begin_layout Plain Layout
-Fourier transforms in [t,x,y,z,..]
+Fourier transforms in [t,x,y,z,..] per observable
 \end_layout
 
 \end_inset
@@ -7793,7 +8029,7 @@ The most common functions, output field dimensions and calling arguments,
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="21" columns="3">
+<lyxtabular version="3" rows="22" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -8029,7 +8265,7 @@ Noise filter function in k-space
 \begin_inset Text
 
 \begin_layout Plain Layout
-Initialization in a sequence
+Transfer in sequence (returns a,r)
 \end_layout
 
 \end_inset
@@ -8375,7 +8611,7 @@ xint
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(a,dx,r)$
+\begin_inset Formula $(a,[dx,]r)$
 \end_inset
 
 
@@ -8400,6 +8636,40 @@ Integrates over a spatial lattice
 \begin_layout Plain Layout
 
 \emph on
+xint
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(a,dk,r)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Integrates over a reciprocal lattice
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
 xave
 \end_layout
 
@@ -8409,7 +8679,7 @@ xave
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(a,av,r)$
+\begin_inset Formula $(a,[av,]r)$
 \end_inset
 
 
@@ -8477,7 +8747,7 @@ xd1
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(a,(dir),r)$
+\begin_inset Formula $(a,[dir,]r)$
 \end_inset
 
 
@@ -8511,7 +8781,7 @@ xd2
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(a,(dir),r)$
+\begin_inset Formula $(a,[dir,]r)$
 \end_inset
 
 
@@ -8534,6 +8804,41 @@ xd2
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The arguments in square brackets are optional.
+ For more details of use of integration and differentiation functions, see
+ the user manual.
+ In the case of the function 
+\begin_inset Formula $xint$
+\end_inset
+
+, it is possible to integrate either with respect to 
+\begin_inset Formula $dx$
+\end_inset
+
+ or 
+\begin_inset Formula $dk$
+\end_inset
+
+, in either ordinary space or momentum space, by changing the the second
+ argument passed to 
+\begin_inset Formula $xint$
+\end_inset
+
+ as required.
+ However, the fields that are passed to 
+\begin_inset Formula $xint$
+\end_inset
+
+ must be transformed first.
+ This happens automatically when the observe function is used with transforms
+ selected.
 \end_layout
 
 \begin_layout Section
@@ -10443,7 +10748,7 @@ gversion
 \begin_layout Plain Layout
 
 \emph on
-'xGRAPH2.3'
+'xGRAPH2.5'
 \emph default
  
 \end_layout
@@ -10489,7 +10794,7 @@ in.olabels{n}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Cell array of function labels
+Cell array of output data labels
 \end_layout
 
 \end_inset

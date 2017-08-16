@@ -12,7 +12,7 @@ function [e] = GPE()
 cd ~
 in.name =  'GPE';
 in.dimension =  3;                                     
-in.points = [201,128,128];
+in.points = [101,64,64];
 in.ranges = [1,20,20];
 in.noises = [0,2];
 in.rfilter =    @(r)          [exp(- r.kx.^2-r.ky.^2);exp(- r.kx.^2-r.ky.^2)];

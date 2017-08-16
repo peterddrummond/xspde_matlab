@@ -30,7 +30,7 @@ for ns = 1:serial                                 %%loop over ensembles
     end                                           %%Set unique random seed
     if l{1}.print                                 %%If print switch
         fprintf('Check %d, Ensemble %d\n',nc,nsp);%%print indices
-    end;                                          %%end if print switch
+    end                                           %%end if print switch
     
       %%Loop over the stochastic integration sequence   
     
@@ -38,17 +38,20 @@ for ns = 1:serial                                 %%loop over ensembles
       r=l{seq};
       if r.print > 1                              %%If verbose print
           fprintf('Sequence %d\n',seq);           %%print sequence indices
-      end;                                        %%end if verbose  print
+      end                                         %%end if verbose  print
       r.dtr=r.dt/nc;                              %%reduced step-size
-      r.propagator = r.propfactor(nc,r);          %%get propagator   
+      r.propagator = r.propfactor(nc,r);          %%get propagator  
       w = r.randomgen(r);                         %%generate random fields
       
       %%Initialise the stochastic fields for sequence
       
       if seq == 1                                 %%check if sequence = 1
           a = r.initial(w,r);                     %%initialize fields
+          if length(a) == 1
+              a = a*ones(r.d.a);
+          end
       else                                        %%if sequence > 1
-          a = r.transfer(w,r,a(1:r.fields,:),l{seq-1}); %%interface fields
+          [a,r] = r.transfer(w,r,a(1:r.fields,:),l{seq-1}); %%interface fields
       end                                         %%end check sequence =1
 
       a = reshape(a,r.d.a);                       %%reshape fields
@@ -72,7 +75,7 @@ for ns = 1:serial                                 %%loop over ensembles
          data{seq}{n}(:,2,:) = data{seq}{n}(:,2,:) + f/r.ncopies;
         end                                       %%end if errorchecks
       end                                         %%end functions loop
-    end;                                          %%end sequence loop
+    end                                           %%end sequence loop
   end                                             %%end errorchecks loop 
-end;                                              %%end ensemble loop
+end                                               %%end ensemble loop
 end                                               %%end function

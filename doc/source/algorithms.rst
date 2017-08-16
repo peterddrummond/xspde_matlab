@@ -212,7 +212,7 @@ The built-in algorithms have convergence order as ordinary differential equation
 
 However, the situation is not as straightforward for stochastic equations. First order convergence is always obtainable stochastically. In addition, second order convergence is generally obtainable with the midpoint algorithm, although this is not guaranteed: it depends on the precise noise term. However, the Runge-Kutta algorithms used do **not** converge to the standard ODE order for stochastic equations. Hence extrapolation should be used with extreme caution in stochastic calculations.
 
-While extrapolated results are usually inside those given by the default error-bars, **extrapolation with too high an order can under-estimate the resulting error bars.** Therefore, xSPDE assumes a cautious default order of ``in.order = 1``. Note that one can set ``in.order = 0`` to obtain fine resolution values and error bars without extrapolation, but this is generally less accurate.
+While extrapolated results are usually inside those given by the default error-bars, **extrapolation with too high an order can under-estimate the resulting error bars.** Therefore, xSPDE assumes a cautious default order of ``in.order = 0``. This gives fine resolution values and error bars without extrapolation, but is generally less accurate than using extrapolation.
 
 
 Sampling errors

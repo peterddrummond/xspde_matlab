@@ -11,5 +11,5 @@ fprintf ('\nxSPDE starting up...\n\n');          %%Start-up message
 errorgraph = xgraph(data,input);                 %%Graphics program   
 error = errorgraph+errorsim;                     %%calculate total error
 
-fprintf ('\nxSPDE error score = %e \n\n',error) 
+fprintf ('\nxSPDE error score = %e, time = %f \n\n',error) 
 end                                              %%End simulation program

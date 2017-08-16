@@ -10,7 +10,7 @@ function [e] = Kubo2()
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License                         
 
 in.name =       'Kubo2: 2 observables';
-in.ensembles =  [2000,10];                       %%samples,ensembles,parallel
+in.ensembles =  [200,10];                       %%samples,ensembles,parallel
 in.initial   =  @(w,r)    1+0*w ;                %%Initialisation  handle
 in.step      =  @xRK2;
 in.steps     =  5;

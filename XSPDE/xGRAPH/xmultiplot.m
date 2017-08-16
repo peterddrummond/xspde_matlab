@@ -46,9 +46,14 @@ function err =  xmultiplot(n,datan,g)
       
     if ~isempty(g.compare{n})                  %%If comparison results
         da_x = g.compare{n}(x{1},g);           %%get comparison results
-        for j = 1:nx(1)
+        if length(da_x) == 1
+            da_x = da_x+0*x{1};
+        end
+        sc = xfcheck('compare',n,da_x,[0,length(x{1})]);
+        datan = datan(1:sc(1),:,:);
+        for j = 1:sc(1)
             da(1,1,:) = da_x(j,:);
-            plot(x{1},da_x(j,:),'--');         %%2D plot, compare, dashed
+            plot(x{1},da_x(j,:),'-.');         %%2D plot, compare, dashed
             datan(j,1,:) = datan(j,1,:) - da;  %%Store difference
         end
         err= max(max(abs(datan(:,1,:))));      %%Diff vs compare result (n)

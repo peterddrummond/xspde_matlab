@@ -36,9 +36,9 @@ for s=1:sequence                                 %%loop over sequence
   end
   fprintf ('%s sequence %d: %s\n',l{s}.version,s,l{s}.name);%%version name
   if l{s}.print >1                               %%if print switch verbose
-    display ('xSIM parameters');                 %%display input data
+    fprintf ('\n xSIM parameters\n');            %%display input data
     display (l{s});                              %%display input data
-  end;                                           %%end if print switch
+  end                                            %%end if print switch
 end                                              %%end loop over sequence
 r = l{1};                                        %%first sequence cell 
 
@@ -96,7 +96,9 @@ end                                              %%end if file not blank
 if length(input) == 1                            %%if  input length is 1
     input = input{1};                            %%returns struct, not cell
 end                                              %%end if input length is 1
-fprintf('xSIM sequence completed, time = %f \n\n',toc());%%print time taken
+timer = toc();
+fprintf('xSIM sequence completed, time = %f \n\n',timer);%%print time taken
+error = [error,timer];
 end                                              %%end xsim
 
 
@@ -107,7 +109,7 @@ function data1 = xaddcell(data1,data2)
 %   Licensed by Peter D. Drummond, (2015) - see License.txt 
 
 for seq = 1:length(data1)
-  for n = 1:length(data1{seq});
+  for n = 1:length(data1{seq})
     data1{seq}{n} = data1{seq}{n}+data2{seq}{n};
   end
 end

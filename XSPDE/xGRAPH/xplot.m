@@ -18,10 +18,11 @@ if esample < 0
       datan(:,2,:)=datan(:,2,:)+datan(:,3,:);  %%Combine both error bars
       datan(:,3,:)=0.0*datan(:,3,:);           %%Set sampling error to zero
 end                                            %%End if sampling error            
-max_error = max(max(datan(:,2,:)));
-max_range = max(max(datan(:,1,:)))-min(min(datan(:,1,:)));
-rel_error = max_error/max_range;
+
 for j = 1:nx(1)
+  max_error = max(datan(j,2,:));
+  max_range = max(datan(j,1,:))-min(datan(j,1,:));
+  rel_error = max_error/(max_range+1.e-100);   %%Prevent divide by zero   
   da =reshape(datan(j,1,:),1,nx(3));           %%Transverse data 
   eb =reshape(datan(j,2,:),1,nx(3));           %%Transverse error-bar
   se =reshape(datan(j,3,:),1,nx(3));           %% sampling-error                       

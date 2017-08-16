@@ -10,8 +10,8 @@ function [e] = GaussianAv6D()
 
 in.name =        '6+1D Schroedinger equation';
 in.dimension =   7; 
-in.points =   [5,11,11,11,11,11,11]; %%dimension: 1-4
-in.ranges =   [10,6,6,6,6,6,6];
+in.points =   [2,9,9,9,9,9,9]; %%dimension: 1-4
+in.ranges =   [10,7,7,7,7,7,7];
 in.initial =     @(w,r) exp(-0.5*(r.x{2}.^2+r.x{3}.^2+r.x{4}.^2+r.x{5}.^2+r.x{6}.^2+r.x{7}.^2));   
 in.observe{1} =  @(a,r) a.*conj(a);                         
 in.observe{2} =  @(a,r) xint(a.*conj(a),r.dx.*[0,1,1,0,0,1,1],r);
