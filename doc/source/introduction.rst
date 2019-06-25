@@ -23,7 +23,9 @@ Readers of this document may also wish to try XMDS [Colecutt2001]_, and its succ
 
 There are many types of stochastic equations, and xSPDE can treat a wide range. It has a configurable functional design. The general structure permits drop-in replacements of the functions provided. Different simulations can be carried out sequentially, to simulate the various stages in an experiment or other process.
 
-The code supports parallelism at both the vector instruction level and at the thread level, using Matlab matrix instructions and the parallel toolbox. It calculates averages of arbitrary functions of any number of complex or real fields. It uses sub-ensemble averaging and extrapolation to obtain accurate error estimates.
+The code supports parallelism at both the vector instruction level and at the thread level, using Matlab matrix instructions and the parallel toolbox. It calculates averages of arbitrary functions of any number of complex or real fields. It can also display multiple trajectories and calculate probabilities of any function of the fields.
+
+It uses sub-ensemble averaging and extrapolation to obtain accurate error estimates.
 
 
 .. rubric:: Source code

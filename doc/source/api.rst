@@ -154,7 +154,7 @@ xSIM parameters
 
 .. attribute:: version
 
-    *Default:* ``'xSIM2.3'``
+    *Default:* ``'xSIM3.1'``
 
     This sets the current version number of the  simulation program. There is typically no need to input this.
 
@@ -276,26 +276,55 @@ xSIM parameters
     
 .. attribute:: boundaries
 
-    *Default:* ``[0, 0, …;0, 0, …]``
+    *Default:* ``[0, 0, …]``
 
-    Type of spatial boundary conditions used, set for each dimension independently, and used in the partial differential equation solutions. To follow standard xspde indexing standards, the first index is time, for which the boundary settings are not relevant. The first row of settings is the lower boundary type, the second row the upper boundary type. The default option, or ``0``, is periodic. If ``-1``,  Neumann boundaries are used, with normal derivatives set to zero.  If ``1``,  Dirichlet boundaries are used, with field values set to zero.  Note that in the current xSPDE code, setting non-periodic boundaries requires the use of finite difference type derivatives, without the option of an interaction picture derivative. Using Fourier derivatives will automatically make both the boundary conditions periodic. 
+    Cell array for type of spatial boundary conditions used, set for each dimension independently, and used in the stochastic partial differential equation solutions with finite value derivatives. The cell index is :math:`c = 1,2`, indicating the lower then upper boundary condition respectively. The vector index is the dimension, starting at the first transverse dimension, and the options are :math:`b = -1,0,1`. The default option, or ``0``, is periodic. If ``-1``,  Neumann boundaries are used, with normal derivatives set to zero.  If ``1``,  Dirichlet boundaries are used, with field values set to zero.  Note that in the current xSPDE code, setting non-periodic boundaries requires the use of finite difference type derivatives, without the option of an interaction picture derivative. Using Fourier derivatives will make both the boundary conditions periodic, and is not compatible with Neuman or Dirichlet boundaries.  Note: boundary values are fixed at zero in this version.
     ::
 
-        in.boundaries = [-1, in.boundaries(2), in.boundaries(3)..] = -1,0,1
+        in.boundaries{c} = [b1, b2,..] = -1,0,1
 
-    Dimensions for setting the boundary conditions are numbered starting from the time dimension, for consistency with numbering conventions elsewhere. However, only the space dimension boundaries are used here, for :math:`j > 1`.
+    Indices for setting the boundary conditions are numbered according to the space dimension.
+    
+
 
 .. attribute:: transforms
 
     *Default:* ``{0}``
 
-    **Cell array** that defines the different transform spaces used to calculate field observables. This has the structure
+    **Cell array** that defines the different transform spaces used to calculate observable ``n``. This has the structure
 
     ::
 
         in.transforms{n} = [t(1), ..., t(4)] >= 0
 
-    There is one transform vector per observable. The ``j``-th index, ``t(j)``, indicates a Fourier transform on the ``j``-th axis if set to one, starting with the time axis. The default value is zero, indicating no transform. The normalization of the Fourier transform is such that the :math:`k=0` value in momentum space corresponds to the integral over space, with an additional factor of :math:`1/\sqrt{2\pi}` in each transformed dimension. This gives a Fourier integral which is symmetrically normalized in ordinary and momentum space. The Fourier transform that is graphed is such that :math:`k=0` is the *central* value.
+    There is one transform vector per observable. The ``j``-th index, ``t(j)``, indicates a Fourier transform on the ``j``-th axis if set to one, starting with the time axis. The default value is zero, indicating no transform. The normalization of the Fourier transform is such that the :math:`k=0` value in momentum space corresponds to the integral over space, with an additional factor of :math:`1/\sqrt{2\pi}` in each transformed dimension. This gives a Fourier integral which is symmetrically normalized in ordinary and momentum space. The Fourier transform that is graphed is such that :math:`k=0` is the *central* value. The default is that there is no transform used.
+    
+    
+    .. attribute:: scatters
+
+    *Default:* ``{0}``
+
+    **Cell array** that defines the number of scatter trajectories plotted for observable :math:`n`. This has the structure
+
+    ::
+
+        in.scatters{n} = s >= 0
+
+    If zero, the mean of the observable is calculated as usual. If nonzero, a set of :math:`s` observables that correspond to independent stochastic fields are accumulated, with no averaging.
+    
+        
+    .. attribute:: probability
+
+    *Default:* ``{0}``
+
+    **Cell array** that defines the probability plotted for observable :math:`n`. This has the structure
+
+    ::
+
+        in.probability{n} = o1:o2:o3;
+
+    If zero, the mean of the observable is calculated as usual. If nonzero, the probability of the observable is calculated and plotted according to the specified vector of axis points. This sets an extra dimension in the data, with :math:`o1`, :math:`o2`, :math:`o3`, being the start, interval and end of the bins used to accumulate probabilities.
+
 
 .. attribute:: olabels
 
@@ -469,7 +498,7 @@ A stochastic equation solver requires the definition of an initial distribution 
 
     *Default:* :func:`xtransfer`
 
-    Initializes the fields :math:`a` for subsequent calculations in a sequence. Otherwise, this function behaves in a similar way to :func:`initial`. The function includes the previous field ``a0`` and lattice ``r0``. The default set by :func:`xtransfer` is ``a = a0``.
+    Initializes the fields :math:`a` for subsequent calculations in a sequence, together with any required changes in the lattice :math:`a`. Therefore, it returns  :math:`[a,r]`. Otherwise, this function behaves in a similar way to :func:`initial`. The function includes the previous field ``a0`` and lattice ``r0``. The default set by :func:`xtransfer` is ``[a,r] = [a0,r]``.
 
 .. function::  da (a,w,r)
 
@@ -495,6 +524,10 @@ A stochastic equation solver requires the definition of an initial distribution 
     *Default:* cell array of :func:`xobserve`
 
     **Cell array** of function handles that take the current field and returns a real observable ``o`` with dimension of ``[1, n.lattice]``. The default observable is the first real field amplitude. Note the use of braces for cell arrays! One can also input these individually as ``in.observe{1} = @(a,r) f(a,r)``, using an inline anonymous function. The total number of observe functions is stored internally as :attr:`graphs`. The fields ``a`` passed in the input are transformed according to the :attr:`functions` metadata.
+    
+.. function:: function (data,in)
+
+    This is a user-definable cell array of data function handles. Use when simulation data is needed that is a function of the :func:`observe` local averages over ``ensemble(1)``, typically involving combinations of several observed averages. The default value sequentially generates all the averages that are in the simulated data. The input to the ``n``-th function is the whole cell array of averages, and the output is a data array for the ``n``-th graph. This function is used at simulation time. It generates  error-bars and sampling errors in the graphed results.
 
 .. function::  rfilter (r)
 
@@ -521,24 +554,29 @@ Advanced input functions are user-definable functions which don’t usually need
 .. function:: xint (o, [dx, ] r)
 
     This function takes a scalar or vector quantity ``o``, and returns a  space integral over selected dimensions with vector measure ``dx``. If ``dx(j) > 0`` an integral is taken over dimension ``j``. Space dimensions are labelled from ``j = 2, ...`` as elsewhere. Time integrals are ignored at present.  To integrate over an entire lattice, set ``dx = r.dx``, otherwise set ``dx(j) = r.dx(j)`` for selected dimensions ``j``.  If the input array is fourier transformed, by using the ``transforms`` attribute in the ``observe`` function, then one must set ``dx(j) = r.dk(j)`` for transformed dimensions ``j``, to get correctly normalised results. If the ``dx`` vector is omitted, the integral is taken over all space directions, assuming no Fourier transforms. Integrals are returned at all lattice locations to give a fixed array size for observables.  
+    
+    .. function:: xbin (o, [dx, ] r)
+
+    This function takes a scalar or vector quantity ``o``, and returns a binned observable on a space axis defined by the vector measure ``dx``. The purpose is to allow binning of probabilities in cases when the observable is a mean position, and can be simply plotted on an axis. If ``j`` is the first index with ``dx(j) > 0`` the binning is taken over dimension ``j``.  The results returned are the probability of ``o`` in the bin, normalized by :math:`1 / dx(j)`. Space dimensions are labelled from ``j = 2, ...`` as elsewhere.  If the input array is fourier transformed, by using the ``transforms`` attribute in the ``observe`` function, then one must set ``dx(j) = r.dk(j)`` for transformed dimensions ``j``, to get correctly binned results. If the ``dx`` vector is omitted, or a scalar ``dx`` is used, the binning is taken over the first space direction. 
+    
+    
+    .. function:: xnft (o, [trans, ] r)
+
+    This function takes a scalar or vector quantity ``o``, and returns a normalized Fourier transform over selected dimensions with Fourier components in the standard order used for graphs. If ``trans(j) > 0`` a transform is taken over dimension ``j``. Space dimensions are labelled from ``j = 2, ...`` as elsewhere. Time transforms are ignored at present.   If the ``trans`` vector is omitted, the integral is taken over all space directions. Transforms are returned at all lattice locations to give a fixed array size for observables.  
 
 
 .. function:: xd (o, [D, ] r)
 
     This function takes a scalar or vector quantity ``o``, and returns a spectral derivative over selected dimensions with a derivative ``D``, by Fourier transforming the data.  Set ``D = r.Dx`` for a first order x-derivative, ``D = r.Dy`` for a first order y-derivative, and similarly ``D = r.Dz.*r.Dy`` for a cross-derivative in ``z`` and ``y``. Higher derivatives require powers of these, for example `D = r.Dz.^4``. For higher dimensions use numerical labels, where ``D = r.Dx`` becomes ``D = r.D{2}``, and so on. If the derivative ``D`` is omitted, a first order x-derivative is returned.
 
-.. function:: xd1 (o, [dir, ] r)
+.. function:: xd1 (o, [dir, values,] r)
 
-    This takes a scalar or vector ``o``, and returns a first derivative with an axis direction ``dir`` using finite differences.  Set ``dir = 2`` for an x-derivative, ``dir = 3`` for a y-derivative.  Time derivatives are ignored at present. Derivatives are returned at all lattice locations. The boundary condition is set by the in.boundaries input. It can be made periodic, which is the default, or Neumann with zero derivative, or Dirichlet with zero field.
+    This takes a scalar or vector ``o``, and returns a first derivative with an axis direction ``dir`` using finite differences.  Set ``dir = 2`` for an x-derivative, ``dir = 3`` for a y-derivative.  Time derivatives are ignored at present. Derivatives are returned at all lattice locations. The boundary condition is set by the in.boundaries(j,dir) input, where ``j = 1`` indicates the lower, and ``j = 2`` the upper limit in each direction ``dir ``. It can be made periodic (``in.boundaries = 0``), which is the default, or Neumann with fixed derivative ``in.boundaries = -1``, or Dirichlet with specified field ``in.boundaries = 1``. The default  boundary values are zero, if ``values`` is omitted. If required, they are specified in the calling argument as values(i,j=1,2), where ``i`` is the component index, ``j`` is the boundary index. 
 
-.. function:: xd2 (o, [dir, ] r)
+.. function:: xd2 (o, [dir, values,] r)
 
 	This takes a scalar or vector ``o``, and returns the second  derivative in axis direction ``dir``.  Set ``dir = 2`` for an x-derivative, ``dir = 3`` for a y-derivative.  All other properties are exactly the same as :func:`xd1`.
-
-
-.. function:: function (data,in)
-
-    This is a cell array of data function handles. Use when simulation data is needed that is a function of the :func:`observe` local averages over ``ensemble(1)``. The default value simply generates all the averages that are in the simulated data. The input to the ``n``-th function is the cell array of averages, and the output is a data array for the ``n``-th graph. This function is used at simulation time, and  generates both  error-bars and sampling errors in the graphed results.
+	
 
 .. function:: grid (r)
 
@@ -558,11 +596,11 @@ Advanced input functions are user-definable functions which don’t usually need
 
     Generates a set of initial random fields ``v`` to initialize the fields simulated.
 
-.. function:: step (a,w,dt,r)
+.. function:: step (a,w,r)
 
     *Default:* :func:`xRK4`
 
-    Specifies the stochastic integration routine for the field ``a``, given a step in time ``dt`` and noise ``w``, together with the interaction-picture propagator :attr:`propagator` which is part of the lattice structure. It returns the new field ``a``. This function can be set to any of the predefined stochastic integration routines provided with xSPDE, described in the :ref:`chap-algorithms` chapter. User-written functions can also be used. The standard method, :func:`xRK4`, is a fourth-order Runge-Kutta. Another very useful alternative, :func:`xMP`, is a midpoint integrator.
+    Specifies the stochastic integration routine for the field ``a``,  noise ``w``, together with the interaction-picture propagator :attr:`propagator` which is part of the lattice structure. It returns the new field ``a``. It uses the current step in time ``r.dtr`` and current time ``r.t``. This function can be set to any of the predefined stochastic integration routines provided with xSPDE, described in the :ref:`chap-algorithms` chapter. User-written functions can also be used. The standard method, :func:`xRK4`, is a fourth-order Runge-Kutta. Another very useful alternative, :func:`xMP`, is a midpoint integrator.
 
 .. function:: prop (a,r)
 
@@ -601,7 +639,7 @@ Together with default values, they are:
 
 .. attribute:: gversion
 
-    *Default:* ``'xGRAPH2.5'``
+    *Default:* ``'xGRAPH3.0'``
 
     This sets the current version number of the graphics program. There is typically no need to input this.
 
@@ -629,6 +667,19 @@ Together with default values, they are:
     ::
 
         in.olabels{n} = 'string'
+        
+        .. attribute:: parametric
+
+    *Default:* ``[0,0]``
+
+    **Cell array** that defines parametric plots, if required, for each graph number. The first number is the graph number of the observable plotted on the horizontal axis for the parametric plot. The second number is the axis number where the parametric value is substituted, which can be time (axis 1) or x-coordinate (axis 2).
+
+    ::
+
+        in.parametric{n} = [p1,p2] >= 0
+
+    If both are zero, the plot against an independent space-time coordinate is calculated as usual. If nonzero, a parametric plot is made, for two-dimensional plots only. In both cases the vertical axis is used to plot the graph variable. The horizontal axis is used for either the independent variable or the parametric variable. In this version, only vertical error-bars are available. Can be usefully combined with in.scatters{n} to plot individual trajectories, but the number of scatters should be the same in each of the two graphs that are parametrically plotted against each other.
+
 
 .. attribute:: axes
 
@@ -754,22 +805,25 @@ Together with default values, they are:
 
     *Default:* ``{{'t', 'x', 'y', 'z'}}`` or ``{{'\omega', 'k_x', 'k_y', 'k_z'}}``
 
-    Graph-dependent labels for the independent variable labels, nested cell array with first dimension  :attr:`graphs`, second dimension :attr:`dimension`. 
+    Graph-dependent labels for the independent variable labels, nested cell array with first dimension  :attr:`graphs`, second dimension :attr:`dimension`. This is useful if the axis labels
+change from graph to graph, for example, if the coordinates have a functional transform.
+
 
     ::
 
         in.glabels{n} = {in.xlabels(1), ..., in.xlabels(in.dimension)}
         
         
-         .. attribute:: lines
+.. attribute:: lines
 
     *Default:* `` {{'-k','--k',':k','-.k','-ok','--ok',':ok','-.ok','-+k','--+k'}}``
 
-    Line types for each line in every two-dimensional graph plotted.
+    Line types for each line in every two-dimensional graph plotted. If a given line on a two-dimensional line is to be removed completely, set the relevant line-style to zero. For example, to remove the first line from graph 3, set in.lines{3} ={0}. This is useful when generating and changing graphics output from a saved data file.
 
     ::
 
         in.lines{n} = {linetype{1}, ..., linetype{nl}}
+        
       
 
 
@@ -816,9 +870,9 @@ A parameter structure contains information about the space-time grid and is pass
 
     Coordinate grids of :math:`x`, :math:`y`, :math:`z`.
 
-.. attribute:: x{n}
+.. attribute:: r{n}
 
-    Higher dimensions are labeled numerically as :math:`x_1`,..  :math:`x_6`, and so on. This numerical axis convention can be set even for lower dimensions if ``in.numberaxis`` is set to 1.
+    Higher dimensions are labeled numerically as :math:`r_1`,..  :math:`r_6`, and so on. This numerical axis convention can be set even for lower dimensions if ``in.numberaxis`` is set to 1.
 
 .. attribute:: kx
 

@@ -24,7 +24,7 @@ Try increasing the time resolution and adding a heading to the random walk examp
 
 This requires specifying the number of points using :attr:`points`. To name the simulation, use :attr:`name`, which is stored with your simulation data. The default option is to add this heading to each graph. If no header is wanted, type ``in.headers = 0``.
 
-To run the xSPDE program after adding these inputs, just press the *Run* icon on the Matlab editor bar. This will run the xSPDE program, with default parameters where they are not specified in the inputs. You will see the following figure:
+To run the xSPDE program after adding these inputs, click the *Run* icon on the Matlab editor bar. This will run the xSPDE program, with default parameters where they are not specified in the inputs. You will see the following figure:
 
 .. figure:: Figures/Wiener_2.*
 
@@ -76,14 +76,9 @@ Here ``~`` indicates an unused input to a function, while ``i`` is the Matlab co
 
     Simple harmonic oscillator amplitude
 
-The plotted error-bars are suppressed, as they are too small to see, nor is there any header, since none was specified. The :func:`xsim` program reports the following error summary, using the default number of points (51):
+The plotted error-bars are suppressed, as they are too small to see, nor is there any header, since none was specified. The :func:`xsim` program reports an error summary, using the default number of points (51), for the sampling error and the step error.
 
-::
-
-    - Max sampling error = 1.193890e-01
-    - Max step error = 1.270917e-02
-
-This is an approximate upper bound on the overall integration error of the specified observable. It is calculated from comparing two solutions. In this case, the default estimates are obtained by comparing a coarse and fine step calculation at half the specified step-size. This is used to extrapolate to zero step-size. The difference between the fine result and the extrapolated result gives the error estimate.
+This is an approximate upper bound on the overall integration error of the specified observable. It is calculated from comparing two solutions. In this case, the default estimates are obtained by comparing a coarse and fine step calculation at half the specified step-size. The difference between the fine result and the coarse result gives the step error estimate, which is usually very conservative. Sampling errors are estimated from statistics of stochastic results only when the higher level ensembles are used.
 
 Comparisons with exact results
 ------------------------------
@@ -194,12 +189,6 @@ We see evidence here the sampling errors often exceed the step-size errors, unle
 Kubo graphs
 -----------
 
-The Graphics program reports the following errors when making the comparisons:
-
-::
-
-    -  Max difference in 1 = 1.294696e-02
-
 With this choice of algorithm and step-size, the results of a simulation run are plotted below.
 
 .. figure:: Kubo/Kubo1.*
@@ -258,12 +247,6 @@ The important parameters and functions in this case are:
         e = xspde(in);
     end
 
-The xspde program reports the following maximum errors:
-
-::
-
-    -  Max step error = 6.270515e-04
-
 The output reflects the known analytic result.
 
 Soliton graphs and errors
@@ -279,13 +262,8 @@ Graphs of results are given below.
 
    Soliton amplitude errors at center
 
-The xgraph program reports that comparison errors are slightly less than the step error:
-
-::
-
-    -  Max difference in 1 = 7.875209e-03
-
-This is not always the case, because the error checking does not check errors due to the lattice sizes. In general this needs to be carried out manually.
+The xgraph program reports that comparison errors are slightly less than the step error,
+but this is not always the case, because the error checking does not check errors due to the lattice sizes. In general this needs to be carried out manually.
 
 .. rubric:: Exercise
 
@@ -340,17 +318,9 @@ A  possible user set of parameters to simulate this is:
         e = e+xgraph(in.file);
     end
 
-Here the program writes an HDF5 data file using :func:`xsim`, and then reads it in with the stored file-name, using :func:`xgraph`. Note that :func:`xsim` may have to change the file-name to avoid overwriting any old data. In this case, it returns the new file-name is uses. The program reports the following maximum step-size errors, which in this case are negligible, as they are purely due to the interaction picture transformations:
+Here the program writes an HDF5 data file using :func:`xsim`, and then reads it in with the stored file-name, using :func:`xgraph`. Note that :func:`xsim` may have to change the file-name to avoid overwriting any old data. In this case, it returns the new file-name is uses. The program reports the following maximum step-size errors, which in this case are negligible, as they are around :math:`\sim10^{-15}`, and are purely due to the interaction picture transformations. These errors do not depend on step-size, apart from rounding.
 
-::
-
-    -  Max step error = 4.107825e-15
-
-However, the finite spatial lattice size introduces errors in the on axis intensity, in coordinate space. This shows up in the comparisons:
-
-::
-
-    -  Max difference in 1 = 5.590272e-07
+However, the finite spatial lattice size introduces finite errors in the on axis intensity, in coordinate space. This shows up in the comparison errors.
 
 Gaussian graphs
 ---------------
@@ -452,9 +422,9 @@ Planar inputs
         in.compare{1} = @(t,in) [1+t]*in.nspace;
         in.compare{2} = @(t,in) [1+t]*in.nspace;
         in.compare{3} = @(t,in) 0;
-        in.images = [4,2,0];
-        in.transverse = [2,2,0];
-        in.pdimension = [4,1,1];
+        in.images = {4,2,0};
+        in.transverse = {2,2,0};
+        in.pdimension = {4,1,1};
         e = xspde(in);
     end
     function a0 = Initial(v,r)
@@ -643,17 +613,7 @@ The important parameters and functions in this case are:
         e = xspde(in);
     end
 
-The simulation program reports the following maximum errors:
-
-::
-
-    -  Max step error = 5.773160e-15
-
-This is slightly misleading, since while the interaction picture is essentially exact, it is solving a finite lattice problem exactly. The transverse lattice discretization does introduce errors of course, and these are seen in the comparisons with the exact results:
-
-::
-
-    -  Maximum comparison differences = 7.581817e-03
+The simulation program reports step errors of order of the intrinsic rounding error, which is slightly misleading, since while the interaction picture is essentially exact, it is solving a finite lattice problem exactly. This transverse lattice discretization does introduce transverse discretization errors in addition, and these are seen from the comparisons with the exact results. The lesson to be learnt here is that one must check the transverse discretization errors in addition, by changing the transverse lattice.
 
 Graphs of results are given below.
 
@@ -722,15 +682,7 @@ Results are graphed below. The calculated spectrum is indistinguishable from the
 
    Equilibrium spectral intensity
 
-The xsim program reports the following error summary:
-
-::
-
-    -  Max step error = 5.856892e-02
-    -  Max sampling error = 4.234763e-01
-    -  Maximum comparison differences = 6.194415e-01
-
-Here, the comparison differences indicate that the maximum error reported is actually about 1.5 standard deviations of the maximum sampling error. Given the large number of data points, this is a reasonable result.
+The xsim program will report in the error summary that the comparison differences indicate that the maximum error reported is typically about 1.5 standard deviations of the maximum sampling error. Given the number of data points, this is a reasonable result: statistical errors can exceed one standard deviation.
 
 .. rubric:: Exercise
 

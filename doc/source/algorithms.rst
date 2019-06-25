@@ -6,7 +6,7 @@ Algorithms
 
 Stochastic, partial and ordinary differential equations are central to numerical mathematics. Certainly, ordinary differential equations have been known in some form ever since calculus was invented. There are a truly extraordinary number of algorithms used to solve these equations. One program cannot possibly provide all of them.
 
-xSPDE currently provides four built-in choices of algorithm. All built-in methods are defined in an interaction picture. All can be used with any space dimension, including ``in.dimension = 1``, which gives an ordinary stochastic equation. All can be used either with stochastic or with non-stochastic equations. When applied to stochastic equations, the Euler method requires an Ito form of stochastic equation, while the others should be used with the Stratonovich form of these equations. Each uses the interaction picture to take care of exactly soluble linear terms.
+xSPDE currently provides five built-in choices of algorithm. All built-in methods are defined in an interaction picture. All can be used with any space dimension, including ``in.dimension = 1``, which gives an ordinary stochastic equation. All can be used either with stochastic or with non-stochastic equations. When applied to stochastic equations, the Euler method requires an Ito form of stochastic equation, while the others should be used with the Stratonovich form of these equations. Each uses the interaction picture to take care of exactly soluble linear terms.
 
 If you have a favorite integration method that isn’t here, don’t panic. User-defined algorithms can be added freely. You can easily add your own. The existing methods are listed below, and the corresponding ``.m``-files can be used as a model. Call the routine, for example ``"myalgorithm.m"``, set ``in.step = @myalgorithm``, then adjust the value of :attr:`ipsteps` if the interaction-picture transform length must be changed to a new value.
 
@@ -52,11 +52,15 @@ Typically, but not necessarily, this is evaluated in Fourier space, where it sho
 xSPDE algorithms
 ================
 
-The four built-in algorithms provided are:
+The five built-in algorithms provided are:
 
 .. function:: xEuler
 
     The first-order Euler method, a simple first-order explicit approach.
+    
+.. function:: xImplicit
+
+    The first-order implicit or backward Euler method, a first-order implicit approach.
 
 .. function:: xRK2
 
@@ -90,6 +94,19 @@ This is because it is is only convergent to first order, and therefore tends to 
 
     \begin{aligned}
     \Delta\mathbf{a}_{n} & = \Delta t\mathcal{D}\left[\mathbf{a}_{n}, t_{n}\right] \\
+    \mathbf{a}_{n+1} & = \mathcal{P}\left(\Delta t\right)\cdot\left[\mathbf{a}_{n}+\Delta\mathbf{a}_{n}\right]\end{aligned}
+    
+Implicit
+========
+
+This is an implicit Ito-Euler method using an interaction picture [Drummond1991]_. It is more robust, though slower, than the explicit form. If it is used, very small step-sizes will generally be necessary to reduce errors to a usable level.
+
+This is because it is is only convergent to first order, and therefore tends to have large errors. It is designed for use with an implicit Ito form of stochastic equation. It requires one IP transform per step (``in.ipsteps = 1``). Starting from time :math:`t=t_{n}`, to get the next time point at :math:`t=t_{n+1}=t_{n}+\Delta t`,  one calculates, using iteration to get the implicit result of the next time-point:
+
+.. math::
+
+    \begin{aligned}
+    \Delta\mathbf{a}_{n} & = \Delta t\mathcal{D}\left[\mathbf{a}_{n+1}, t_{n}\right] \\
     \mathbf{a}_{n+1} & = \mathcal{P}\left(\Delta t\right)\cdot\left[\mathbf{a}_{n}+\Delta\mathbf{a}_{n}\right]\end{aligned}
 
 

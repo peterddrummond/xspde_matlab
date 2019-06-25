@@ -3,7 +3,7 @@ xGRAPH
 *******
 
 
-The graphics program :func:`xgraph`  inputs data from :func:`xsim` simulations, then  graphs them in a variety of multidimensional graphics formats. This is the xSPDE graphics function, which uses inputs  ``data`` and, optionally, ``input``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions. 
+The graphics program :func:`xgraph`  inputs data from :func:`xsim` simulations, then  graphs them in a variety of multidimensional graphics formats. This is the xSPDE graphics function, which uses inputs  ``data`` and, optionally, ``input``. It plots graphs, and returns the maximum difference ``diff`` from comparisons with user-specified comparison functions.
     If required, the first argument can be a data file-name. The specified file is then read both for ``input`` and ``data``. The stored input parameters in the file can be replaced by any of the the new ``input`` parameters that are specified.
 
 
@@ -24,7 +24,7 @@ To explain xGRAPH in full detail,
 
 -  The diff output is available when there are comparisons made on the graphed data.
 
-The input data sequence ``cdata`` is a cell array with a number of individual simulation objects ``dat1,...``. Each includes all the parameters that specify the simulation, together with the generated data. If there is only one simulation, just one individual ``dat`` is needed. 
+The input data sequence ``cdata`` is a cell array with a number of individual simulation objects ``dat1,...``. Each includes all the parameters that specify the simulation, together with the generated data. If there is only one simulation, just one individual ``dat`` is needed.
 
 Customization options
 ---------------------
@@ -77,12 +77,12 @@ For graphics input, cell data from each simulation in a sequence is packed into 
 
 #.  graph: observable or function making up a single graph
 
-    **Array**, has dimension: ``(components, checks, in.points(1), ... in.points(in.dimension))``.
+    **Array**, has dimension: ``(components, in.points(1), ... in.points(in.dimension), checks)``.
 
-The cell index enumerates first the sequence number and then the graph number. The second array index (``1``, ``2``, ``3``) give the error-checking status of the data. If there is no error-bar checking, the second data array is zero. If there is no sampling error checking, the third data array is zero.
+The cell index enumerates first the sequence number and then the graph number. The last array index (``1``, ``2``, ``3``) give the error-checking status of the data. If there is no error-bar checking, the second data array is zero. If there is no sampling error checking, the third data array is zero.
 
 
-In summary, observables are calculated and averaged over the ``ensembles(1)`` parallel trajectories in the :func:`xpath` function. The results are added to the earlier results in the array ``data``, to create graphs for each observable. 
+In summary, observables are calculated and averaged over the ``ensembles(1)`` parallel trajectories in the :func:`xpath` function. The results are added to the earlier results in the array ``data``, to create graphs for each observable.
 There are :attr:`graphs` real observables, which are determined by the number of functions defined in the :func:`observe` cell array, unless there are additional functional transformations. The number of :attr:`graphs` may be smaller or larger than the number of vector fields. The stored cdata includes all the necessary averages over the ensembles in a complete sequence.
 
 
@@ -102,7 +102,11 @@ Comparison results are calculated if available from the user-specified :attr:`co
 The code is intended to cascade down from higher to lower dimension, generating different types of user-defined graphs. Each type of graph is generated once for each specified graphics function. The graphics axes that are used for plotting, and the points plotted, are defined using the optional axes input parameters, where :attr:`axes` indicates the axes preferences for n-th graph or set of generated graphical data.
 
 If there are no :attr:`axes` inputs, or the inputs are zero - for example,
-``in.axes{1} = {0,0,0}``, then only the lowest dimensions are plotted, up to 3. If the axes inputs project out a single point in a given dimension, - for example, ``axes{1}={0,31,-1,0}``, these axes are suppressed in the plots. This reduces the effective dimension of the data - in this case to two dimensions. 
+``in.axes{1} = {0,0,0}``, then only the lowest dimensions are plotted, up to 3. If the axes inputs project out a single point in a given dimension, - for example, ``axes{1}={0,31,-1,0}``, these axes are suppressed in the plots. This reduces the effective dimension of the data - in this case to two dimensions.
+
+Axis labels can be of three types. There are automatic labels generated of form ``t,x,y,z`` for up to four space-time dimensions, then labeled axes with indices with more than four dimensions. Thirdly, user defined axis labels are also possible, as well as user defined labels for graphs and for individual quantities plotted.
+
+Inside Matlab, all graphs can be re-edited.
 
 Examples:
 
@@ -110,7 +114,7 @@ Examples:
   - For function 1, plot all the time points; higher dimensions get defaults.
 
 • ``axes{2}={-1,0}``
-  - For function 2, plot the maximum time (the default), and all x-points. The first or time axis is suppressed. 
+  - For function 2, plot the maximum time (the default), and all x-points. The first or time axis is suppressed.
 
 • ``axes{3}={1:4:51,32,64}``
   - For function 3, plot every 4-th time point at x point 32, y point 64
@@ -139,11 +143,11 @@ Graphics user functions
 
 :attr:`gfunction`
 
-    This is used when a graph is needed that is a function of the data coming from the simulation package, since this data can be analysed at a later time. Error estimates are less accurate when this function is used, due to error-propagation effects that may occur after averaging, unless corrected for explicitly in the graphics function. 
+    This is used when a graph is needed that is a function of the data coming from the simulation package, since this data can be analysed at a later time. Error estimates are less accurate when this function is used, due to error-propagation effects that may occur after averaging, unless corrected for explicitly in the graphics function.
 
 :attr:`xfunctions`
 
-    This is used when a graph is needed whose axes are a function of the original axes. 
+    This is used when a graph is needed whose axes are a function of the original axes.
 
 :attr:`compare`
 
@@ -179,4 +183,3 @@ For each observable, the projection sequence is as follows:
 -  A central :math:`x` point ``nx = 1 + floor(in.points(2)/2)`` is picked. This gives a one dimensional time lattice, which is treated the same as if :attr:`dimension` is ``1``.
 
 -  Plots of observable vs time are obtained, including sampling errors and error bars. If comparison graphs are specified using :func:`compare` functions, they are plotted also, using a dotted line. A difference graph is also plotted when there is a comparison.
-

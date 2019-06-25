@@ -9,7 +9,6 @@ All xSPDE simulations require parameters stored in an input structure used by th
 The simplest way to use xSPDE is via the interactive Matlab command window, illustrated in this chapter. In this mode of operation, any required parameters are entered into the input structure ``in``, and then the command ``xspde(in)`` runs and graphs the simulation.
 Note that one must enter ``clear`` first to erase previous data in the Matlab workspace, unless the previous data is being recycled. 
 
-
 Stochastic equations
 ====================
 
@@ -25,7 +24,11 @@ Here :math:`\boldsymbol{A}` is a vector function, :math:`\underline{\mathbf{B}}`
 
     \left\langle \zeta_{i}\left(t\right)\zeta_{j}\left(t\right)\right\rangle = \delta\left(t-t^\prime\right)\delta_{ij}.
 
-To simulate a stochastic equation like this interactively, first make sure Matlab path is pointing to the xSPDE folder and type ``clear`` to clear old data.
+xSPDE simulations
+=================
+
+
+To simulate a stochastic equation like this interactively with xSPDE, first make sure Matlab path is pointing to the xSPDE folder and type ``clear`` to clear old data.
 
 Next, enter the xspde parameters (see :ref:`chap-api`) into the command window, as follows:
 
@@ -64,7 +67,7 @@ with a complete xSPDE script in Matlab below, and output in :numref:`fig-simples
 
     in.da = @(a,w,r) w; xspde(in);
 
-- Here :func:`da` defines the derivative function, with ``w`` being the noise.
+- Here :func:`da` defines the derivative function. The notation @(a,w,r) defines an inline function. In this case the derivative equals the noise ``w``. Other parameters have their default values.
 - The last argument of xspde user functions is ``r``, containing the parameters required for the simulation.
 
 .. _fig-simplest-case-wiener:
@@ -179,9 +182,10 @@ More generally, xSPDE solves [Werner1997]_ a stochastic partial differential equ
 
 .. math::
 
-    \frac{\partial\boldsymbol{a}}{\partial t}=\boldsymbol{A}\left[\boldsymbol{a}\right]+\underline{\mathbf{B}}\left[\boldsymbol{a}\right]\cdot\boldsymbol{\zeta}(t)+\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]\cdot\boldsymbol{a}.
+    \frac{\partial\boldsymbol{a}}{\partial t}=\boldsymbol{A}\left[\boldsymbol{a}\right]+\underline{\mathbf{B}}\left[\boldsymbol{a}\right]\cdot\boldsymbol{\zeta}(t)+\underline{\mathbf{L}}\left[\boldsymbol{\nabla},
+    \boldsymbol{a}\right]
 
-Here :math:`\boldsymbol{a}` is a real or complex vector or vector field. The initial conditions are arbitrary functions. :math:`\boldsymbol{A}\left[\boldsymbol{a}\right]` and :math:`\underline{\mathbf{B}}\left[\boldsymbol{a}\right]` are vector and matrix functions of :math:`\boldsymbol{a}`, :math:`\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]` is a matrix of linear terms and derivatives, diagonal in the vector indices, and :math:`\mathbf{\boldsymbol{\zeta}}=\left[\boldsymbol{\zeta}^{x},\boldsymbol{\zeta}^{k}\right]` are real delta-correlated noise fields such that:
+Here :math:`\boldsymbol{a}` is a real or complex vector or vector field. The initial conditions are arbitrary functions. :math:`\boldsymbol{A}\left[\boldsymbol{a}\right]` and :math:`\underline{\mathbf{B}}\left[\boldsymbol{a}\right]` are vector and matrix functions of :math:`\boldsymbol{a}`, :math:`\underline{\mathbf{L}}\left[\boldsymbol{\nabla},\boldsymbol{a}\right]` is a function of the fields and their derivatives, and :math:`\mathbf{\boldsymbol{\zeta}}=\left[\boldsymbol{\zeta}^{x},\boldsymbol{\zeta}^{k}\right]` are real delta-correlated noise fields such that:
 
 .. math::
 
@@ -193,7 +197,7 @@ Note that the x and k noise term for each value of the index are generated from 
 
 Transverse boundary conditions are assumed periodic as the default option, which allows the use of efficient spectral Fourier transform propagation codes. Other types of boundary conditions available are Neumann boundaries with zero normal derivatives, and Dirichlet boundaries with zero fields at the boundary. These require the use of finite difference methods. The boundary type can be individually specified in each axis direction. The term :math:`\underline{\mathbf{L}}\left[\boldsymbol{\nabla}\right]` may be omitted, as space derivatives can also be treated directly in the derivative function, and this is necessary with Neumann or Dirichlet boundaries. The momentum filter :math:`f(\boldsymbol{k})` is an arbitrary user-specified function, allowing for spatially correlated noise.
 
-To treat stochastic partial differential equations or SPDEs, the equations are divided into the first two terms, which are essentially an ordinary stochastic equation, and the last term which gives a linear partial differential equation:
+To treat stochastic partial differential equations or SPDEs, in the most efficient  way, the equations are divided into the first two terms, which are essentially an ordinary stochastic equation, and the last term which is assumed linear, and therefore gives a linear partial differential equation:
 
 .. math::
 
@@ -219,7 +223,7 @@ The total derivative in the interaction picture is the xSPDE derivative function
 
 where usually :math:`\boldsymbol{A}`, :math:`\underline{\mathbf{B}}` are evaluated at the midpoint which is the origin in the interaction picture.  For convenience, the final output is calculated in the original picture, with at least two interaction picture (IP) transformations per time-step.
 
-Note that there are many types of partial differential equation that can be treated with xSPDE, even if the interaction picture method doesn't apply. This occurs when there are nonlinear functions with arbitrary derivatives, or derivatives that are non-diagonal in the vector indices. For these cases, the space derivatives are evaluated inside the derivative term :func:`da`:. If there are higher order time derivatives as well, these can be re-expressed as a set of first-order time derivatives, provided the problem is an initial-value problem.
+Note that there are many other types of partial differential equation that can be treated with xSPDE, even if the interaction picture method doesn't apply. This occurs when there are nonlinear functions with arbitrary derivatives, or derivatives that are non-diagonal in the vector indices. For these cases, the space derivatives are evaluated inside the derivative term :func:`da`:. If there are higher order time derivatives as well, these can be re-expressed as a set of first-order time derivatives, provided the problem is an initial-value problem.
 
 
 Symmetry breaking
