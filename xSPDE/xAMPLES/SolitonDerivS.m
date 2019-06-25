@@ -9,20 +9,17 @@ function [e] = SolitonDerivS()
 %   (6) Using two sequential integrations
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-in.name =          'NLS soliton using interaction picture';
+in.name =         'NLS soliton using spectral derivatives';
 in.dimension =     2;                                     
 in.points =        [101,51];                                    
 in.steps =         10;
 in.initial =       @(w,r)   sech(r.x);                 %%Initialisation
-in.linear  =       @(r)     0.5*1i*(r.Dx.^2-1); 
-in.da =            @(a,~,r) 1i*a.*(conj(a).*a);
+in.da =           @(a,w,r) 1i*a.*(conj(a).*a)+0.5*1i*(xd(a,r.Dx.^2,r)-a);
 in.observe{1} =    @(a,r)   a.*conj(a);
 in.observe{2} =    @(a,r)   xint (abs(xd(a,r.Dx,r)).^2,r);
 in.olabels    =    {'|a|^2','\int |da/dx|^2 dx'};
 in1    =           in;
-%in1.step     =     @xMP;
-in1.linear  =      @(r)     zeros(r.d.a); 
-in1.da =           @(a,w,r) 1i*a.*(conj(a).*a)+0.5*1i*(xd(a,r.Dx.^2,r)-a);
-in1.name =         'NLS soliton using spectral derivatives';
+in1.da =           @(a,w,r) 1i*a.*(conj(a).*a)+0.5*1i*(xd2(a,r)-a);
+in1.name =         'NLS soliton using periodic finite differences';
 e =xspde({in,in1});                                     %%main program
 end                                                     %%end of function

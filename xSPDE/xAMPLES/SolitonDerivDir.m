@@ -15,7 +15,7 @@ in.observe{1} =    @(a,r)   a.*conj(a);
 in.observe{2} =    @(a,r)   xint (abs(xd(a,r.Dx,r)).^2,r);
 in.olabels    =    {'|a|^2','\int |da/dx|^2 dx'};
 in.name =          'NLS soliton using finite differences + Dirichlet';
-in.boundaries  =  [0,1;0,1];
+in.boundaries{2}  =  [1,1];
 in.da        =    @(a,w,r) 1i*a.*(conj(a).*a)+0.5*1i*(xd2(a,2,r)-a)+w*r.N;
 e =xspde(in);                                           %%main program
 end                                                     %%end of function
