@@ -31,7 +31,7 @@ end                                              %% End if rawinput ~empty
 sequence = length(input);                        %%get sequence length
 for s = 1:sequence                               %%loop over sequence 
     in = input{s};                               %%get input structure
-    in.version =    xprefer(in,'version',0,'xSIM3.0');
+    in.version =    xprefer(in,'version',0,'xSIM3.1');
     in.name =       xprefer(in,'name',0,'');
     in.dimension =  xprefer(in,'dimension',1,1);
     nd      =       in.dimension;
@@ -174,12 +174,12 @@ function l = xlinear(r)                      %% Default linear filter
     l = zeros(r.d.a);                        %% Default is zero response
 end
 
-function kn = xnfilter(r)                    %% Default stochastic filters
-    kn = ones(r.noises(2),r.nlattice);       %% Default noise filter
+function kn = xnfilter(w,~)                  %% Default noise filters
+    kn = w;                                  %% Default noise filter
 end
 
-function kr = xrfilter(r)                    %% Default stochastic filters
-    kr = ones(r.randoms(2),r.nlattice);      %% Default input filter
+function kr = xrfilter(w,~)                  %% Default random filters
+    kr = w;                                  %% Default input filter 
 end
 
 function ab = xboundin(r)                    %% Initial boundary values

@@ -27,12 +27,12 @@ if n == 1
       display(r.x)
       display(r.kx);
     end
-    if (r.noises(2)+r.randoms(2)) > 0               %%if k-noise required
-      Kr =  r.rfilter(r);                       %%get k random filters
-      Kn =  r.nfilter(r);                       %%get k noise filters
-      r.infilt = reshape(Kr,[r.randoms(2),r.d.int]); %%reshape input filter
-      r.noisefilt = reshape(Kn,[r.noises(2),r.d.int]);%%reshape filter
-    end                                             %%end if k-noise 
+    %if (r.noises(2)+r.randoms(2)) > 0               %%if k-noise required
+     % Kr =  r.rfilter(r);                       %%get k random filters
+      %Kn =  r.nfilter(r);                       %%get k noise filters
+      %r.infilt = reshape(Kr,[r.randoms(2),r.d.int]); %%reshape input filter
+      %r.noisefilt = reshape(Kn,[r.noises(2),r.d.int]);%%reshape filter
+    %end                                             %%end if k-noise 
 else 
     for id = 2:d                            %%loop over dimension           
         r.k{id} = fftshift(r.k{id},1+d);

@@ -1,4 +1,8 @@
-Improved error-checking and boundary calculations in xSPDE2.5
+Version 3.0
 
-The main improvement to xSPDE2.5 is that all user functions are now checked to ensure that they return correct array dimensions.
+This is an improved and updated version of xspde version 2. The most significant change is a re-ordering of array indices. In version 3,  array indices for ensembles and error-bars are the last index. This is largely invisible to the user, unless additional software is written to read and write files. 
+
+Version 3.1
+
+This has an improved treatment of non-periodic boundary conditions, in stochastic differential equations, including Neuman, Dirichlet, Robin and nonlinear boundaries. 
 

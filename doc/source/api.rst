@@ -210,7 +210,7 @@ xSIM parameters
 
     *Default:* :attr:`fields` (1)
 
-    This gives the number of stochastic noises generated per lattice point, in coordinate and momentum space respectively. Set to zero (``in.noises = 0``) for no noises. This is the number of *rows* in the noise-vector. Noises can be delta-correlated or correlated in space. The second input is the dimension of noises in k-space. It can be left out if zero. This allows use of finite correlation lengths when needed, by including a frequency filter function that is used to multiply the noise in Fourier-space. The Fourier-space noise variance is the square of the filter function. Note that the first noise index, noises(1), indicates how many independent noise fields are generated, while noises(2) indicates how many of these are are fourier-transformed, filtered and then inverse fourier transformed to give correlations. These appear as extra noises, so the total is noises(1)+noises(2). The filtered noises have a finite correlation length. They are also correlated with the first noises(2) noises they are generated from. 
+    This gives the number of stochastic noises generated per lattice point, in coordinate and momentum space respectively. Set to zero (``in.noises = 0``) for no noises. This is the number of *rows* in the noise-vector. Noises can be delta-correlated or correlated in space. The second input is the dimension of noises in k-space. It can be left out if zero. This allows use of finite correlation lengths when needed, by including a frequency filter function that is used to modify the noise in Fourier-space. Note that the first noise index, noises(1), indicates how many independent noise fields are generated in x-space, while noises(2) indicates how many of these are are fourier-transformed, filtered and then inverse fourier transformed to give correlations. These appear as extra noises, so the total is noises(1)+noises(2). The filtered noises have a finite correlation length. 
 
     ::
 
@@ -221,7 +221,7 @@ xSIM parameters
 
     *Default:* :attr:`noises`
 
-    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be delta-correlated or correlated in space. The second input is the dimension of random fields in momentum space. It can be left out if zero. The Fourier-space random variance is the square of the filter function. Note that the first noise index, in.randoms(1), indicates how many independent random fields are generated, while in.randoms(2) indicates how many of these are are fourier-transformed, filtered and then inverse fourier transformed. These appear as additional random fields, so the total is in.randoms(1)+in.randoms(2). The filtered noises have a finite correlation length. They are correlated with the first in.randoms(2) random fields they are generated from, just as with the noise terms. 
+    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be delta-correlated or correlated in space. The second input is the dimension of random fields in momentum space. It can be left out if zero. The Fourier-space random variance is defined by the filter function. Note that the first noise index, in.randoms(1), indicates how many independent random fields are generated, while in.randoms(2) indicates how many extra noises are fourier-transformed, filtered and then inverse fourier transformed. These appear as additional random fields, so the total is in.randoms(1)+in.randoms(2). The filtered noises have a finite correlation length.
 
     ::
 
@@ -529,17 +529,17 @@ A stochastic equation solver requires the definition of an initial distribution 
 
     This is a user-definable cell array of data function handles. Use when simulation data is needed that is a function of the :func:`observe` local averages over ``ensemble(1)``, typically involving combinations of several observed averages. The default value sequentially generates all the averages that are in the simulated data. The input to the ``n``-th function is the whole cell array of averages, and the output is a data array for the ``n``-th graph. This function is used at simulation time. It generates  error-bars and sampling errors in the graphed results.
 
-.. function::  rfilter (r)
+.. function::  rfilter (w,r)
 
     *Default:* :func:`xrfilter`
 
-    Returns the momentum-space filters for the input random terms. Each component has an array dimension the same as the input random fields in momentum space, that is, the return dimension is ``[r.randoms(2), r.nlattice]``.
+    Returns the momentum-space filter function for the input random terms. Each input component has an array dimension the same as the input random fields in momentum space, that is, the input dimension of w and default return dimension is ``[r.randoms(2), r.nlattice]``. The default filter function is a unit function giving randoms delta-correlated in both x-space and k-space, similar to randoms(1).
 
-..function:: nfilter (r)
+..function:: nfilter (w,r)
 
     *Default:* :func:`xnfilter`
 
-    Returns the momentum-space filters for the propagation noise terms. Each component has an array dimension the same as the random noises in momentum space, that is, the return dimension is ``[r.noises(2), r.nlattice]``.
+    Returns the momentum-space filters for the propagation noise terms. Each component has an array dimension the same as the random noises in momentum space, that is, the input dimension and default return dimension is ``[r.noises(2), r.nlattice]``. The default filter function is a unit function giving noise delta-correlated in both x-space and k-space, similar to noises(1).
 
 
 Advanced input functions

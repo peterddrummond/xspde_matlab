@@ -92,7 +92,7 @@ xSPDE: The Stochastic Toolbox
 \begin_inset Newline newline
 \end_inset
 
-User's Guide v3.0
+User's Guide v3.1
 \end_layout
 
 \begin_layout Author
@@ -5183,6 +5183,329 @@ Add a decay rate of
 Add growth and nonlinear saturation terms
 \end_layout
 
+\begin_layout Section
+GPE
+\end_layout
+
+\begin_layout Standard
+The next example is a Gross-Pitaevskii equation in two dimensions, 
+\begin_inset Formula 
+\[
+\frac{da}{dt}=\frac{i}{2}\nabla^{2}a-ia(V(r)+\left|a\right|^{2})+\epsilon\eta
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\eta$
+\end_inset
+
+ is a correlated complex noise vector field: 
+\begin_inset Formula 
+\[
+\eta(t,\mathbf{x})=w_{1}(t,\mathbf{x})+iw_{2}(t,\mathbf{x}),
+\]
+
+\end_inset
+
+with the initial condition that the initial random field and the noise are
+ both filtered in momentum space 
+\begin_inset Formula 
+\[
+a(0,\mathbf{x})=a_{0}(\mathbf{x})+\epsilon\zeta^{(in)}(\bm{x})
+\]
+
+\end_inset
+
+where: 
+\begin_inset Formula 
+\[
+\zeta^{(in)}(\bm{x})=v_{1}(\mathbf{x})+iv_{2}(\mathbf{x})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We add a Gaussian filter in momentum space for both the initial random field
+ and noise so that, if 
+\begin_inset Formula $\tilde{w}\left(\bm{k}\right)$
+\end_inset
+
+ is a delta-correlated noise in momentum space:
+\begin_inset Formula 
+\begin{align*}
+w\left(\bm{k}\right) & =\tilde{w}\left(\bm{k}\right)\exp\left(-\left|\bm{k}\right|^{2}\right)\\
+v\left(\bm{k}\right) & =\tilde{v}\left(\bm{k}\right)\exp\left(-\left|\bm{k}\right|^{2}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This allows use of finite correlation lengths when needed, by including
+ a frequency filter function that is used to multiply the noise in Fourier-space.
+ The Fourier-space noise variance is the square of the filter function.
+ 
+\end_layout
+
+\begin_layout Standard
+The first noise index, 
+\begin_inset Formula $in.noises(1)$
+\end_inset
+
+, indicates how many noise fields are generated that are delta-correlated
+ in 
+\begin_inset Formula $x$
+\end_inset
+
+, while 
+\begin_inset Formula $in.noises(2)$
+\end_inset
+
+ indicates how many of these are spatially correlated, via Fourier transform,
+ filter and inverse Fourier transform.
+ These appear to the user as additional noises, so the total is 
+\begin_inset Formula $in.noises(1)+in.noises(2)$
+\end_inset
+
+.
+ The filtered noises have a finite correlation length.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Exercises
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Solve the GPE equation
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Box Doublebox
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+function [e] = GPE() 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+% e = GPE() tests xSPDE for a vortex in two space dimensions
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+% Tests a three-dimensional noisy GPE in a harmonic well by
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+% (1) Modifying points and ranges in 3 dimensions
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+% (2) Using momentum filters on noises generated
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+% (3) Setting the noise and random transform filter in k-space
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+% (4) Changing the movie image type to give a contour plot
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+% (5) Using auxiliary functions defined inline
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+% (6) Graphing data from results saved in an HDF5 file
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+% xSPDE functions are licensed by Peter D.
+ Drummond, (2015) - see License
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+cd ~
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.name = 'GPE';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.dimension = 3; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.points = [101,64,64];
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.ranges = [1,20,20];
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.noises = [0,2];
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.rfilter = @(w,r) w.*[exp(- r.kx.^2-r.ky.^2);exp(- r.kx.^2-r.ky.^2)];
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.nfilter = @(v,r) v.*[exp(- r.kx.^2-r.ky.^2);exp(- r.kx.^2-r.ky.^2)];
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+b = @(xi) .1*(xi(1,:)+1i*xi(2,:));
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.initial = @(w,r) (r.x+1i*r.y)./(1+10*(r.x.^2 +r.y.^2))+b(w);
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+V = @(r) 0.01*(r.x.^2 +r.y.^2)-0.001*1i*(r.x.^2 +r.y.^2).^2;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.da = @(a,xi,r) -1i*a.*(V(r)+conj(a).*a)+b(xi);
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.linear = @(r) 0.5*1i*(r.Dx.^2+r.Dy.^2);
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.observe{1} = @(a,r) a.*conj(a);
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.images = {2}; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.imagetype = {2}; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.olabels = {'|a|^2'};
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+in.file = 'GPE.mat';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+%in.print =2;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+[e,in] = xsim(in); %%sim program
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+xgraph(in.file,in); %%graph program
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+end %%end of function
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage newpage
 \end_inset
@@ -7581,7 +7904,7 @@ version
 \begin_layout Plain Layout
 
 \emph on
-'xSIM3.0'
+'xSIM3.1'
 \emph default
  
 \end_layout
@@ -8220,8 +8543,7 @@ in.probability
 \uwave off
 \noun off
 \color none
-Binning ranges for probabilities
-: see text
+Binning ranges for probabilities: see text
 \end_layout
 
 \end_inset
@@ -8750,7 +9072,7 @@ Linear derivative function
 \emph on
  
 \emph default
-(r)
+(v,r)
 \end_layout
 
 \end_inset
@@ -8759,7 +9081,7 @@ Linear derivative function
 \begin_inset Text
 
 \begin_layout Plain Layout
-Random input filter in k-space
+Random filter function in k-space
 \end_layout
 
 \end_inset
@@ -8783,7 +9105,7 @@ Random input filter in k-space
 \begin_inset Text
 
 \begin_layout Plain Layout
-(r)
+(w,r)
 \end_layout
 
 \end_inset
@@ -11350,7 +11672,7 @@ gversion
 \begin_layout Plain Layout
 
 \emph on
-'xGRAPH3.0'
+'xGRAPH3.1'
 \emph default
  
 \end_layout
