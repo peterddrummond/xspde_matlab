@@ -10,9 +10,7 @@ function [e] = Soliton()
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
 in.name =       'NLS soliton';
-in.dimension =  2;                                      %%dimension: 1-4
-in.step =@xRK4;
-%in.axes{1}   =  {0,-1};
+in.dimension =  2; 
 in.initial =    @(w,r)         sech(r.x);               %%Initialisation 
 in.da =         @(a,~,r)       1i*a.*(conj(a).*a);      %%Derivative 
 in.linear =     @(r)           0.5*1i*(r.Dx.^2-1.0);    %%laplacian

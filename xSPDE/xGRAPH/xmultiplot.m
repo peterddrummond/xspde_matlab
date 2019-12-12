@@ -11,7 +11,7 @@ function err =  xmultiplot(n,datan,param,g)
     set (0, 'defaulttextfontsize', g.font{n})     
     head = g.headers{n};                       %%set graph name   
     [datan,param,nx,x,xlab,olab] =  xreduce(n,datan,param,g); %%reduce data
-    grd = length(nx)-2;                        %%adjust graph dimension
+    grd = length(nx)-2;                        %%graph dimension = grd
     tlabel = xlab{1};
     tcoord = x{1};
     if grd == 0
@@ -34,10 +34,8 @@ function err =  xmultiplot(n,datan,param,g)
     
     if grd  > 1                                %%Check plot dimension
         xtransverseplot(n,datan,param,nx,x,xlab,olab,g)%%Transverse plot 
-        figure;                                %%Start new graphics figure
         im = reshape(datan(1,:,:,1),nx(2),nx(3));%%Image vs t,x
-        surf(x{1},x{2},im');                   %%plot 3d mean vs t,x
-        xheader(head,xlab{1},xlab{2},olab);    %%3d plot title
+        xplot3(x{1},x{2},im',xlab{1},xlab{2},olab,head,g.imagetype{n});
         sz = size(datan);
         datan=reshape(datan(:,:,mx(3),:),[sz(1:2),sz(4)]);%%Reduce
         sz = size(param);

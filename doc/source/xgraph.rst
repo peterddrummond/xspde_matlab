@@ -136,7 +136,7 @@ Results depend on the value of :attr:`dimension`, or else the effective graphics
 
 - ``1``: for one dimensions, one image of observable *vs* :math:`t` is plotted, with data at each lattice point in time. Exact results, error bars and sampling error bounds are included if available.
 
-In addition to time-dependent graphs, the :func:`xgraph` function can generate :attr:`images` (3D) and :attr:`transverse` (2D) plots at specified points in time, up to a maximum given by the number of time points specified. The number of these can be individually specified for each graphics output. The images available are specified in :attr:`imagetype`: 3D perspective plots, grey-scale colour plots and contour plots.
+In addition to time-dependent graphs, the :func:`xgraph` function can generate :attr:`images` (3D) and :attr:`transverse` (2D) plots at specified points in time, up to a maximum given by the number of time points specified. The number of these can be individually specified for each graphics output. The images available are specified in :attr:`imagetype`: 3D perspective plots (1), grey-scale colour plots (2), contour plots (3) and pseudocolor plots (4).
 
 Graphics user functions
 =======================

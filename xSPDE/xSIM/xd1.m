@@ -49,20 +49,20 @@ d = zeros(shape);
 dx = r.dx(dir);
 dx2 = 2*dx;
 d(:,:,2:end-1,:) = (a(:,:,3:end,:)-a(:,:,1:end-2,:))/dx2;
-shape(3) =  2;                            %%for boundary values
-cellboundvalue=xboundfun(a,r);
-boundvalue = reshape(cellboundvalue{dir},shape);
+shape(3) =  2;                           %%for boundary values
+boundvalue=r.boundfun(a,dir,r);
+boundvalue = reshape(boundvalue,shape);
 for i=1:sz(1)
-  if r.boundaries{dir}(i,1)  == 1
+  if r.boundaries{dir}(i,1)  == 1        %%Dirichlet, prescribed field
     d(i,:,1,:) = d(i,:,2,:);
   elseif r.boundaries{dir}(i,1) == -1
-        d(i,:,1,:) = boundvalue(i,:,1,:);
+        d(i,:,1,:) = boundvalue(i,:,1,:);%%Neuman, prescribed derivative
   else
     d(i,:,1,:) = (a(i,:,2,:)-a(i,:,end,:))/dx2;%%periodic case
   end
-  if r.boundaries{dir}(i,2) == 1
-    d(i,:,end,:) = d(i,:,end-1,:);
-  elseif r.boundaries{dir}(i,2) == -1
+  if r.boundaries{dir}(i,2) == 1        %%Dirichlet, prescribed field
+    d(i,:,end,:) = d(i,:,end-1,:);   
+  elseif r.boundaries{dir}(i,2) == -1   %%Neuman, prescribed derivative
     d(i,:,end,:) = boundvalue(i,:,end,:);
   else
     d(i,:,end,:) = (a(i,:,1,:)-a(i,:,end-1,:))/dx2;%%periodic case

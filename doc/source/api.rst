@@ -154,7 +154,7 @@ xSIM parameters
 
 .. attribute:: version
 
-    *Default:* ``'xSIM3.1'``
+    *Default:* ``'xSIM3.2'``
 
     This sets the current version number of the  simulation program. There is typically no need to input this.
 
@@ -210,7 +210,7 @@ xSIM parameters
 
     *Default:* :attr:`fields` (1)
 
-    This gives the number of stochastic noises generated per lattice point, in coordinate and momentum space respectively. Set to zero (``in.noises = 0``) for no noises. This is the number of *rows* in the noise-vector. Noises can be delta-correlated or correlated in space. The second input is the dimension of noises in k-space. It can be left out if zero. This allows use of finite correlation lengths when needed, by including a frequency filter function that is used to modify the noise in Fourier-space. Note that the first noise index, noises(1), indicates how many independent noise fields are generated in x-space, while noises(2) indicates how many of these are are fourier-transformed, filtered and then inverse fourier transformed to give correlations. These appear as extra noises, so the total is noises(1)+noises(2). The filtered noises have a finite correlation length. 
+    This gives the number of stochastic noises generated per lattice point, in coordinate and momentum space respectively. Set to zero (``in.noises = 0``) for no noises. This is the number of *rows* in the noise-vector. Noises can  be delta-correlated in x-space or in k-space. The second input is the dimension of noises in k-space. It can be left out if zero. This allows use of finite correlation lengths when needed, by including a frequency filter function that is used to modify the noise in Fourier-space.  The Fourier-space random variance is defined by the filter function. This takes the noises in Fourier space, and returns a filtered version, which is inverse Fourier transformed before use. The first noise index, noises(1), indicates how many independent noise fields are generated, while noises(2) indicates how many noises are fourier-transformed, filtered and then inverse fourier transformed to give correlations. These appear as extra noises, so the total is noises(1)+noises(2). The filtered noises have a finite correlation length. 
 
     ::
 
@@ -221,7 +221,7 @@ xSIM parameters
 
     *Default:* :attr:`noises`
 
-    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be delta-correlated or correlated in space. The second input is the dimension of random fields in momentum space. It can be left out if zero. The Fourier-space random variance is defined by the filter function. Note that the first noise index, in.randoms(1), indicates how many independent random fields are generated, while in.randoms(2) indicates how many extra noises are fourier-transformed, filtered and then inverse fourier transformed. These appear as additional random fields, so the total is in.randoms(1)+in.randoms(2). The filtered noises have a finite correlation length.
+    This gives the number of random fields generated per lattice point for the initial noise, in coordinate and momentum space. Set to zero (``in.randoms = 0``) for no random fields. Random fields can be delta-correlated in x-space or in k-space. The second input is the dimension of random fields that are delta-correlated in momentum space. It can be left out if zero. The Fourier-space random variance is modified by the filter function. This takes the randoms in Fourier space, and returns a filtered version, which is inverse Fourier transformed before use. The first noise index, in.randoms(1), indicates how many independent random fields delta-correlated in space are generated, while in.randoms(2) indicates how many additional random fields are fourier-transformed, filtered and then inverse fourier transformed. These are additional random fields, so the total is in.randoms(1)+in.randoms(2). The filtered noises have a finite correlation length. 
 
     ::
 
@@ -276,12 +276,12 @@ xSIM parameters
     
 .. attribute:: boundaries
 
-    *Default:* ``[0, 0, …]``
+    *Default:* ``{[0, 0]}``
 
-    Cell array for type of spatial boundary conditions used, set for each dimension independently, and used in the stochastic partial differential equation solutions with finite value derivatives. The cell index is :math:`c = 1,2`, indicating the lower then upper boundary condition respectively. The vector index is the dimension, starting at the first transverse dimension, and the options are :math:`b = -1,0,1`. The default option, or ``0``, is periodic. If ``-1``,  Neumann boundaries are used, with normal derivatives set to zero.  If ``1``,  Dirichlet boundaries are used, with field values set to zero.  Note that in the current xSPDE code, setting non-periodic boundaries requires the use of finite difference type derivatives, without the option of an interaction picture derivative. Using Fourier derivatives will make both the boundary conditions periodic, and is not compatible with Neuman or Dirichlet boundaries.  Note: boundary values are fixed at zero in this version.
+    Cell array for type of spatial boundary conditions used, set for each dimension independently, and used in the stochastic partial differential equation solutions with finite value derivatives. The cell index is :math:`d = 2,3,..`, indicating the dimension. The boundary conditions are defined as a matrix. The first index is the field index i, and the second index the boundary j, with :math:`j=1` for the lower and :math:`j=2` for the upper boundary. The options are :math:`b = -1,0,1`. The default option, or ``0``, is periodic. If ``-1``,  Neumann boundaries are used, with normal derivatives set to zero.  If ``1``,  Dirichlet boundaries are used, with field values set to zero.  Note that in the current xSPDE code, setting non-periodic boundaries requires the use of finite difference type derivatives, without the option of an interaction picture derivative. Using Fourier derivatives will make both the boundary conditions periodic, and is not compatible with Neuman or Dirichlet boundaries.  Note: boundary values are set by  boundfun(a,d,r).
     ::
 
-        in.boundaries{c} = [b1, b2,..] = -1,0,1
+        in.boundaries{d} = [b1,b2;..] = -1,0,1
 
     Indices for setting the boundary conditions are numbered according to the space dimension.
     
@@ -323,7 +323,7 @@ xSIM parameters
 
         in.probability{n} = o1:o2:o3;
 
-    If zero, the mean of the observable is calculated as usual. If nonzero, the probability of the observable is calculated and plotted according to the specified vector of axis points. This sets an extra dimension in the data, with :math:`o1`, :math:`o2`, :math:`o3`, being the start, interval and end of the bins used to accumulate probabilities.
+    If zero, the mean of the observable is calculated as usual. If nonzero, the probability of the observable is calculated and plotted according to the specified vector of axis points. This sets an extra dimension in the data, with :math:`o1`, :math:`o2`, :math:`o3`, being the start, interval and end of the bins used to accumulate probabilities. Bins are centered at o1, o1+o2,o1+2*o2,..o3,each of the same width o2, and the quantity plotted is the average probability density. An extra space dimension is added to store the probability data.
 
 
 .. attribute:: olabels
@@ -533,13 +533,13 @@ A stochastic equation solver requires the definition of an initial distribution 
 
     *Default:* :func:`xrfilter`
 
-    Returns the momentum-space filter function for the input random terms. Each input component has an array dimension the same as the input random fields in momentum space, that is, the input dimension of w and default return dimension is ``[r.randoms(2), r.nlattice]``. The default filter function is a unit function giving randoms delta-correlated in both x-space and k-space, similar to randoms(1).
+    Returns the momentum-space filter function for the input random terms. Each component has an array dimension the same as the input random fields in momentum space, that is, the return dimension is ``[r.randoms(2), r.nlattice]``.
 
 ..function:: nfilter (w,r)
 
     *Default:* :func:`xnfilter`
 
-    Returns the momentum-space filters for the propagation noise terms. Each component has an array dimension the same as the random noises in momentum space, that is, the input dimension and default return dimension is ``[r.noises(2), r.nlattice]``. The default filter function is a unit function giving noise delta-correlated in both x-space and k-space, similar to noises(1).
+    Returns the momentum-space filter function for the propagation noise terms. Each component has an array dimension the same as the random noises in momentum space, that is, the return dimension is ``[r.noises(2), r.nlattice]``.
 
 
 Advanced input functions
@@ -571,7 +571,7 @@ Advanced input functions are user-definable functions which don’t usually need
 
 .. function:: xd1 (o, [dir, values,] r)
 
-    This takes a scalar or vector ``o``, and returns a first derivative with an axis direction ``dir`` using finite differences.  Set ``dir = 2`` for an x-derivative, ``dir = 3`` for a y-derivative.  Time derivatives are ignored at present. Derivatives are returned at all lattice locations. The boundary condition is set by the in.boundaries(j,dir) input, where ``j = 1`` indicates the lower, and ``j = 2`` the upper limit in each direction ``dir ``. It can be made periodic (``in.boundaries = 0``), which is the default, or Neumann with fixed derivative ``in.boundaries = -1``, or Dirichlet with specified field ``in.boundaries = 1``. The default  boundary values are zero, if ``values`` is omitted. If required, they are specified in the calling argument as values(i,j=1,2), where ``i`` is the component index, ``j`` is the boundary index. 
+    This takes a scalar or vector ``o``, and returns a first derivative with an axis direction ``dir`` using finite differences.  Set ``dir = 2`` for an x-derivative, ``dir = 3`` for a y-derivative, and so on.  Time derivatives are ignored at present. Derivatives are returned at all lattice locations. The boundary condition is set by the in.boundaries(j,dir) input, where ``j = 1`` indicates the lower, and ``j = 2`` the upper limit in each direction ``dir ``. It can be made periodic (``in.boundaries = 0``), which is the default, or Neumann with fixed derivative ``in.boundaries = -1``, or Dirichlet with specified field ``in.boundaries = 1``. The default  boundary values are zero, if ``values`` is omitted. If required, they are specified in the calling argument as values(i,j=1,2), where ``i`` is the component index, ``j`` is the boundary index. 
 
 .. function:: xd2 (o, [dir, values,] r)
 
@@ -614,7 +614,17 @@ Advanced input functions are user-definable functions which don’t usually need
 
     Returns the transfer array :attr:`propagator`, used by the :attr:`prop` function. The time propagated is a fraction of the current integration time-step, :attr:`dt`. It is equal to ``1 / ipsteps`` of the integration time-step.
 
+.. function:: boundfun (a,d,r)
 
+    *Default:* :func:`xboundfun`
+
+    For non-vanishing, specified boundary conditions, the boundary function ``boundfun(a,d,r)`` is called. This returns the boundary values used for the fields or derivatives in dimension d>1 as an array b(i,J,j,K)).
+
+Here i is the field index, J is a flattened dimension equal to the product of field array dimensions less than d, and K is a flattened dimension equal to the product of field array dimensions greater than d, including the ensemble dimension. Crucially, j is the index of the dimension d whose boundary values are specified, so only two values are needed: j=1,2 for the upper and lower boundary values, which are either field values or derivatives.
+
+Boundary values may be constant or a function of both the fields (a) and internal variables like the current time (r.t). The boundary values can have predefined or stochastic initial values which need to be calculated only once. In such cases the boundary values must first be initialized, so the routine boundfun(a,d,r) is called with time t<origin(1), and the field ``a`` equal to the random field, delta-correlated in space, used to initialize field evolution. The program uses these results to store values for the boundaries in an internal array, boundval{d}, for later use if needed.
+
+The default initial boundary value is zero, set by the default boundary function xboundfun(a,d,r). The boundary values returned by xboundfun(a,d,r), are set equal to the initial boundary values stored in r.boundval{d}.
 
 .. _sec-gparameters:
 
@@ -639,7 +649,7 @@ Together with default values, they are:
 
 .. attribute:: gversion
 
-    *Default:* ``'xGRAPH3.0'``
+    *Default:* ``'xGRAPH3.2'``
 
     This sets the current version number of the graphics program. There is typically no need to input this.
 
@@ -743,11 +753,11 @@ Together with default values, they are:
 
     *Default:* ``{1, 1, ...}``
 
-    This is the *type* of transverse o-x-y movie images plotted. If an element is ``1``, a perspective surface plot is output, for ``2``, a gray plot with colours is output, or for ``3`` a contour plot with 10 equally spaced contours is generated. This has a vector length equal to :attr:`graphs`.
+    This is the *type* of transverse o-x-y movie images plotted. If an element is ``1``, a perspective surface plot is output, for ``2``, a gray plot with colours is output, for ``3`` a contour plot with 10 equally spaced contours is generated, and for ``4`` a pseudocolor map is generated.This has a vector length equal to :attr:`graphs`.
 
     ::
 
-        in.imagetype{n} = 1, 2, 3
+        in.imagetype{n} = 1, 2, 3, 4
 
 .. attribute:: transverse
 
@@ -1028,13 +1038,13 @@ These functions are used as defaults for simulations and can be overridden by th
 
     Returns the real part of ``a(1,:)``.
 
-.. function:: xrfilter (r)
+.. function:: xrfilter (v,r)
 
-    Returns an array of ones.
+    Returns the unfiltered random field v.
 
-.. function:: xnfilter (r)
+.. function:: xnfilter (w,r)
 
-    Returns an array of ones.
+    Returns the unfiltered noise w.
 
 .. function:: xgrid (r)
 
@@ -1046,12 +1056,15 @@ These functions are used as defaults for simulations and can be overridden by th
 
 .. function:: xrandomgen (r)
 
-    Generates initial random field matrix :math:`v`.
+    Generates default initial random field matrix :math:`v`.
 
 .. function:: xpropfactor (nc, r)
 
-    Returns the interaction picture propagation factor. ``nc`` is a check index, ``r`` is a lattice structure.
+    Returns default interaction picture propagation factor. ``nc`` is a check index, ``r`` is a lattice structure.
 
+.. function:: xboundfun (a, d, r)
+
+    Returns default initial boundary value of zero. The later time boundary values returned by xboundfun(a,d,r), are set equal to the initial boundary values stored in r.boundval{d}, whose default is initialized to zero  by the initial boundary value.
 
 Frequently asked questions
 ==========================

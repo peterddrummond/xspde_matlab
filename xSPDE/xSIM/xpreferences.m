@@ -31,7 +31,7 @@ end                                              %% End if rawinput ~empty
 sequence = length(input);                        %%get sequence length
 for s = 1:sequence                               %%loop over sequence 
     in = input{s};                               %%get input structure
-    in.version =    xprefer(in,'version',0,'xSIM3.1');
+    in.version =    xprefer(in,'version',0,'xSIM3.2');
     in.name =       xprefer(in,'name',0,'');
     in.dimension =  xprefer(in,'dimension',1,1);
     nd      =       in.dimension;
@@ -49,6 +49,7 @@ for s = 1:sequence                               %%loop over sequence
     in.order =      xprefer(in,'order',1,0);
     in.checks  =    xprefer(in,'checks',nd,1);   %%check timestep not space
     in.errorchecks =xprefer(in,'errorchecks',1,sum(in.checks)+1);%%cycles
+    in.antialias =  xprefer(in,'antialias',1,0);
     in.octave =     xprefer(in,'octave',1,exist('OCTAVE_VERSION','builtin'));
     in.seed =       xprefer(in,'seed',1,0);
     in.file =       xprefer(in,'file',0,'');
@@ -101,6 +102,9 @@ for s = 1:sequence                               %%loop over sequence
     in.averages =   xprefer(in,'averages',1,length(in.observe));
     in.transforms = xcprefer(in,'transforms',in.averages,{zeros(1,nd+1)});
     in.scatters =   xcprefer(in,'scatters',in.averages,{0});
+    if ~isequal(in.boundaries{1},zeros(in.fields,2))
+        error('Boundaries for first dimension are not supported')
+    end                                      %% end check direction 1 
 %    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  INITIALIZE PLOT FUNCTIONS
 %
@@ -130,6 +134,7 @@ for s = 1:sequence                               %%loop over sequence
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  INITIALIZE LATTICE DATA
 
     in.dk =  2.0*pi./(in.points.*in.dx);     %%n-th step-size in k
+    in.kranges = in.dk.*in.points;           %%ranges in k-space
     in.dv  = prod(in.dx(2:nd));              %%lattice cell volume
     in.dkv = prod(in.dk(2:nd));              %%k-space volume
     in.nspace = prod(in.points(2:nd));       %%Transverse lattice size
@@ -182,18 +187,17 @@ function kr = xrfilter(w,~)                  %% Default random filters
     kr = w;                                  %% Default input filter 
 end
 
-function ab = xboundin(r)                    %% Initial boundary values
-    ab = cell(1,r.dimension);                %% set fields to zero
-    shape = [r.fields,1,2,1];
-    for dir = 2:r.dimension                  %%loop over space dimension
-        shape(2) =  prod(r.d.int(1:dir-1)); 
-        shape(4) =  prod(r.d.int(dir+1:end)); 
-        ab{dir} = zeros(shape);              %%Set to zeros
+function b = xboundfun(~,dir,r)              %% Default boundary values
+%   b = XBOUNDFUN(a,dir,r) calculates default boundary values
+%   Boundaries are set in direction 'dir' at upper and lower boundaries
+    if r.t<r.origin(1)                       %% Set initial boundary values
+    	shape = r.d.fields;                  %% Shape vector for fields
+        shape(dir+1) = 2;                    %% Differentiation direction
+    	b = zeros(shape);                    %% Set to zeros as default
+    else                                     %% Not initial, use previous
+    	b=r.boundval{dir};                   %% Previous boundary values
     end
-end
-
-function ab = xboundfun(~,r)                 %% Default boundary values
-    ab = r.boundinvalue;                     %% set to initial boundary 
 end
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  END DEFAULT  FUNCTIONS
+

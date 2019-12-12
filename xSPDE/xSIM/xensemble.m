@@ -43,7 +43,10 @@ for ns = 1:serial                                 %%loop over ensembles
       w = r.randomgen(r);                         %%generate random fields
       if seq == 1                                 %%check if sequence = 1
           if r.setboundaries                      %%initialize boundaries
-              r.boundinvalue = r.boundin(r);
+              r.t  = r.origin(1)-1;               %%Set time < origin
+              for dir=2:r.dimension
+                  r.boundval{dir} = r.boundfun(w,dir,r); %%Store boundaries
+              end
           end
           a = r.initial(w,r);                     %%initialize fields
           if length(a) == 1

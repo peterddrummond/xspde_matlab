@@ -28,6 +28,6 @@ if r.propagator ~= 0                          %%No xprop required
   end
 end                                           %%end if r.propagator
 if r.setboundaries
-      [a,r.boundvalue]  =  xsetbound(a,r);   %%set boundary values
+     a  =  xsetbound(a,r);                    %%set boundary values
 end
 end                                           %%end xprop function

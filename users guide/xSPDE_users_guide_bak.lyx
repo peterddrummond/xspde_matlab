@@ -222,7 +222,7 @@ Here,
  is a noise vector, delta-correlated in time: 
 \begin_inset Formula 
 \begin{eqnarray}
-\left\langle w_{i}\left(t,\mathbf{x}\right)w_{j}\left(t',\mathbf{x}'\right)\right\rangle  & = & \delta\left(t-t'\right)\delta\left(\bm{x}-\bm{x}'\right)\delta_{ij}
+\left\langle w_{i}\left(t,\mathbf{x}\right)w_{j}\left(t',\mathbf{x}'\right)\right\rangle  & = & \delta\left(t-t'\right)F\left(\bm{x},\bm{x}'\right)\delta_{ij}
 \end{eqnarray}
 
 \end_inset
@@ -292,13 +292,13 @@ name "chap:Interactive-xSPDE"
 \end_layout
 
 \begin_layout Standard
-The general purpose xSPDE toolbox function is:
+The general purpose xSPDE toolbox function co is:
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-xspde
+xspde(s)
 \series default
 , the combined simulation (xSIM) and graphics (xGRAPH) function.
 \end_layout
@@ -373,18 +373,17 @@ Next, type
 \end_layout
 
 \begin_layout Standard
-A typical script first defines parameters and function specifications, in
- a structure, then runs the simulation code with the parameter structure
- as an input, as follows:
+A typical script first defines parameters and function specifications, then
+ runs the simulation code as follows:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{r.}[label1] & = & [parameter1]\\
-\mathtt{r.}[label2] & = & \ldots\\
-\mathtt{r.da} & = & \mathtt{@(a,w,r)}\,\,[derivative]\\
-\mathtt{xspde(r)}
+\mathtt{s.}[label1] & = & [parameter1]\\
+\mathtt{s.}[label2] & = & \ldots\\
+\mathtt{s.da} & = & \mathtt{@(a,w,r)}\,\,[derivative]\\
+\mathtt{xspde(in)}
 \end{eqnarray*}
 
 \end_inset
@@ -398,15 +397,40 @@ Note the following points to remember:
 
 \begin_layout Itemize
 The notation 
-\begin_inset Formula $\mathtt{r.}[label1]=[parameter1]$
+\begin_inset Formula $\mathtt{s.}[label1]=[parameter1]$
 \end_inset
 
- defines a parameter or function in the data structure 
-\begin_inset Formula $r$
+ defines a parameter or function in the 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+stochastic
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ data structure, 
+\begin_inset Formula $s$
 \end_inset
 
 .
- 
 \end_layout
 
 \begin_layout Itemize
@@ -419,7 +443,7 @@ You don't have to save the data if you just want an immediate plot
 
 \begin_layout Itemize
 The notation 
-\begin_inset Formula $\mathtt{r.da=}\mathtt{@(a,w,r)}\,\,[derivative]=..$
+\begin_inset Formula $\mathtt{s.da=}\mathtt{@(a,w,r)}\,\,[derivative]=..$
 \end_inset
 
  defines an inline function, 
@@ -431,7 +455,7 @@ The notation
 \end_layout
 
 \begin_layout Itemize
-In this example, 
+In xSPDE, 
 \begin_inset Formula $\mathtt{a}$
 \end_inset
 
@@ -440,31 +464,31 @@ In this example,
 \end_inset
 
  the random noise, and 
-\begin_inset Formula $\mathtt{r}$
+\begin_inset Formula $s$
 \end_inset
 
- the internal data structure.
+ the internal stochastic parameter structure.
  
 \end_layout
 
 \begin_layout Itemize
 For example, 
-\begin_inset Formula $\mathtt{r.t}$
+\begin_inset Formula $\mathtt{s.t}$
 \end_inset
 
  is the current time, and 
-\begin_inset Formula $\mathtt{r.x},$
+\begin_inset Formula $\mathtt{s.x},$
 \end_inset
 
  
-\begin_inset Formula $\mathtt{r.y},$
+\begin_inset Formula $\mathtt{s.y},$
 \end_inset
 
  
-\begin_inset Formula $\mathtt{r.z},$
+\begin_inset Formula $\mathtt{s.z},$
 \end_inset
 
- the grid of coordinates.
+ are the grid of coordinates.
  
 \end_layout
 
@@ -473,20 +497,20 @@ Inputs
 \end_layout
 
 \begin_layout Standard
-All xSPDE simulations use a structure 
+All xSPDE simulations use a structure - labelled 
 \emph on
-in
+
+\begin_inset Formula $s$
+\end_inset
+
+
 \emph default
- for input data.
+ here - for input data.
  All functions use an internally generated structure 
-\begin_inset Formula $r$
+\begin_inset Formula $s$
 \end_inset
 
-, combining both 
-\begin_inset Formula $in$
-\end_inset
-
- and additional internally generated parameters.
+, combining input data with additional internally generated parameters.
  Any name will do for either structure, as long as you are consistent.
  
 \end_layout
@@ -495,33 +519,31 @@ in
 All xSPDE inputs have default values, which can be changed by typing parameters
  into the 
 \emph on
-in
+s 
 \emph default
- structure.
+data structure.
  If you only need the first element of a vector or array, just input the
  value that is required, the remaining elements will be given their default
  value.
  All parameters used can be output using the documentation switch, 
-\begin_inset Formula $\mathtt{print=1}$
+\begin_inset Formula $\mathtt{s.print=1}$
 \end_inset
 
 .
+ The data structure label is omitted in some of the text , but it is implicit.
 \end_layout
 
 \begin_layout Subsection
-Common inputs
-\end_layout
+Common inputs: 
+\series bold
+for complete list see Chapter (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Table-of-xSPDE"
 
-\begin_layout Standard
-The most common xSPDE input parameters are: 
-\begin_inset Newline newline
 \end_inset
 
-
-\begin_inset Separator latexpar
-\end_inset
-
-
+).
 \end_layout
 
 \begin_layout Standard
@@ -578,7 +600,7 @@ Description
 \begin_layout Plain Layout
 
 \emph on
-fields
+s.fields
 \emph default
  
 \end_layout
@@ -623,7 +645,7 @@ Stochastic field variables
 \begin_layout Plain Layout
 
 \emph on
-noises
+s.noises
 \emph default
  
 \end_layout
@@ -668,7 +690,7 @@ Number of noises
 \begin_layout Plain Layout
 
 \emph on
-dimension
+s.dimension
 \end_layout
 
 \end_inset
@@ -711,7 +733,7 @@ Space-time dimensions
 \begin_layout Plain Layout
 
 \emph on
-name
+s.name
 \emph default
  
 \end_layout
@@ -753,7 +775,7 @@ Simulation name
 \begin_layout Plain Layout
 
 \emph on
-olabels
+s.olabels
 \emph default
  
 \end_layout
@@ -797,7 +819,7 @@ Observable labels
 \begin_layout Plain Layout
 
 \emph on
-da
+s.da
 \emph default
  
 \end_layout
@@ -841,7 +863,7 @@ The stochastic derivative
 \begin_layout Plain Layout
 
 \emph on
-define
+s.define
 \emph default
  
 \end_layout
@@ -885,7 +907,7 @@ Defined field definition
 \begin_layout Plain Layout
 
 \emph on
-initial
+s.initial
 \emph default
  
 \end_layout
@@ -927,7 +949,7 @@ Function to initialize variables
 \begin_layout Plain Layout
 
 \emph on
-ensembles
+s.ensembles
 \end_layout
 
 \end_inset
@@ -967,7 +989,7 @@ Numbers of stochastic trajectories
 \begin_layout Plain Layout
 
 \emph on
-observe
+s.observe
 \emph default
  
 \end_layout
@@ -1011,7 +1033,7 @@ Observable function(s)
 \begin_layout Plain Layout
 
 \emph on
-linear
+s.linear
 \emph default
  
 \end_layout
@@ -1053,7 +1075,7 @@ Linear interaction picture function
 \begin_layout Plain Layout
 
 \emph on
-ranges
+s.ranges
 \end_layout
 
 \end_inset
@@ -1094,7 +1116,7 @@ Ranges in time and space
 \begin_layout Plain Layout
 
 \emph on
-steps
+s.steps
 \end_layout
 
 \end_inset
@@ -1103,7 +1125,7 @@ steps
 \begin_inset Text
 
 \begin_layout Plain Layout
-integer
+integer vector
 \end_layout
 
 \end_inset
@@ -1112,7 +1134,7 @@ integer
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $[1]$
+\begin_inset Formula $[1,1,,..]$
 \end_inset
 
 
@@ -1124,7 +1146,7 @@ integer
 \begin_inset Text
 
 \begin_layout Plain Layout
-Intermediate steps per time point
+Intermediate steps per plot point
 \end_layout
 
 \end_inset
@@ -1137,7 +1159,7 @@ Intermediate steps per time point
 \begin_layout Plain Layout
 
 \emph on
-points
+s.points
 \end_layout
 
 \end_inset
@@ -1177,7 +1199,7 @@ Output lattice points in [t,x,y,z]
 \begin_layout Plain Layout
 
 \emph on
-probability
+s.probability
 \end_layout
 
 \end_inset
@@ -1217,7 +1239,7 @@ Binning ranges for probabilities
 \begin_layout Plain Layout
 
 \emph on
-images
+s.images
 \emph default
  
 \end_layout
@@ -1263,7 +1285,7 @@ Movie images in time per 2D observable
 \begin_layout Plain Layout
 
 \emph on
-transforms
+s.transforms
 \emph default
  
 \end_layout
@@ -1309,7 +1331,7 @@ Set to 1 for Fourier transforms in [t,x,y,z]
 \begin_layout Plain Layout
 
 \emph on
-scatters
+s.scatters
 \end_layout
 
 \end_inset
@@ -1353,7 +1375,7 @@ Set to s for s scatter plots in the observable
 \begin_layout Plain Layout
 
 \emph on
-print
+s.print
 \emph default
  
 \end_layout
@@ -1401,19 +1423,6 @@ Set to 1 for parameter outputs
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-A complete list of user inputs is given in Chapter (
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "chap:Table-of-xSPDE"
-
-\end_inset
-
-).
 \end_layout
 
 \begin_layout Subsection
@@ -1499,12 +1508,12 @@ function
  All important functionality in xSPDE uses modular functions.
  Functions can be specifed inline, which is short and fast.
  An example of this is 
-\begin_inset Formula $r.da=@(a,w,r)\,w$
+\begin_inset Formula $s.da=@(a,w,r)\,w$
 \end_inset
 
  .
  This defines the function 
-\begin_inset Formula $da$
+\begin_inset Formula $s.da$
 \end_inset
 
 , which gives the stochastic derivative function.
@@ -1514,7 +1523,7 @@ function
 
  This user specified inline function is then known internally by the function
  handle 
-\begin_inset Formula $r.da$
+\begin_inset Formula $s.da$
 \end_inset
 
 .
@@ -1707,13 +1716,9 @@ backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-da=@(a,w,r) w; xspde(
-\family default
-r)
-\family typewriter
-;
+s.da=@(a,w,r) w; xspde(s);
 \end_layout
 
 \end_inset
@@ -1723,7 +1728,7 @@ r)
 
 \begin_layout Standard
 Here 
-\begin_inset Formula $r.da$
+\begin_inset Formula $s.da$
 \end_inset
 
  defines the time derivative function 
@@ -1770,7 +1775,7 @@ status collapsed
 
 
 \begin_inset Graphics
-	filename ../../xspde_matlab3.1/users guide/Figures/Wiener_1.pdf
+	filename Figures/Wiener_1.pdf
 	width 75text%
 
 \end_inset
@@ -1829,19 +1834,15 @@ backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-ensembles = 10000;
+s.ensembles = 10000;
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-xspde(
-\family default
-r)
-\family typewriter
-;
+xspde(s);
 \end_layout
 
 \end_inset
@@ -1881,25 +1882,21 @@ backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
-r.
-\family typewriter
-observe = @(a,r) a.^2;
-\end_layout
 
-\begin_layout Plain Layout
-r.
 \family typewriter
-olabels = '<a^2>';
+s.observe = @(a,r) a.^2;
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-xspde(
-\family default
-r)
+s.olabels = '<a^2>';
+\end_layout
+
+\begin_layout Plain Layout
+
 \family typewriter
-;
+xspde(s);
 \end_layout
 
 \end_inset
@@ -1944,19 +1941,15 @@ backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-da=@(a,w,r) -a+w;
+s.da=@(a,w,r) -a+w;
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-xspde(
-\family default
-r)
-\family typewriter
-;
+xspde(s);
 \end_layout
 
 \end_inset
@@ -2114,37 +2107,33 @@ clear
 \end_layout
 
 \begin_layout Plain Layout
-r.
-\family typewriter
-noises=2;
-\end_layout
 
-\begin_layout Plain Layout
-r.
 \family typewriter
-observe = @(a,r) abs(a)^2;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-olabels = '|a|^2';
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-da=@(a,w,r) a+0.01*(w(1)+i*w(2));
+s.noises=2;
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-xspde(
-\family default
-r)
+s.observe = @(a,r) abs(a)^2;
+\end_layout
+
+\begin_layout Plain Layout
+
 \family typewriter
-;
+s.olabels = '|a|^2';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.da=@(a,w,r) a+0.01*(w(1)+i*w(2));
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+xspde(s);
 \end_layout
 
 \end_inset
@@ -2210,19 +2199,15 @@ backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-da=@(a,w,r) (1-abs(a)^2)*a+0.01*(w(1)+i*w(2));
+s.da=@(a,w,r) (1-abs(a)^2)*a+0.01*(w(1)+i*w(2));
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-xspde(
-\family default
-r)
-\family typewriter
-;
+xspde(s);
 \end_layout
 
 \end_inset
@@ -2262,7 +2247,7 @@ status collapsed
 
 
 \begin_inset Graphics
-	filename ../../xspde_matlab3.1/users guide/Figures/Laser.pdf
+	filename Figures/Laser.pdf
 	width 75text%
 
 \end_inset
@@ -2310,7 +2295,7 @@ Frequency spectra have many uses, especially for understanding the steady-state
 
 \begin_layout Standard
 To get an output from a temporally Fourier transformed field, just set 
-\begin_inset Formula $transforms\{n\}=1$
+\begin_inset Formula $s.transforms\{n\}=1$
 \end_inset
 
 , for the particular observable (
@@ -2485,57 +2470,57 @@ clear
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-points = 640;
+s.points = 640;
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-ranges = 100;
+s.ranges = 100;
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-noises = 2; 
+s.noises = 2; 
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-ensembles = 10000; 
+s.ensembles = 10000; 
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-initial = @(v,r) (v(1,:)+1i*v(2,:))/sqrt(2); 
+s.initial = @(v,r) (v(1,:)+1i*v(2,:))/sqrt(2); 
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-da = @(a,w,r) -a + w(1,:)+1i*w(2,:); 
+s.da = @(a,w,r) -a + w(1,:)+1i*w(2,:); 
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-observe =@(a,r) a.*conj(a);
+s.observe =@(a,r) a.*conj(a);
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-transforms =1;
+s.transforms =1;
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-olabels = '|a(
+s.olabels = '|a(
 \backslash
 omega)|^2'; 
 \end_layout
@@ -2543,11 +2528,7 @@ omega)|^2';
 \begin_layout Plain Layout
 
 \family typewriter
-xspde(
-\family default
-r)
-\family typewriter
-; 
+xspde(s); 
 \end_layout
 
 \end_inset
@@ -2556,9 +2537,9 @@ r)
 \end_layout
 
 \begin_layout Standard
-Note that r.
+Note that 
 \family typewriter
-transforms =1
+s.transforms =1
 \family default
  tells xSPDE to Fourier transform the field over the time coordinate before
  averaging, to give a spectrum.
@@ -2607,15 +2588,15 @@ backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-observe{1} = ..;
+s.observe{1} = ..;
 \end_layout
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-observe{2} = ..;
+s.observe{2} = ..;
 \end_layout
 
 \end_inset
@@ -2642,119 +2623,6 @@ Change the equation to the laser noise equations.
 \end_layout
 
 \begin_layout Section
-Probability density
-\end_layout
-
-\begin_layout Standard
-It is possible to graph probability densities of a real observable.
- This is achieved through specifying the observable and the binning ranges,
- by inputting:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-r.probability\{n\}=o1:ostep:o2;
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-If present, this returns probability density of variable 
-\begin_inset Formula $o(n)$
-\end_inset
-
-, through binning into ranges of width 
-\begin_inset Formula $ostep$
-\end_inset
-
- around centers starting at 
-\begin_inset Formula $\text{\emph{o1}}$
-\end_inset
-
-, and ending at 
-\begin_inset Formula $o2$
-\end_inset
-
-.
- Returns a result of 
-\begin_inset Formula $1/ostep$
-\end_inset
-
- in the 
-\begin_inset Formula $j-th$
-\end_inset
-
- bin if the trajectory is inside the bin, so that 
-\begin_inset Formula $o(j)-ostep/2<o<o(j)+ostep/2$
-\end_inset
-
-, and zero otherwise.
- This gives a probability graph on output, plotted against time.
- Note that on graphing, an extra dimension is added for the variable 
-\begin_inset Formula $o$
-\end_inset
-
-.
- Only probabilities of one-dimensional real variables are plotted, for interface
- simplicity.
- The probability can be for any function of the stochastic variable if required.
-\end_layout
-
-\begin_layout Standard
-The 
-\emph on
-xgraph
-\emph default
- program provides facilities for extracting slices and windows of the probabilit
-ies where required.
- To plot the probabilities in the first observable for a range of 0:1, add
- the following input before the 
-\emph on
-xsim
-\emph default
- or 
-\emph on
-xspde
-\emph default
- command:
-\end_layout
-
-\begin_layout Standard
-\align center
-\begin_inset Box Doublebox
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-r.probability{1}=0:0.1:1.01;
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
 Ito and Stratonovich
 \end_layout
 
@@ -2772,7 +2640,7 @@ literal "true"
  where derivatives are evaluated at the start of each step.
  If you have an Ito equation, you can either use the Euler integration option,
  and set 
-\begin_inset Formula $r.step=xEuler$
+\begin_inset Formula $s.step=xEuler$
 \end_inset
 
 , or else apply the Stratonovich correction to the drift, as outlined below.
@@ -2922,25 +2790,21 @@ clear
 \end_layout
 
 \begin_layout Plain Layout
-r.
-\family typewriter
-initial=@(v,r) 1;
-\end_layout
 
-\begin_layout Plain Layout
-r.
 \family typewriter
-da=@(a,w,r) -0.4*a+a*w;
+s.initial=@(v,r) 1;
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-xspde(
-\family default
-r)
+s.da=@(a,w,r) -0.4*a+a*w;
+\end_layout
+
+\begin_layout Plain Layout
+
 \family typewriter
-;
+xspde(s);
 \end_layout
 
 \end_inset
@@ -2980,7 +2844,7 @@ status collapsed
 
 
 \begin_inset Graphics
-	filename ../../xspde_matlab3.1/users guide/Figures/Black-Scholes.pdf
+	filename Figures/Black-Scholes.pdf
 	width 75text%
 
 \end_inset
@@ -3010,7 +2874,7 @@ Simulation of the Black-Scholes equation describing stock prices.
 
 \begin_layout Standard
 Note that 
-\begin_inset Formula $r.initial$
+\begin_inset Formula $s.initial$
 \end_inset
 
  describes the initialization function.
@@ -3114,9 +2978,9 @@ Description
 \begin_inset Text
 
 \begin_layout Plain Layout
-r.
+
 \emph on
-file
+s.file
 \emph default
  
 \end_layout
@@ -3173,7 +3037,7 @@ Averages over stochastic ensembles are the specialty of xSPDE, which requires
  possible, to allow maximum resource utilization, so that:
 \begin_inset Formula 
 \[
-r.ensembles=[ensembles(1),ensembles(2),ensembles(3)]\,.
+s.ensembles=[ensembles(1),ensembles(2),ensembles(3)]\,.
 \]
 
 \end_inset
@@ -3257,7 +3121,7 @@ reference "chap:Interactive-xSPDE"
  For generating graphs automatically, the script input or project function
  should end with the combined function 
 \series bold
-xspde
+xspde(s)
 \series default
 .
  
@@ -3287,7 +3151,7 @@ With batch jobs it is often useful to divide xSPDE into its simulation function,
 \begin_layout Standard
 To create a data file, you must enter the filename when running the simulation,
  using the 
-\begin_inset Formula $r.file=filename$
+\begin_inset Formula $s.file=filename$
 \end_inset
 
  input.
@@ -3298,11 +3162,11 @@ To create a data file, you must enter the filename when running the simulation,
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{function}\,[e,ec] & = & project.m\\
-\mathtt{r.}[label1] & = & [parameter1];\\
-\mathtt{r.}[label2] & = & \ldots;\\
-\mathtt{r.file} & = & '[my\,file].\mathtt{mat'};\\
-\mathtt{[e,r]} & = & \mathtt{xsim(r)};\\
-\mathtt{ec} & = & \mathtt{xgraph(r.file)};\\
+\mathtt{s.}[label1] & = & [parameter1];\\
+\mathtt{s.}[label2] & = & \ldots;\\
+\mathtt{s.file} & = & '[my\,file].\mathtt{mat'};\\
+\mathtt{[e,in]} & = & \mathtt{xsim(in)};\\
+\mathtt{ec} & = & \mathtt{xgraph(s.file)};\\
 \mathtt{end}
 \end{eqnarray*}
 
@@ -3319,11 +3183,11 @@ A batch job workflow is as follows:
 
 \begin_layout Itemize
 Create the metadata 
-\begin_inset Formula $r$
+\begin_inset Formula $in$
 \end_inset
 
 , and include a file name, 
-\begin_inset Formula $r.file$
+\begin_inset Formula $s.file$
 \end_inset
 
 .
@@ -3340,13 +3204,13 @@ Change the Matlab directory path to home using
 \begin_layout Itemize
 Run the simulation with
 \series bold
- [e,r]=xsim(
+ [e,in]=xsim(s)
 \series default
-r), or just 
+, or just 
 \series bold
-xsim(
+xsim(s)
 \series default
-r);.
+;.
 \end_layout
 
 \begin_layout Itemize
@@ -3357,25 +3221,13 @@ Note: xsim changes the file-name if it already exists, and returns the new
 \begin_layout Itemize
 Run 
 \series bold
-xgraph(
-\series default
-r.
-\series bold
-file)
+xgraph(s.file)
 \series default
 , or 
 \series bold
-xgraph(
+xgraph(in,s.file)
 \series default
-r.
-\series bold
-file,r)
-\series default
- if you want to edit the inputs in the structure 
-\begin_inset Formula $r$
-\end_inset
-
-, and the data will be graphed.
+ if you want to edit the inputs, and the data will be graphed.
  
 \end_layout
 
@@ -3446,59 +3298,51 @@ function [error] = Kubo()
 \end_layout
 
 \begin_layout Plain Layout
-r.
-\family typewriter
-name = 'Kubo oscillator';
-\end_layout
 
-\begin_layout Plain Layout
-r.
 \family typewriter
-ensembles = [400,16]; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-initial = @(v,r) 1+0*v;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-da = @(a,w,r) i*a.*w;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-olabels = {'<a_1>'};
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-file = 'kubo.mat';
+s.name = 'Kubo oscillator';
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-[error,r]=xsim(
-\family default
-r)
-\family typewriter
-; 
+s.ensembles = [400,16]; 
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-xgraph(
-\family default
-r.
+s.initial = @(v,r) 1+0*v;
+\end_layout
+
+\begin_layout Plain Layout
+
 \family typewriter
-file);
+s.da = @(a,w,r) i*a.*w;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.olabels = {'<a_1>'};
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.file = 'kubo.mat';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+[error,in]=xsim(s); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+xgraph(s.file);
 \end_layout
 
 \begin_layout Plain Layout
@@ -3555,6 +3399,102 @@ just in case the first graphs you generate need changes.
 \end_layout
 
 \begin_layout Section
+Probabilities
+\end_layout
+
+\begin_layout Standard
+It is possible to graph probabilities of a real observable.
+ This is achieved through specifying the observable and the binning ranges,
+ by inputting:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+s.probability{n}=o1:ostep:o2;
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If present, this returns probability density of variable 
+\begin_inset Formula $o(n)$
+\end_inset
+
+, through binning.
+ Returns a result of 
+\begin_inset Formula $1/ostep$
+\end_inset
+
+ in the 
+\begin_inset Formula $j-th$
+\end_inset
+
+ bin if the trajectory is inside the bin, so that 
+\begin_inset Formula $o(j)-ostep/2<o<o(j)+dstep/2$
+\end_inset
+
+, and zero otherwise.
+ This gives a probability graph on output, plotted against time.
+ Note that on graphing, an extra dimension is added for the variable 
+\begin_inset Formula $o$
+\end_inset
+
+.
+ Only probabilities of one-dimensional real variables are plotted, for interface
+ simplicity.
+ The probability can be for any function of the stochastic variable if required.
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+xgraph
+\emph default
+ program provides facilities for extracting slices and windows of the probabilit
+ies where required.
+ To plot the probabilities above, add the following input before the 
+\emph on
+xsim
+\emph default
+ command:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Box Doublebox
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.probability{1}=0:0.1:1.01;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Challenge problem #1
 \end_layout
 
@@ -3582,7 +3522,7 @@ The following new ideas are introduced:
 \begin_layout Enumerate
 
 \series bold
-\begin_inset Formula $\mathtt{ranges}$
+\begin_inset Formula $\mathtt{s.ranges}$
 \end_inset
 
  is the space-time integration range.
@@ -3594,10 +3534,10 @@ The following new ideas are introduced:
 \begin_layout Enumerate
 
 \series bold
-\begin_inset Formula $\mathtt{steps}$
+\begin_inset Formula $\mathtt{s.steps}$
 \end_inset
 
- gives integration steps per time point, for increased accuracy.
+ gives integration steps per plot-point, for accuracy.
 
 \series default
  
@@ -3713,12 +3653,12 @@ Since tunneling is random, for real experimental comparisons, one would
  However, a tunneling event in a simulation indicates that it is likely
  in experiment too.
  These calculations require long time scales, 
-\begin_inset Formula $\mathtt{in.ranges}$
+\begin_inset Formula $\mathtt{s.ranges}$
 \end_inset
 
-, to observe tunneling, and a large number of time steps per plotted time
- point, 
-\begin_inset Formula $\mathtt{in.steps}$
+, to observe tunneling, and a large number of time steps per plotted point,
+ 
+\begin_inset Formula $\mathtt{s.steps}$
 \end_inset
 
 , to maintain accuracy in the quantum simulations.
@@ -3773,35 +3713,24 @@ A stochastic partial differential equation or
 \noun default
 \color inherit
 .
- The total number of 
-\begin_inset Formula $fields$
-\end_inset
-
- or internal indices is unlimited.
- The total space-time 
+ The total 
 \emph on
-dimension,
+dimension
 \emph default
  
-\begin_inset Formula $D$
+\begin_inset Formula $d$
 \end_inset
 
- in xSPDE is also unlimited.
- It includes time (
-\begin_inset Formula $D=1)$
+ in xSPDE is unlimited, and includes time and space.
+ Large 
+\begin_inset Formula $d$
 \end_inset
 
- and space (
-\begin_inset Formula $D>1$
+ is memory-intensive and slow, with a practical limit of about 
+\begin_inset Formula $d=6$
 \end_inset
 
-).
- Large numbers of space-time dimensions are memory-intensive and slow, with
- a currently practical limit of about 
-\begin_inset Formula $D=6$
-\end_inset
-
- unless you have a very large memory and fast computer!
+!
 \end_layout
 
 \begin_layout Standard
@@ -3825,98 +3754,161 @@ Here
 \end_inset
 
  components, and 
-\begin_inset Formula $\bm{w}=\left[\bm{w}^{x},\bm{w}^{k}\right]$
+\begin_inset Formula $\bm{w}$
 \end_inset
 
- is a random field, with 
+ is a random field with 
 \begin_inset Formula $'noises'$
 \end_inset
 
  components.
- This is a vector such that: 
-\begin_inset Formula $noises(1)$
-\end_inset
-
-' is the number of x-correlated noises,
-\begin_inset Formula $\bm{w}^{x}$
-\end_inset
-
-, and 
-\begin_inset Formula $noises(2)$
-\end_inset
-
-' is the number of k-correlated noises, 
-\begin_inset Formula $\bm{w}^{k}$
-\end_inset
-
-.
- These correlations are user-adjustable, explained below.
- 
-\end_layout
-
-\begin_layout Standard
-Initial conditions are set at the initial time of 
+ Initial conditions are set at the initial time of 
 \begin_inset Formula $t=o_{1}$
 \end_inset
 
  with a user-defined function so that:
 \begin_inset Formula 
 \[
-a(o_{1})=initial(v,r)
+a(o_{1})=i(v,r)
 \]
 
 \end_inset
 
-The 
-\emph on
-initial
-\emph default
- function includes 
-\begin_inset Formula $'randoms'$
+The initialization function can include 
+\begin_inset Formula $r.randoms$
 \end_inset
 
  initial random fields 
-\begin_inset Formula $v=\left[v^{x},v^{k}\right]$
+\begin_inset Formula $v$
 \end_inset
 
-.
- Their correlations are also defined either in x-space or in k-space.
- To allow this, the input parameter 
-\begin_inset Formula $'randoms'$
+, defined such that:
+\begin_inset Formula 
+\begin{eqnarray}
+\left\langle v_{i}^{x}\left(\bm{x}\right)v_{j}^{x}\left(\bm{x}'\right)\right\rangle  & = & \delta\left(\bm{x}-\bm{x}'\right)\delta_{ij}\nonumber \\
+\left\langle v_{i}^{k}\left(\bm{k}\right)v_{j}^{k}\left(\bm{k}'\right)\right\rangle  & = & rf(\mathbf{k})\delta\left(\bm{k}-\bm{k}'\right)\delta_{ij}.
+\end{eqnarray}
+
 \end_inset
 
- is a vector such that: 
-\begin_inset Formula $'randoms(1)$
+Here 
+\begin_inset Formula $\mathbf{w}=\left[\bm{w}^{x},\bm{w}^{k}\right]$
 \end_inset
 
-' is the number of x-correlated random fields,
-\begin_inset Formula $v^{x}$
+ are real delta-correlated noise fields such that:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\left\langle w_{i}^{x}\left(t,\bm{x}\right)w_{j}^{x}\left(t,\bm{x}'\right)\right\rangle  & = & \delta\left(\bm{x}-\bm{x}'\right)\delta\left(t-t'\right)\delta_{ij}\nonumber \\
+\left\langle w_{i}^{k}\left(t,\bm{k}\right)w_{j}^{k}\left(t,\bm{k}'\right)\right\rangle  & = & nf(\mathbf{k})\delta\left(\bm{k}-\bm{k}'\right)\delta\left(t-t'\right)\delta_{ij}.
+\end{eqnarray}
+
 \end_inset
 
-, and 
-\begin_inset Formula $'randoms(2)$
+
+\begin_inset Formula $\underline{\mathbf{L}}\left[\bm{\nabla},\mathbf{a}\right]$
 \end_inset
 
-' is the number of k-correlated random fields, 
-\begin_inset Formula $v^{k}$
-\end_inset
-
-.
- All random fields in the 
+ is a matrix of 
 \emph on
-initial
+linear
 \emph default
- function, even if defined with momentum correlations, are transformed to
- position space before use.
- If there is no scaling of the momentum noise, 
-\begin_inset Formula $v^{x}$
+ terms including derivatives, diagonal in the array indices.
+\end_layout
+
+\begin_layout Standard
+Details of how to input the data are as follows:
+\end_layout
+
+\begin_layout Itemize
+The initial conditions are specified by the user from the 
+\emph on
+initial(v,r)
+\emph default
+ function, where 
+\begin_inset Formula $\mathbf{v}=\left[\bm{v}^{x},\bm{v}^{k}\right]$
+\end_inset
+
+ is an array of random initial values, delta-correlated in space or momentum
+ space.
+ For space correlations, set 
+\begin_inset Formula $randoms(1)$
+\end_inset
+
+, for momentum correlations set 
+\begin_inset Formula $randoms(2)$
+\end_inset
+
+.
+ Here 
+\begin_inset Formula $f(\mathbf{k})$
+\end_inset
+
+ is an arbitrary momentum filter, for correlated noise.
+ Set this using the 
+\emph on
+rfilter(r) 
+\emph default
+function, specified by the user.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathbf{A}\left[\mathbf{a}\right]$
 \end_inset
 
  and 
-\begin_inset Formula $v^{k}$
+\begin_inset Formula $\underline{\mathbf{B}}\left[\mathbf{a}\right]$
 \end_inset
 
- have the same correlations.
+ are vector and matrix functions of 
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+, set by the user using the 
+\emph on
+da(a,w,r) 
+\emph default
+function.
+ Here, 
+\begin_inset Formula $\mathbf{w}=\left[\bm{w}^{x},\bm{w}^{k}\right]$
+\end_inset
+
+ are real delta-correlated noise fields such that: 
+\begin_inset Formula 
+\begin{eqnarray}
+\left\langle w_{i}^{x}\left(t,\bm{x}\right)w_{j}^{x}\left(t,\bm{x}'\right)\right\rangle  & = & \delta\left(\bm{x}-\bm{x}'\right)\delta\left(t-t'\right)\delta_{ij}\nonumber \\
+\left\langle w_{i}^{k}\left(t,\bm{k}\right)w_{j}^{k}\left(t,\bm{k}'\right)\right\rangle  & = & f(\mathbf{k})\delta\left(\bm{k}-\bm{k}'\right)\delta\left(t-t'\right)\delta_{ij}.
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+The term 
+\begin_inset Formula $\underline{\mathbf{L}}$
+\end_inset
+
+ may be omitted and in the case of 
+\begin_inset Formula $d=1$
+\end_inset
+
+, there are no space dimensions or space derivatives.
+ The
+\emph on
+ linear
+\emph default
+ function 
+\begin_inset Formula $L$
+\end_inset
+
+ is input as a separate function in xSPDE, to allow for greatest efficiency
+ and use of an interaction picture.
+ Note that it depends on momentum space coordinates, and which involves
+ Fourier transforms.
 \end_layout
 
 \begin_layout Standard
@@ -3930,35 +3922,7 @@ boundaries
 \begin_inset Formula $boundaries=-1,0,1$
 \end_inset
 
-, which can be specified for each space dimension, field index and boundary,
- as explained below in greater detail.
-\end_layout
-
-\begin_layout Standard
-The spatial derivatives or other functions linking different spatial points
- can be specified either in the functions 
-\begin_inset Formula $A$
-\end_inset
-
-, 
-\begin_inset Formula $B$
-\end_inset
-
-, or else in the 
-\begin_inset Formula $linear$
-\end_inset
-
- function, if the derivative terms are linear functions of the fields.
- Use of the 
-\begin_inset Formula $linear$
-\end_inset
-
- function allows an interaction picture algorithm, with increased efficiency.
- Currently, the 
-\begin_inset Formula $linear$
-\end_inset
-
- function is only available in conjunction with a Fourier transform propagator.
+, as explained below in greater detail.
 \end_layout
 
 \begin_layout Section
@@ -4020,7 +3984,7 @@ ranges
 
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Standard
 In order to discretize the problem for solution the 
 \begin_inset Formula $n_{i}$
 \end_inset
@@ -4041,13 +4005,9 @@ x_{i}=o_{i}+(i-1)dx_{i}\,.
 
 \end_inset
 
-Stochastic data
-\end_layout
-
-\begin_layout Standard
-To store stochastic data like field variables that are used in the stochastic
- equations, the following convention is always used.
- The logical array index ordering is 
+To store stochastic data like field variables, the following convention
+ is always used.
+ The array index ordering is 
 \begin_inset Formula $fields(i,\mathbf{j},e)$
 \end_inset
 
@@ -4071,7 +4031,7 @@ The
 \begin_inset Formula $j_{1},\ldots j_{d}\equiv\bm{j}$
 \end_inset
 
- are for time and space, or momentum space if Fourier transformed.
+ are for time and space.
 \end_layout
 
 \begin_layout Itemize
@@ -4091,20 +4051,20 @@ For storing space coordinates like
 \begin_inset Formula $i,j_{1}=1$
 \end_inset
 
-, and are not used.
+.
 \end_layout
 
 \begin_layout Itemize
-Transient arrays in calculations use a reduced space-time index 
+Transient arrays in calculations use 
 \begin_inset Formula $\bm{j}'=[1,j_{2},\ldots]$
 \end_inset
 
- , with time index equal to one.
+ , with time index equals one.
  
 \end_layout
 
 \begin_layout Itemize
-Arrays in calculations are packed to have indices 
+Arrays in calculations have indices 
 \begin_inset Formula $a(i,J)$
 \end_inset
 
@@ -4116,37 +4076,23 @@ Arrays in calculations are packed to have indices
 \end_layout
 
 \begin_layout Standard
-The dimensionality of the fields being integrated is logically stored in
- the array shape 
+The dimensionality of the integrated fields is stored in the internal shape
+ array 
 \begin_inset Formula $r.d.fields=(i,\mathbf{j}',e)$
 \end_inset
 
-, which is packed for calculations into a matrix labelled 
-\series bold
-a
-\series default
 .
  The use of a two-dimensional index in internal storage simplifies many
- functions, and this two-dimensional shape is stored in the internal matrix
- shape 
+ functions, and the two-dimensional shape is stored in the internal array
+ 
 \begin_inset Formula $r.d.a=(i,J)$
 \end_inset
 
 .
- Where Fourier transforms are used internally for linear propagation, the
- momentum arrays start at 
-\begin_inset Formula $k=0$
-\end_inset
-
- in the first index.
 \end_layout
 
 \begin_layout Standard
-A 
-\series bold
-packed
-\series default
- matrix, 
+A compressed field, 
 \begin_inset Formula $a$
 \end_inset
 
@@ -4162,11 +4108,7 @@ fields=reshape(a,r.d.fields)
 \end_layout
 
 \begin_layout Standard
-An 
-\series bold
-unpacked
-\series default
- array, 
+An extended field, 
 \begin_inset Formula $fields$
 \end_inset
 
@@ -4178,67 +4120,12 @@ a=reshape(fields,r.d.a)
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Paragraph*
-
-\series bold
-Averaged data
-\end_layout
-
-\begin_layout Standard
-The array index ordering for averages generated by the 
-\emph on
-observe
-\emph default
- functions is still logically 
-\begin_inset Formula $(i,\mathbf{j},e)$
-\end_inset
-
-, although there are differences, as follows: 
-\end_layout
-
-\begin_layout Itemize
-Averaged data for storing or graphing is stored in unpacked form, including
- time for stored data, so that all indices can be readily accessed for graphing.
- 
-\end_layout
-
-\begin_layout Itemize
-Data obtained from functions of fields retains the first index to indicate
- different output lines on a graph.
- This also allows a vector average to be calculated.
- 
-\end_layout
-
-\begin_layout Itemize
-Averages that are defined in momentum space have the momentum origin at
- 
-\begin_inset Formula $k=0$
-\end_inset
-
- is shifted to become the central index for graphing.
- 
-\end_layout
-
-\begin_layout Itemize
-Data that is ensemble averaged has no ensemble index, so the last index
- is used for storing error-bars instead.
-\end_layout
-
-\begin_layout Itemize
-Where integrals or spatial averages are used, the entire array is filled
- to keep them homogeneous, although this will be changed in future.
-\end_layout
-
-\begin_layout Itemize
-Where data is binned to get distributions, an extra 'space' dimension is
- added to 
-\begin_inset Formula $\bm{j}$
-\end_inset
-
- to store the binning index in each space-time location.
+External data for averaging and graphing is stored in an uncompressed form,
+ including time, so that these indices can be readily accessed for graphing.
+ Data obtained from functions of fields retains the first index to indicate
+ different output lines on a graph, allowing a vector average to be calculated.
+ Data that has been ensemble averaged has no ensemble index, so the last
+ index is used for storing error-bars instead.
 \end_layout
 
 \begin_layout Section
@@ -4267,7 +4154,7 @@ Otherwise, the differential equation boundaries are specified at
 \end_inset
 
 , using the cell-array input 
-\begin_inset Formula $boundaries\{d\}(i,j)$
+\begin_inset Formula $s.boundaries\{d\}(i,j)$
 \end_inset
 
 , which is defined per space dimension (
@@ -4298,7 +4185,7 @@ Neumann: For specified
 derivative
 \emph default
  boundaries, 
-\begin_inset Formula $boundaries\{d\}(i,j)=-1$
+\begin_inset Formula $s.boundaries\{d\}(i,j)=-1$
 \end_inset
 
 
@@ -4310,7 +4197,7 @@ Periodic: For
 periodic
 \emph default
  boundaries, 
-\begin_inset Formula $boundaries\{d\}(i,j)=0$
+\begin_inset Formula $s.boundaries\{d\}(i,j)=0$
 \end_inset
 
 
@@ -4322,7 +4209,7 @@ Dirichlet: For specified
 field
 \emph default
  boundaries, 
-\begin_inset Formula $boundaries\{d\}(i,j)=1$
+\begin_inset Formula $s.boundaries\{d\}(i,j)=1$
 \end_inset
 
 
@@ -4330,11 +4217,11 @@ field
 
 \begin_layout Standard
 These are specified in a cell array: 
-\begin_inset Formula $boundaries\{d\}(i,1)$
+\begin_inset Formula $s.boundaries\{d\}(i,1)$
 \end_inset
 
  sets the lower boundary type, while 
-\begin_inset Formula $boundaries\{d\}(i,2)$
+\begin_inset Formula $s.boundaries\{d\}(i,2)$
 \end_inset
 
  gives the upper boundary type.
@@ -4346,7 +4233,7 @@ These are specified in a cell array:
 
  is not included.
  The default option is periodic boundaries if 
-\begin_inset Formula $boundaries$
+\begin_inset Formula $s.boundaries$
 \end_inset
 
  is not specified.
@@ -4362,9 +4249,8 @@ Setting the boundary values
 \end_layout
 
 \begin_layout Standard
-For non-vanishing, specified boundary conditions, the boundary function
- 
-\begin_inset Formula $boundfun(a,d,r)$
+For nonvanishing, specified boundary conditions, the boundary function 
+\begin_inset Formula $s.boundfun(a,d,r)$
 \end_inset
 
  is called.
@@ -4373,8 +4259,8 @@ For non-vanishing, specified boundary conditions, the boundary function
 \begin_inset Formula $d>1$
 \end_inset
 
- as an array of dimension 
-\begin_inset Formula $b(i,J,j,K))$
+ as an array 
+\begin_inset Formula $b(i,J_{1},j_{d},J_{2}))$
 \end_inset
 
 .
@@ -4382,43 +4268,35 @@ For non-vanishing, specified boundary conditions, the boundary function
 
 \begin_layout Standard
 Here 
-\begin_inset Formula $i$
+\begin_inset Formula $J_{1}$
 \end_inset
 
- is the field index, 
-\begin_inset Formula $J$
-\end_inset
-
- is a flattened dimension equal to the product of field array dimensions
- for 
+ is a flattened index list that matches the field index list for 
 \begin_inset Formula $d_{1}<d$
 \end_inset
 
 , and 
-\begin_inset Formula $K$
+\begin_inset Formula $J_{2}$
 \end_inset
 
- is a flattened dimension equal to the product of field array dimensions
- for 
+ is a flattened index list that matches the field index list for 
 \begin_inset Formula $d_{2}>d$
 \end_inset
 
-, including the ensemble dimension.
- Crucially, 
-\begin_inset Formula $j$
+, including the ensemble index, while 
+\begin_inset Formula $j_{d}$
 \end_inset
 
  is the index of the dimension whose boundary values are specified, so only
  two values are needed: 
-\begin_inset Formula $j=1,2$
+\begin_inset Formula $j_{d}=1,2$
 \end_inset
 
- for the upper and lower boundary values, which could either be field values
- or their derivatives.
+.
 \end_layout
 
 \begin_layout Standard
-Boundary values can be a function of both the fields (
+Boundary values may be constant or a function of both the fields (
 \begin_inset Formula $a$
 \end_inset
 
@@ -4427,44 +4305,24 @@ Boundary values can be a function of both the fields (
 \end_inset
 
 ).
- These may have predefined or stochastic initial values at 
-\begin_inset Formula $t=0$
-\end_inset
-
- which are calculated only once.
+ The boundary values can have predefined or stochastic initial values which
+ need to be calculated only once.
  In such cases the boundary values must first be initialized, so the routine
  
-\begin_inset Formula $boundfun(a,d,r)$
+\begin_inset Formula $s.boundfun(a,d,r)$
 \end_inset
 
- is internally initialized with time 
-\begin_inset Formula $t<origin(1)$
-\end_inset
-
-, and with random Gaussian values in the input field 
-\begin_inset Formula $a$
+ is called with 
+\begin_inset Formula $r.t<r.origin$
 \end_inset
 
 .
- These are delta-correlated in space, i.e., with the same definition as the
- 
-\begin_inset Quotes eld
+ The program uses these results to store values for the boundaries in an
+ internal array, 
+\begin_inset Formula $r.boundval{d}$
 \end_inset
 
-randoms
-\begin_inset Quotes erd
-\end_inset
-
-.
- The xSDPE program stores the returned values 
-\begin_inset Formula $b$
-\end_inset
-
- for the boundaries in an internal cell array, 
-\begin_inset Formula $boundval\{d\}$
-\end_inset
-
-, for later use if required.
+, for later use if needed.
 \end_layout
 
 \begin_layout Standard
@@ -4474,16 +4332,15 @@ The default initial boundary value is zero, set by the default boundary
 \end_inset
 
 .
- Subsequent boundary values returned by 
+ The boundary values returned by 
 \begin_inset Formula $xboundfun(a,d,r)$
 \end_inset
 
-, are set equal to the initial boundary values stored in 
-\begin_inset Formula $boundval\{d\}$
+, are set equal to these initial boundary values stored in 
+\begin_inset Formula $r.boundval{d}(i,..,j,..)$
 \end_inset
 
 .
- 
 \end_layout
 
 \begin_layout Section
@@ -4497,30 +4354,16 @@ It is often useful to Fourier transform a field before it is averaged.
 \end_inset
 
  function and space-time dimension by 
-\begin_inset Formula $transforms$
+\begin_inset Formula $s.transforms$
 \end_inset
 
 .
- The xSPDE Fourier transforms or spectrum definitions in space-time are
- given by the symmetric Fourier transform definition:
+ xSPDE Fourier transforms or spectrum definitions in space-time are given
+ by the symmetric Fourier transform definition:
 \begin_inset Formula 
-\begin{align}
-\tilde{a}(\omega,\bm{k}) & =\mathcal{F}\left(a(t,\bm{x})\right)\nonumber \\
- & =\frac{1}{\left[2\pi\right]^{d/2}}\int e^{i(\omega t-\bm{k}\cdot\bm{x})}a(t,\bm{x})dtd\bm{x}\,
-\end{align}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The inverse Fourier transform is the function:
-\begin_inset Formula 
-\begin{align*}
-a(t,\bm{x}) & =\mathcal{F}^{-1}\left(\tilde{a}\right)\\
- & =\frac{1}{\left[2\pi\right]^{d/2}}\int e^{i(\bm{k}\cdot\bm{x}-\omega t)}\tilde{a}(\omega,\bm{k})d\omega d\bm{k}\,
-\end{align*}
+\begin{equation}
+\tilde{a}(\omega,\bm{k})=\frac{1}{\left[2\pi\right]^{d/2}}\int e^{i(\bm{k}\cdot\bm{x}-\omega t)}a(t,\bm{x})dtd\bm{x}\,
+\end{equation}
 
 \end_inset
 
@@ -4539,7 +4382,7 @@ This is translated into a sum over the lattice points using a discrete Fourier
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\tilde{a}(\omega_{i},\bm{k}_{i})=\frac{dtd\mathbf{x}}{\left[2\pi\right]^{d/2}}\sum_{j_{1}\ldots j_{d}}\exp\left[i\left(\omega_{i_{1}}t_{j_{1}}-\bm{k}_{\bm{i}}\cdot\bm{x}_{\bm{j}}\right)\right]a(t_{j_{1}},\bm{x}_{\bm{j}})\,
+\tilde{a}(\omega_{i},\bm{k}_{i})=\frac{dtd\mathbf{x}}{\left[2\pi\right]^{d/2}}\sum_{j_{1}\ldots j_{d}}\exp\left[i\left(\bm{k}_{\bm{i}}\cdot\bm{x}_{\bm{j}}-\omega_{i_{1}}t_{j_{1}}\right)\right]a(t_{j_{1}},\bm{x}_{\bm{j}})\,
 \end{equation}
 
 \end_inset
@@ -4581,489 +4424,11 @@ k_{i}=\frac{1-n_{i}}{2}dk_{i},\ldots\frac{n_{i}-1}{2}dk_{i}
 
 \begin_layout Standard
 Once Fourier transformed, the 
-\begin_inset Formula $observe$
+\begin_inset Formula $s.observe$
 \end_inset
 
- function can be used to take any further functions or combinations of Fourier
- transformed fields prior to averaging.
- Important points to keep in mind are as follows:
-\end_layout
-
-\begin_layout Itemize
-Fourier transforms are specified for the k-th 
-\emph on
-observe 
-\emph default
-function independently of all other functions, by specifying 
-\begin_inset Formula $transforms\{k\}=\left[\ell_{\ensuremath{1},}\ldots\ell_{\ensuremath{d},}\right]$
-\end_inset
-
-, 
-\end_layout
-
-\begin_layout Itemize
-Here 
-\begin_inset Formula $\ell_{j}=0,1$
-\end_inset
-
- is a logical switch, set to to 
-\begin_inset Formula $\ell_{j}=1$
-\end_inset
-
- if the 
-\begin_inset Formula $j-th$
-\end_inset
-
- dimension requires a Fourier transform, and 
-\begin_inset Formula $\ell_{j}=0$
-\end_inset
-
- if there is no Fourier transform.
-\end_layout
-
-\begin_layout Itemize
-The internal fields 
-\begin_inset Formula $r.k\{1\},\ldots r.k\{d\}$
-\end_inset
-
- are available for use in making functions of momentum for use with observations.
-\end_layout
-
-\begin_layout Itemize
-In propagation calculations, the momentum lattice values start with 
-\begin_inset Formula $k=0,\ldots$
-\end_inset
-
-, following standard Matlab and FFT conventions.
-\end_layout
-
-\begin_layout Itemize
-For storing and graphing, momentum lattice values are reordered to start
- with 
-\begin_inset Formula $k=-k_{max},\ldots$
-\end_inset
-
-, following standard graphics and mathematical conventions.
-\end_layout
-
-\begin_layout Standard
-A stochastic partial differential equation or 
-\begin_inset Formula $SPDE$
-\end_inset
-
- for a complex vector field is defined in both time 
-\begin_inset Formula $t$
-\end_inset
-
- and space dimensions
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
- 
-\begin_inset Formula $\bm{x}$
-\end_inset
-
-
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-.
- The total 
-\emph on
-dimension
-\emph default
- 
-\begin_inset Formula $d$
-\end_inset
-
- in xSPDE is unlimited, and includes time and space.
- Large 
-\begin_inset Formula $d$
-\end_inset
-
- is memory-intensive and slow! The general equation solved can be written
- in differential form as
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\frac{\partial\mathbf{a}}{\partial t}=\mathbf{A}\left[\mathbf{a}\right]+\underline{\mathbf{B}}\left[\mathbf{a}\right]\cdot\bm{w}(t)+\underline{\mathbf{L}}\left[\bm{\nabla},\mathbf{a}\right]\,.
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The linear function 
-\begin_inset Formula $L$
-\end_inset
-
- is input as a separate function in xSPDE, to allow for greatest efficiency
- and use of an interaction picture.
- Note that it depends on momentum space coordinates, and this involves Fourier
- transforms.
-\end_layout
-
-\begin_layout Subsection
-Specifying the equations
-\end_layout
-
-\begin_layout Standard
-Details of how to input the equations are as follows:
-\end_layout
-
-\begin_layout Itemize
-The initial conditions are specified by the user from the 
-\emph on
-initial(v,r)
-\emph default
- function, where 
-\begin_inset Formula $\mathbf{v}=\left[\bm{v}^{x},\bm{v}^{k}\right]$
-\end_inset
-
- is an array of random initial values, delta-correlated in space or momentum
- space.
- For space correlations, set 
-\begin_inset Formula $randoms(1)$
-\end_inset
-
-, for momentum correlations set 
-\begin_inset Formula $randoms(2)$
-\end_inset
-
-.
- Here 
-\begin_inset Formula $f^{(r)}(\bm{v}\left(\mathbf{k}\right))$
-\end_inset
-
- is an arbitrary momentum filter, for correlated noise.
- Set this using the 
-\emph on
-rfilter(v,r) 
-\emph default
-function, specified by the user.
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\mathbf{A}\left[\mathbf{a}\right]$
-\end_inset
-
- and 
-\begin_inset Formula $\underline{\mathbf{B}}\left[\mathbf{a}\right]$
-\end_inset
-
- are vector and matrix functions of 
-\begin_inset Formula $\mathbf{a}$
-\end_inset
-
-, set by the user using the 
-\emph on
-da(a,w,r) 
-\emph default
-function.
- 
-\end_layout
-
-\begin_layout Itemize
-Here, 
-\begin_inset Formula $\mathbf{w}=\left[\bm{w}^{x},\bm{w}^{k}\right]$
-\end_inset
-
- are real noise fields, delta-correlated in time, and also in space or momentum,
- as explained below.
- 
-\end_layout
-
-\begin_layout Itemize
-The
-\emph on
- linear
-\emph default
- function 
-\begin_inset Formula $L$
-\end_inset
-
- is input as a function in xSPDE, to allow for greatest efficiency and use
- of an interaction picture.
- Here 
-\begin_inset Formula $\underline{\mathbf{L}}\left[\bm{\nabla},\mathbf{a}\right]$
-\end_inset
-
- is a matrix of 
-\emph on
-linear
-\emph default
- terms including derivatives, diagonal in the array indices.
- Note that it depends on momentum space coordinates, and generally involves
- Fourier transforms.
- If 
-\begin_inset Formula $d=1$
-\end_inset
-
-, there are no space dimensions or derivatives.
- The term 
-\begin_inset Formula $\underline{\mathbf{L}}$
-\end_inset
-
- may be omitted if not required.
-\end_layout
-
-\begin_layout Subsection
-Initial random fields and noise transforms
-\end_layout
-
-\begin_layout Standard
-Fourier transforms are available for use both on initial random values and
- on noise fields during time-evolution.
- This is controlled by the second element of 
-\begin_inset Formula $randoms$
-\end_inset
-
- and 
-\begin_inset Formula $noises$
-\end_inset
-
- respectively.
- 
-\end_layout
-
-\begin_layout Standard
-When 
-\begin_inset Formula $randoms(1)>0$
-\end_inset
-
-, an initial random field 
-\begin_inset Formula $\bm{v}^{x}$
-\end_inset
-
- is generated with delta-correlations in 
-\begin_inset Formula $x$
-\end_inset
-
--space.
- When 
-\begin_inset Formula $randoms(2)>0$
-\end_inset
-
-, an initial random field 
-\begin_inset Formula $\tilde{\bm{v}}^{k}$
-\end_inset
-
- is generated with delta-correlations in 
-\begin_inset Formula $k$
-\end_inset
-
--space.
- This is filtered with a user-specified filter function to give 
-\begin_inset Formula $\tilde{\bm{v}}^{kf}$
-\end_inset
-
-, then inverse Fourier transformed to give 
-\begin_inset Formula $v^{k}$
-\end_inset
-
-.
- Both random fields are passed to the 
-\begin_inset Formula $initial$
-\end_inset
-
- function as an extended vector 
-\begin_inset Formula $\left[v^{x},v^{k}\right]$
-\end_inset
-
-, for field 
-\emph on
-initialization
-\emph default
- in space.
-\end_layout
-
-\begin_layout Standard
-There is a user specified filter function available, to modify random fields
- 
-\begin_inset Formula $\tilde{v}^{k}$
-\end_inset
-
-, that are delta-correlated in momentum space using a filter function, '
-\emph on
-rfilter
-\emph default
-' so that 
-\begin_inset Formula $v_{i}^{kf}\left(\bm{k}\right)=f_{i}^{(r)}\left(\bm{v}^{k}\left(\bm{k}\right)\right)$
-\end_inset
-
-, before being used.
- The corresponding correlations are:
-\begin_inset Formula 
-\begin{eqnarray}
-\left\langle v_{i}^{x}\left(\bm{x}\right)v_{j}^{x}\left(\bm{x}'\right)\right\rangle  & = & \delta\left(\bm{x}-\bm{x}'\right)\delta_{ij}\sim\frac{1}{\Delta V}\delta_{\bm{x},\bm{x}'}\delta_{ij}\nonumber \\
-\left\langle \tilde{v}_{i}^{k}\left(\bm{k}\right)\tilde{v}_{j}^{k}\left(\bm{k}'\right)\right\rangle  & = & \delta\left(\bm{k}-\bm{k}'\right)\delta_{ij}\sim\frac{1}{\Delta K}\delta_{\bm{k},\bm{k}'}\delta_{ij}\nonumber \\
-\left\langle \tilde{v}_{i}^{kf}\left(\bm{k}\right)\tilde{v}_{j}^{kf}\left(\bm{k}'\right)\right\rangle  & = & \left\langle f_{i}^{(r)}\left(\tilde{\bm{v}}^{k}\left(\bm{k}\right)\right)f_{j}^{(r)}\left(\tilde{\bm{v}}^{k}\left(\bm{k}'\right)\right)\right\rangle .
-\end{eqnarray}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Note that on a lattice, we replace the Dirac continuous delta-function by
- a discrete Kronecker delta function scaled by an inverse volume element
- either in space (
-\begin_inset Formula $\Delta V$
-\end_inset
-
-) or momentum (
-\begin_inset Formula $\Delta K$
-\end_inset
-
-) .
- The xSPDE Fourier transforms are given by a symmetric Fourier transform
- definition, so that if we inverse Fourier-transform the 
-\begin_inset Formula $k-$
-\end_inset
-
-randoms, without filtering, then:
-\begin_inset Formula 
-\begin{equation}
-v^{k}(\bm{x})=\frac{1}{\left[2\pi\right]^{(d-1)/2}}\int e^{i\bm{k}\cdot\bm{x}}\tilde{v}^{k}(\bm{k})d\bm{k}\,
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-These have random initial values that are real and delta-correlated in space,
- so that:
-\begin_inset Formula 
-\begin{equation}
-\left\langle v^{x}\left(\bm{x}\right)v^{x}\left(\bm{x}'\right)\right\rangle =\delta\left(\bm{x}-\bm{x}'\right).
-\end{equation}
-
-\end_inset
-
-The corresponding noises in position space are correlated according to:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{align}
-\left\langle v^{k}\left(\bm{x}\right)\left(v^{k}\left(\bm{x}'\right)\right)^{*}\right\rangle  & =\frac{1}{\left[2\pi\right]^{(d-1)}}\int e^{i(\bm{k}\cdot\bm{x}-\bm{k}'\cdot\bm{x}')}\left\langle \tilde{v}^{k}\left(\bm{k}\right)\tilde{v}^{k}\left(\bm{k}'\right)\right\rangle d\bm{k}d\bm{k}'\nonumber \\
- & =\frac{1}{\left[2\pi\right]^{(d-1)}}\int e^{i(\bm{x}-\bm{x}')\cdot\bm{k}}d\bm{k}\nonumber \\
- & =\delta\left(\bm{x}-\bm{x}'\right).
-\end{align}
-
-\end_inset
-
- Similarly, if we don't conjugate the k-noise, then:
-\begin_inset Formula 
-\begin{equation}
-\left\langle v^{k}\left(\bm{x}\right)v^{k}\left(\bm{x}'\right)\right\rangle =\delta\left(\bm{x}+\bm{x}'\right).
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{align*}
-\left\langle v^{c}\left(\bm{x}\right)v^{c}\left(\bm{x}'\right)^{*}\right\rangle  & =\frac{1}{2\left[2\pi\right]^{(d-1)}}\int e^{-i(\bm{k}\cdot\bm{x}-\bm{k}'\cdot\bm{x}')}\left\langle \left(v_{1}^{x}\left(\bm{k}\right)+iv_{2}^{x}\left(\bm{k}\right)\right)\left(v_{1}^{x}\left(\bm{k}'\right)-iv_{2}^{x}\left(\bm{k}'\right)\right)\right\rangle d\bm{k}d\bm{k}'\\
- & =\frac{1}{\left[2\pi\right]^{(d-1)}}\int e^{-i(\bm{x}-\bm{x}')\cdot\bm{k}}d\bm{k}\\
- & =\delta\left(\bm{x}-\bm{x}'\right)
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-However, if we define 
-\begin_inset Formula $\tilde{v}^{c}\left(\bm{k}\right)=\left[\tilde{v}_{1}^{k}\left(\bm{k}\right)+i\tilde{v}_{2}^{k}\left(\bm{k}\right)\right]/\sqrt{2}$
-\end_inset
-
- , then we obtain complex noise is only delta correlated when conjugated.
- 
-\begin_inset Formula 
-\begin{align}
-\left\langle v^{c}\left(\bm{x}\right)\left(v^{c}\left(\bm{x}'\right)\right)^{*}\right\rangle  & =\delta\left(\bm{x}-\bm{x}'\right)\nonumber \\
-\left\langle v^{c}\left(\bm{x}\right)v^{c}\left(\bm{x}'\right)\right\rangle  & =0.
-\end{align}
-
-\end_inset
-
-This is obtainable with the x-space noise as well, but the utility of the
- k-space noise is that it can be filtered to have nonlocal correlations
- in space if required.
- 
-\end_layout
-
-\begin_layout Standard
-During propagation in time, 
-\begin_inset Formula $\mathbf{w}=\left[\bm{w}^{x},\bm{w}^{k}\right]$
-\end_inset
-
- are real noise fields that are delta-correlated in space-time.
- They are calculated in an anlogous way, except with an additional factor
- of 
-\begin_inset Formula $1/\sqrt{dt}$
-\end_inset
-
- because they are delta correlated in time as well.There is a user specified
- scaling function available, to take random noises 
-\begin_inset Formula $w^{k}$
-\end_inset
-
- in momentum space that are then scaled using a filter function, '
-\emph on
-nfilter
-\emph default
-' so that 
-\begin_inset Formula $w_{i}^{kf}\left(\bm{k}\right)=f_{i}^{(n)}\left(\bm{w}^{k}\left(\bm{k}\right)\right)$
-\end_inset
-
-, before being used:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray}
-\left\langle w_{i}^{x}\left(t,\bm{x}\right)w_{j}^{x}\left(t,\bm{x}'\right)\right\rangle  & = & \delta\left(\bm{x}-\bm{x}'\right)\delta\left(t-t'\right)\delta_{ij}\nonumber \\
-\left\langle \tilde{w}_{i}^{k}\left(t,\bm{k}\right)\tilde{w}_{j}^{k}\left(t,\bm{k}'\right)\right\rangle  & = & \delta\left(\bm{k}-\bm{k}'\right)\delta\left(t-t'\right)\delta_{ij}\nonumber \\
-\left\langle \tilde{w}_{i}^{kf}\left(t,\bm{k}\right)\tilde{w}_{j}^{kf}\left(t',\bm{k}'\right)\right\rangle  & = & \left\langle f_{i}^{(n)}\left(\tilde{\bm{w}}^{k}\left(t,\bm{k}\right)\right)f_{j}^{(n)}\left(\tilde{\bm{w}}^{k}\left(t',\bm{k}'\right)\right)\right\rangle .
-\end{eqnarray}
-
-\end_inset
-
-
+ function can be used to take any further functional transforms and combinations
+ of Fourier transformed fields prior to averaging.
 \end_layout
 
 \begin_layout Section
@@ -5071,7 +4436,7 @@ Stochastic Ginzburg-Landau
 \end_layout
 
 \begin_layout Standard
-Including two space dimensions, or space-time dimensions of 
+Including two space dinmensions, or space-time dimensions of 
 \begin_inset Formula $d=3$
 \end_inset
 
@@ -5105,7 +4470,7 @@ The following new ideas are introduced for this problem:
 \begin_layout Enumerate
 
 \series bold
-\begin_inset Formula $\mathtt{dimension}$
+\begin_inset Formula $\mathtt{s.dimension}$
 \end_inset
 
  is the space-time dimension.
@@ -5129,7 +4494,7 @@ notation used for parallel operations over lattices
 \begin_layout Enumerate
 
 \series bold
-\begin_inset Formula $\mathtt{linear}$
+\begin_inset Formula $\mathtt{s.linear}$
 \end_inset
 
  is the linear operator - a laplacian in these cases.
@@ -5138,7 +4503,7 @@ notation used for parallel operations over lattices
 \begin_layout Enumerate
 
 \series bold
-\begin_inset Formula $\mathtt{images}$
+\begin_inset Formula $\mathtt{s.images}$
 \end_inset
 
  produces movie-style images at discrete time slices.
@@ -5147,7 +4512,7 @@ notation used for parallel operations over lattices
 \begin_layout Enumerate
 
 \series bold
-\begin_inset Formula $\mathtt{Dx}$
+\begin_inset Formula $\mathtt{r.Dx}$
 \end_inset
 
  indicates a derivative operation, 
@@ -5242,65 +4607,63 @@ clear;
 \end_layout
 
 \begin_layout Plain Layout
-r.
-\family typewriter
-name = 'Extended laser gain equation';
-\end_layout
 
-\begin_layout Plain Layout
-r.
 \family typewriter
-noises=2;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-dimension=3;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-steps=10;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-linear = @(r) i*0.01*(r.Dx.^2+r.Dy.^2);
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-observe = @(a,~) abs(a).^2;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-images =6;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-olabels = '|a|^2';
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-da=@(a,w,~) (1-abs(a(1,:)).^2).*a+0.001*(w(1,:)+i*w(2,:));
+s.name = 'Extended laser gain equation';
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-xspde(
-\family default
-r)
+s.noises=2;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.dimension=3;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.steps=10;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.linear = @(r) i*0.01*(r.Dx.^2+r.Dy.^2);
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.observe = @(a,~) abs(a).^2;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.images =6;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.olabels = '|a|^2';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.da=@(a,w,~) (1-abs(a(1,:)).^2).*a+0.001*(w(1,:)+i*w(2,:));
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+xspde(s)
 \end_layout
 
 \end_inset
@@ -5349,7 +4712,7 @@ status collapsed
 
 
 \begin_inset Graphics
-	filename ../../xspde_matlab3.1/users guide/Figures/GinzLand.pdf
+	filename Figures/GinzLand.pdf
 	width 75text%
 
 \end_inset
@@ -5466,55 +4829,51 @@ unction [e] = Soliton()
 \end_layout
 
 \begin_layout Plain Layout
-r.
-\family typewriter
-name = 'NLS soliton';
-\end_layout
 
-\begin_layout Plain Layout
-r.
 \family typewriter
-dimension = 2; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-initial = @(v,r) sech(r.x); 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-da = @(a,~,r) i*a.*(conj(a).*a);
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-linear = @(r) 0.5*i*(r.Dx.^2-1.0);
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-olabels = {'a_1(x)'}; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-compare{1}= @(t,~) 1; 
+s.name = 'NLS soliton';
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-e = xspde(
-\family default
-r)
+s.dimension = 2; 
+\end_layout
+
+\begin_layout Plain Layout
+
 \family typewriter
-; 
+s.initial = @(v,r) sech(r.x); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.da = @(a,~,r) i*a.*(conj(a).*a);
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.linear = @(r) 0.5*i*(r.Dx.^2-1.0);
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.olabels = {'a_1(x)'}; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.compare{1}= @(t,~) 1; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+e = xspde(s); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -5597,9 +4956,9 @@ Together with the initial condition that
 \end_layout
 
 \begin_layout Standard
-To get an output from a spatially Fourier transformed field in three-dimensions,
- but without a Fourier transform in time, just set 
-\begin_inset Formula $transforms=[0,1,1,1]$
+To get an output from a spatially fourier transformed field in three-dimensions,
+ but without a fourier transform in time, just set 
+\begin_inset Formula $s.transforms=[0,1,1,1]$
 \end_inset
 
 , for the particular observable you need to calculate in transform space.
@@ -5646,65 +5005,57 @@ function [e] = Gaussian()
 \end_layout
 
 \begin_layout Plain Layout
-r.
-\family typewriter
-dimension = 4; 
-\end_layout
 
-\begin_layout Plain Layout
-r.
 \family typewriter
-initial = @(v,r) exp(-0.5*(r.x.^2+r.y.^2+r.z.^2));
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-linear = @(r) 1i*0.05*(r.Dx.^2+r.Dy.^2+r.Dz.^2); 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-observe = @(a,r) a.*conj(a); 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-olabels = '|a(x)|^2'; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-file = 'Gaussian.h5';
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-images = 4;
+s.dimension = 4; 
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-[e,r] = xsim(
-\family default
-r)
-\family typewriter
-; 
+s.initial = @(v,r) exp(-0.5*(r.x.^2+r.y.^2+r.z.^2));
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-e = xgraph(
-\family default
-r.
+s.linear = @(r) 1i*0.05*(r.Dx.^2+r.Dy.^2+r.Dz.^2); 
+\end_layout
+
+\begin_layout Plain Layout
+
 \family typewriter
-file); 
+s.observe = @(a,r) a.*conj(a); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.olabels = '|a(x)|^2'; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.file = 'Gaussian.h5';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.images = 4;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+[e,s] = xsim(s); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+e = xgraph(s.file); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -5737,7 +5088,7 @@ Add an additive complex noise of
 
 \begin_layout Standard
 Note that for this, you'll need to define 
-\begin_inset Formula $r.da=@(a,w,r)0.01*(w(1,:)+i*w(2,:))$
+\begin_inset Formula $s.da=@(a,w,r)0.01*(w(1,:)+i*w(2,:))$
 \end_inset
 
 
@@ -5853,17 +5204,17 @@ elated noise, the other with noise transformed to momentum space to allow
 
 \begin_layout Standard
 The first noise index, 
-\begin_inset Formula $r.noises(1)$
+\begin_inset Formula $s.noises(1)$
 \end_inset
 
 , indicates how many noise fields are generated, while 
-\begin_inset Formula $r.noises(2)$
+\begin_inset Formula $s.noises(2)$
 \end_inset
 
  indicates how many of these are spatially correlated, via Fourier transform,
  filter and inverse Fourier transform.
  These appear to the user as additional noises, so the total is 
-\begin_inset Formula $r.noises(1)+r.noises(2)$
+\begin_inset Formula $s.noises(1)+s.noises(2)$
 \end_inset
 
 .
@@ -5881,7 +5232,7 @@ The first noise index,
 \noun off
 \color none
 
-\begin_inset Formula $r.noises(1)$
+\begin_inset Formula $s.noises(1)$
 \end_inset
 
 
@@ -5937,105 +5288,93 @@ function [e] = Planar()
 \end_layout
 
 \begin_layout Plain Layout
-r.
-\family typewriter
-name = 'Planar noise growth'; 
-\end_layout
 
-\begin_layout Plain Layout
-r.
 \family typewriter
-dimension = 3; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-fields = 2; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-ranges = [1,5,5]; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-steps = 2; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-noises = [2,2]; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-ensembles = [10,4,4]; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-initial = @Initial; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-da = @Da; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-linear = @Linear; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-observe = @(a,r) a(1,:).*conj(a(1,:));
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-olabels= '<|a_1(x)|^2>';
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-compare = @(t,
-\family default
-r)
-\family typewriter
- [1+t]/
-\family default
-r.
-\family typewriter
-dv;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-images = 4; 
+s.name = 'Planar noise growth'; 
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-e = xspde(
-\family default
-r)
+s.dimension = 3; 
+\end_layout
+
+\begin_layout Plain Layout
+
 \family typewriter
-; 
+s.fields = 2; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.ranges = [1,5,5]; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.steps = 2; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.noises = [4,2]; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.ensembles = [10,4,4]; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.initial = @Initial; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.da = @Da; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.linear = @Linear; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.observe = @(a,r) a(1,:).*conj(a(1,:));
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.olabels= '<|a_1(x)|^2>';
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.compare = @(t,in) [1+t]/s.dv;
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.images = 4; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+e = xspde(s); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -6061,7 +5400,7 @@ function a0 = Initial(v,r)
 \begin_layout Plain Layout
 
 \family typewriter
-a0(1,:) = (v(1,:)+1i*v(2,:))/sqrt(2); 
+a0(1,:) = (v(5,:)+1i*v(6,:))/sqrt(2); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -6093,7 +5432,7 @@ function da = Da(a,z,r)
 \begin_layout Plain Layout
 
 \family typewriter
-da(1,:) = (z(1,:)+1i*z(2,:))/sqrt(2); 
+da(1,:) = (z(5,:)+1i*z(6,:))/sqrt(2); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -6165,345 +5504,6 @@ Add a decay rate of
 
 \series bold
 Add growth and nonlinear saturation terms
-\end_layout
-
-\begin_layout Section
-GPE
-\end_layout
-
-\begin_layout Standard
-The next example is a Gross-Pitaevskii equation in two dimensions, 
-\begin_inset Formula 
-\[
-\frac{da}{dt}=\frac{i}{2}\nabla^{2}a-ia(V(r)+\left|a\right|^{2})+\epsilon\eta
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\eta$
-\end_inset
-
- is a correlated complex noise vector field: 
-\begin_inset Formula 
-\[
-\eta(t,\mathbf{x})=w_{1}(t,\mathbf{x})+iw_{2}(t,\mathbf{x}),
-\]
-
-\end_inset
-
-with the initial condition that the initial random field and the noise are
- both filtered in momentum space 
-\begin_inset Formula 
-\[
-a(0,\mathbf{x})=a_{0}(\mathbf{x})+\epsilon\zeta^{(in)}(\bm{x})
-\]
-
-\end_inset
-
-where: 
-\begin_inset Formula 
-\[
-\zeta^{(in)}(\bm{x})=v_{1}(\mathbf{x})+iv_{2}(\mathbf{x})
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We add a Gaussian filter in momentum space for both the initial random field
- and noise so that, if 
-\begin_inset Formula $\tilde{w}\left(\bm{k}\right)$
-\end_inset
-
- is a delta-correlated noise in momentum space:
-\begin_inset Formula 
-\begin{align*}
-w\left(\bm{k}\right) & =\tilde{w}\left(\bm{k}\right)\exp\left(-\left|\bm{k}\right|^{2}\right)\\
-v\left(\bm{k}\right) & =\tilde{v}\left(\bm{k}\right)\exp\left(-\left|\bm{k}\right|^{2}\right)
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This allows use of finite correlation lengths when needed, by including
- a frequency filter function that is used to multiply the noise in Fourier-space.
- The Fourier-space noise variance is the square of the filter function.
- 
-\end_layout
-
-\begin_layout Standard
-The first noise index, 
-\begin_inset Formula $r.noises(1)$
-\end_inset
-
-, indicates how many noise fields are generated that are delta-correlated
- in 
-\begin_inset Formula $x$
-\end_inset
-
-, while 
-\begin_inset Formula $r.noises(2)$
-\end_inset
-
- indicates how many of these are spatially correlated, via Fourier transform,
- filter and inverse Fourier transform.
- These appear to the user as additional noises, so the total is 
-\begin_inset Formula $r.noises(1)+r.noises(2)$
-\end_inset
-
-.
- The filtered noises have a finite correlation length.
- 
-\end_layout
-
-\begin_layout Subsection*
-Exercises
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Solve the GPE equation
-\end_layout
-
-\begin_layout Standard
-\align center
-\begin_inset Box Doublebox
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-function [e] = GPE() 
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-% e = GPE() tests xSPDE for a vortex in two space dimensions
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-% Tests a three-dimensional noisy GPE in a harmonic well by
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-% (1) Modifying points and ranges in 3 dimensions
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-% (2) Using momentum filters on noises generated
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-% (3) Setting the noise and random transform filter in k-space
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-% (4) Changing the movie image type to give a contour plot
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-% (5) Using auxiliary functions defined inline
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-% (6) Graphing data from results saved in an HDF5 file
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-% xSPDE functions are licensed by Peter D.
- Drummond, (2015) - see License
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-cd ~
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-name = 'GPE';
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-dimension = 3; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-points = [101,64,64];
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-ranges = [1,20,20];
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-noises = [0,2];
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-rfilter = @(w,r) w.*[exp(- r.kx.^2-r.ky.^2);exp(- r.kx.^2-r.ky.^2)];
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-nfilter = @(v,r) v.*[exp(- r.kx.^2-r.ky.^2);exp(- r.kx.^2-r.ky.^2)];
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-b = @(xi) .1*(xi(1,:)+1i*xi(2,:));
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-initial = @(w,r) (r.x+1i*r.y)./(1+10*(r.x.^2 +r.y.^2))+b(w);
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-V = @(r) 0.01*(r.x.^2 +r.y.^2)-0.001*1i*(r.x.^2 +r.y.^2).^2;
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-da = @(a,xi,r) -1i*a.*(V(r)+conj(a).*a)+b(xi);
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-linear = @(r) 0.5*1i*(r.Dx.^2+r.Dy.^2);
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-observe{1} = @(a,r) a.*conj(a);
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-images = {2}; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-imagetype = {2}; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-olabels = {'|a|^2'};
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-file = 'GPE.mat';
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-%
-\family default
-r.
-\family typewriter
-print =2;
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-[e,r] = xsim(
-\family default
-r)
-\family typewriter
-; %%sim program
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-xgraph(
-\family default
-r.
-\family typewriter
-file,
-\family default
-r)
-\family typewriter
-; %%graph program
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-end %%end of function
-\end_layout
-
-\end_inset
-
- 
 \end_layout
 
 \begin_layout Standard
@@ -6601,59 +5601,51 @@ function [e] = Characteristic()
 \end_layout
 
 \begin_layout Plain Layout
-r.
-\family typewriter
-name = 'Characteristic'
-\end_layout
 
-\begin_layout Plain Layout
-r.
 \family typewriter
-dimension = 2; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-initial = @(v,r) sech(2.*(r.x+2.5)); 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-da = @(a,z,r) 0*a; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-linear = @(r) -r.Dx; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-olabels = {'a_1(x)'}; 
-\end_layout
-
-\begin_layout Plain Layout
-r.
-\family typewriter
-compare = @(t,
-\family default
-r)
-\family typewriter
- sech(2.*(t-2.5)); 
+s.name = 'Characteristic'
 \end_layout
 
 \begin_layout Plain Layout
 
 \family typewriter
-e = xspde(
-\family default
-r)
+s.dimension = 2; 
+\end_layout
+
+\begin_layout Plain Layout
+
 \family typewriter
-; 
+s.initial = @(v,r) sech(2.*(r.x+2.5)); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.da = @(a,z,r) 0*a; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.linear = @(r) -r.Dx; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.olabels = {'a_1(x)'}; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+s.compare = @(t,in) sech(2.*(t-2.5)); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+e = xspde(s); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -6698,8 +5690,8 @@ prevents
 \end_layout
 
 \begin_layout Standard
-This can be treated either using a Schrodinger equation with a random potential,
- at low density, or using the Gross-Pitaevskii (GP) equation to include
+This can be treated either using a Schroedinger equation with a random potential
+, at low density, or using the Gross-Pitaevskii (GP) equation to include
  atom-atom interactions at the mean field level.
  In this example of a problem where strong localization occurs, the general
  equations are: 
@@ -6773,7 +5765,7 @@ Exercise
 \begin_layout Itemize
 
 \series bold
-Solve Schrodinger's equation without a random potential, to observe expansion.
+Solve Schroedinger's equation without a random potential, to observe expansion.
 \end_layout
 
 \begin_layout Itemize
@@ -6871,7 +5863,7 @@ sequence
 \emph default
  of simulations, so that 
 \series bold
-input={r1,r2,...}
+input={in1,in2,...}
 \series default
 .
  
@@ -6880,8 +5872,7 @@ input={r1,r2,...}
 \begin_layout Itemize
 Each structure 
 \series bold
-r1,r2,...
-
+in
 \series default
  describes a simulation, whose output is the input of the next.
  
@@ -6919,12 +5910,19 @@ The sequence
 \begin_inset Formula $\mathbf{input}$
 \end_inset
 
- has a number of individual simulation objects, with parameters that specify
- the simulation functions and give the equations and observables.
- If there is only one simulation, just one data structure is needed, without
- requiring a cell array.
+ has a number of individual simulation objects 
+\begin_inset Formula $\mathbf{in}$
+\end_inset
+
+.
+ Each includes parameters that specify the simulation, with functions that
+ give the equations and observables.
+ If there is only one simulation, just one individual specification 
+\begin_inset Formula $\mathbf{in}$
+\end_inset
+
+ is needed.
  In addition, xSPDE generates graphs with its own graphics program.
- 
 \end_layout
 
 \begin_layout Subsection
@@ -7075,11 +6073,8 @@ xRK2
 xRK4, 
 \series default
 for Euler and Runge-Kutta integration methods.
- This can be user-modified by initializing the handle 
-\emph on
-step
-\emph default
- to add a new integration function.
+ This can be user-modified by initializing the handle s.step to add a new
+ integration function.
  The default is 
 \begin_inset Formula $\mathbf{xRK4}$
 \end_inset
@@ -8186,7 +7181,7 @@ An arbitrary number of functions of these observables can also be plotted,
 *compare(r) is a cell array of functions used to obtain comparison results.
  These are calculated from the user-specified 
 \series bold
-compare
+s.compare
 \series default
  handle, giving a dashed line on the generated time-domain graphs, and an
  error summary which is printed.
@@ -8260,7 +7255,7 @@ If the
 \end_inset
 
  option is used on input - for example 
-\begin_inset Formula $steps=[2,3,4]$
+\begin_inset Formula $s.steps=[2,3,4]$
 \end_inset
 
 , this adds additional integration points between the plotted points, to
@@ -8506,27 +7501,18 @@ transverse
  (2D) plots at specified points in time, up to a maximum given by the number
  of time points specified.
  The number of these can be individually specified for each graphics output.
- The images available are specified as
+ The images available are specified in 
 \emph on
- imagetype
+imagetype
 \emph default
-
-\begin_inset Formula $=1,\ldots4$
-\end_inset
-
-, giving 3D perspective plots (the default), grey-scale colour plots, contour
- plots, and pseudo-color plots respectively.
+: 3D perspective plots, grey-scale colour plots and contour plots.
 \end_layout
 
 \begin_layout Standard
-Eerror bars, sampling errors and multiple lines are only graphed for 2D
- plots.
- Error-bars are not plotted when they are below a user-specified size, with
- a default of 
-\begin_inset Formula $1\%$
-\end_inset
-
- of the maximum range, to improve graphics quality.
+Note that error bars, sampling errors and multiple lines are only graphed
+ for 2D plots, typically of results vs time.
+ The error-bars are not plotted when they are below a user-specified size,
+ to improve graphics quality.
  Higher dimensional graphs do not include this data, for visibility reasons,
  but they are still recorded in the data files.
  
@@ -8575,9 +7561,9 @@ backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
-r.
+
 \family typewriter
-step=@Mystep;
+s.step=@Mystep;
 \end_layout
 
 \end_inset
@@ -8703,10 +7689,9 @@ The input data, which we label
 \end_inset
 
 , is a sequence of data structures that we label 
-\begin_inset Formula $in$
+\begin_inset Formula $s.$
 \end_inset
 
-.
  All of the input data is later passed to the 
 \begin_inset Formula $xgraph$
 \end_inset
@@ -8810,9 +7795,13 @@ The simulation data of the
  User application constants can be included, but must not be reserved names.
  However, names starting with '
 \emph on
-c
+s.c
 \emph default
-' or any capital letter like 'A...' - except the reserved '
+' or any capital letter like '
+\emph on
+s.
+\emph default
+A...' - except the reserved '
 \emph on
 D
 \emph default
@@ -8839,22 +7828,18 @@ iable through the
 \emph default
  function.
  Any defaults can be checked by typing 
-\begin_inset Formula $print=2$
+\begin_inset Formula $s.print=2$
 \end_inset
 
 , then running 
 \emph on
-xSIM(r)
+xSIM(s)
 \emph default
  or 
 \emph on
-xspde(r).
+xspde(s).
 
 \emph default
- All parameters must be input as part of a structure passed to xSPDE.
- If multiple structures are passed, they are executed in sequence, with
- the output of the first simulation passed to the second, then the third,
- and so on.
  
 \begin_inset Newline newline
 \end_inset
@@ -8918,7 +7903,7 @@ version
 \begin_layout Plain Layout
 
 \emph on
-'xSIM3.2'
+'xSIM3.0'
 \emph default
  
 \end_layout
@@ -9526,7 +8511,7 @@ Boundary: '-1,0,1'=Neum,periodic,Dirich: per boundary.
 \begin_layout Plain Layout
 
 \emph on
-probability
+s.probability
 \end_layout
 
 \end_inset
@@ -9840,7 +8825,7 @@ Raw data switch: 1 for raw output
 \begin_layout Plain Layout
 
 \emph on
-scatters
+s.scatters
 \end_layout
 
 \end_inset
@@ -9927,7 +8912,7 @@ The most common functions, output field dimensions and calling arguments,
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="25" columns="3">
+<lyxtabular version="3" rows="23" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -10086,7 +9071,7 @@ Linear derivative function
 \emph on
  
 \emph default
-(v,r)
+(r)
 \end_layout
 
 \end_inset
@@ -10095,7 +9080,7 @@ Linear derivative function
 \begin_inset Text
 
 \begin_layout Plain Layout
-Random filter function in k-space
+Random input filter in k-space
 \end_layout
 
 \end_inset
@@ -10119,7 +9104,7 @@ Random filter function in k-space
 \begin_inset Text
 
 \begin_layout Plain Layout
-(w,r)
+(r)
 \end_layout
 
 \end_inset
@@ -10500,74 +9485,6 @@ Noise generator
 \begin_layout Plain Layout
 
 \emph on
-rfilter
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $(v,r)$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Initial random kspace filter
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
-nfilter
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $w,(r)$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Noise kspace filter
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
 xint
 \end_layout
 
@@ -10850,8 +9767,16 @@ Internally, xSPDE data is stored in a cell array,
 \begin_inset Formula $latt$
 \end_inset
 
-, of the data structures passed to functions.
- This includes the data given above from the input structures.
+, of the structures called 
+\begin_inset Formula $r$
+\end_inset
+
+ passed to functions.
+ This includes the data given above from the 
+\begin_inset Formula $in$
+\end_inset
+
+ structures.
  In addition, it includes the computed parameters given below, which includes
  various internal array dimensions.
  The stochastic variable arrays like 
@@ -10866,8 +9791,12 @@ Internally, xSPDE data is stored in a cell array,
 \end_layout
 
 \begin_layout Standard
-For more than four total dimensions, the spatial grid, momentum grid and
- derivative grid notation of 
+For 
+\begin_inset Formula $d>4$
+\end_inset
+
+ total dimensions, the spatial grid, momentum grid and derivative grid notation
+ of 
 \emph on
 
 \begin_inset Formula $t,x,y,z$
@@ -10882,7 +9811,7 @@ For more than four total dimensions, the spatial grid, momentum grid and
  and 
 \emph on
 
-\begin_inset Formula $Dx,Dy,Dz$
+\begin_inset Formula $r.Dx,r.Dy,r.Dz$
 \end_inset
 
 
@@ -10902,13 +9831,16 @@ For more than four total dimensions, the spatial grid, momentum grid and
 
 .
  These are simpler to handle with large numbers of space dimensions.
- This numeric labeling preference can be used even for lower dimensionality
- by setting the input switch 
+ This numeric labeling preference can be used even if 
+\begin_inset Formula $d<5$
+\end_inset
+
+, by setting the input switch 
 \begin_inset Formula $numberaxis=1$
 \end_inset
 
 .
- The graph labels will use the same notation also, unless specified otherwise.
+ The graph labels will use this notation also, unless specified otherwise.
 \begin_inset Newline newline
 \end_inset
 
@@ -11037,7 +9969,7 @@ real
 \begin_inset Text
 
 \begin_layout Plain Layout
-Frequency passed to in.observe : 
+Frequency passed to s.observe : 
 \begin_inset Formula $\omega$
 \end_inset
 
@@ -11865,9 +10797,7 @@ Computational axes in
 \begin_layout Plain Layout
 
 \emph on
-s.dx
-\emph default
- 
+sdx
 \end_layout
 
 \end_inset
@@ -11907,9 +10837,7 @@ Initial stochastic normalization
 \begin_layout Plain Layout
 
 \emph on
-s.dxt
-\emph default
- 
+sdxt
 \end_layout
 
 \end_inset
@@ -11953,9 +10881,7 @@ Propagating stochastic normalization
 \begin_layout Plain Layout
 
 \emph on
-s.dk
-\emph default
- 
+sdk
 \end_layout
 
 \end_inset
@@ -11995,7 +10921,7 @@ Initial k stochastic normalization
 \begin_layout Plain Layout
 
 \emph on
-s.dkt
+sdkt
 \emph default
  
 \end_layout
@@ -12739,7 +11665,7 @@ gversion
 \begin_layout Plain Layout
 
 \emph on
-'xGRAPH3.1'
+'xGRAPH3.0'
 \emph default
  
 \end_layout
@@ -12763,7 +11689,7 @@ Current version number
 \begin_layout Plain Layout
 
 \emph on
-in.olabels{n}
+s.olabels{n}
 \emph default
  
 \end_layout

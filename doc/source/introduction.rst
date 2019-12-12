@@ -1,8 +1,8 @@
 .. _chap-introduction:
 
-######################
-Introduction to xSPDE 
-######################
+########################
+Introduction to xSPDE3.2 
+########################
 
 Stochastic equations are equations with random noise terms [Gardiner2004]_. They occur in in many fields of science, engineering, economics and other disciplines. xSPDE can solve both ordinary and partial differential stochastic equations. These include partial spatial derivatives, like the Maxwell or Schrödinger equations.
 

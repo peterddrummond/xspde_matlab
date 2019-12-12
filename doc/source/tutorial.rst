@@ -394,7 +394,7 @@ Here, the noise is delta-correlated, and :math:`\Delta V`, :math:`\Delta V_{k}` 
    \Delta V_{k} & = \Delta k_{x}\Delta k_{y}=\frac{(2\pi)^{2}}{V}.
    \end{aligned}
 
-In the simulations, two planar noise fields are propagated, one using noise generated in position space, the other with noise generated in momentum space. This example shows that, provided no filters are applied, both types of noise are identical in their effects. However, momentum space noise requires an N-dimensional inverse FFT before being added, which is slower, so this method is not recommended unless needed.
+In the simulations, two planar noise fields are propagated, one using noise generated in position space, the other with noise generated in momentum space. This example shows that, provided no filters are applied, both types of noise are identical in their effects. However, momentum space noise uses an internal N-dimensional inverse FFT before being added, which is slower, so this method is not recommended unless needed.
 
 Planar inputs
 -------------

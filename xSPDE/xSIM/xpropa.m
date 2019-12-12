@@ -1,5 +1,5 @@
 function a  =  xpropa(a,r) 
-%   a = XPROP(a,r) propagates a step in time for linear propagarion.
+%   a = XPROPA(a,r) propagates a step in time for linear propagarion.
 %   includes anti-aliasing.   
 %   Input: field a, lattice r.
 %   Uses r.propagator to propagate in k-space or x-space as necessary
@@ -16,7 +16,7 @@ if r.propagator ~= 0                          %%No xprop required
       for nd = 3:dmax                         %%loop over dimension
         a = fft(a,[],nd);                     %%take Fourier transform
       end                                     %%end loop over dimension
-      a = r.propagatora.*a;                   %%propagate in Fourier space
+      a = r.propagatora.*a;                   %% anti-aliasing propagation
       for nd = 3:dmax                         %%loop over dimension
         a = ifft(a,[],nd);                    %%inverse Fourier transform
       end                                     %%end loop over dimension

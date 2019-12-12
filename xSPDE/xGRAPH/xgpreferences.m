@@ -50,7 +50,7 @@ for s = 1:sequence                               %%loop over sequence
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  SET COMMON GRAPHICS DEFAULTS
 %                          
-  in.gversion =   xprefer(in,'gversion',0,'xGRAPH3.1');
+  in.gversion =   xprefer(in,'gversion',0,'xGRAPH3.2');
   in.graphs =     xprefer(in,'graphs',1,in.functions);
   in.gtransforms = xcprefer(in,'ftransforms',in.graphs,{zeros(1,nd+1)});
   in.axes =       xcprefer(in,'axes',in.graphs,axes);

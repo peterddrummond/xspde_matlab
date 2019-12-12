@@ -3,6 +3,8 @@ function r = xlattice(r)
 %   Input:  input structure, 'r'.
 %   Output: input with lattices data, 'r'. 
 %   First dimension is the field index, last dimension is the ensemble
+%   Note, s.dx = 1/sqrt (dV) = stochastic normalisation in x-space
+%   s.dk = 1/sqrt (dK) = sqrt (V/(2*pi)^d) = stochastic normalisation in k-space
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  STORE INTEGRATION CONSTANTS
@@ -12,18 +14,20 @@ function r = xlattice(r)
   for i=1:r.averages                              %%check for w-transform
       r.transformw = max(r.transformw,r.transforms{i}(1));
   end                                             %%end for w-transform
+
   r.kfact =     r.dx/sqrt(2*pi);                  %%fft (k) normalization
+  r.kfspace =   prod(r.kfact(2:end));             %%total k-space norm
   r.kfacti =    r.dx(1)*r.points(1)/sqrt(2*pi);   %%ifft (w) normalize
   %Note insert correction to phase: exp(iw(t_0+dt/2))
   r.dt  =       r.dx(1)/r.steps(1);               %%integration step
   r.dtr  =      r.dt;                             %%reduced step
+  r.d.space =   r.points(2:r.dimension);          %%total space dimensions
+  r.nspace =    prod(r.d.space);                  %%total space points
+  r.npoints  =  prod(r.points);                   %%space-time points
   r.s.dx =      sqrt(1./r.dv);                    %%Transverse normalize
   r.s.dxt =     r.s.dx*sqrt(r.errorchecks/r.dt);  %%noise normalization
-  r.s.dkt =     r.s.dxt*sqrt(r.nspace);           %%k-noise normalization
-  r.s.dk  =     r.s.dx*sqrt(r.nspace);            %%input k-noise factor
-  r.d.space =   r.points(2:r.dimension);          %%total space dimensions
-  r.nspace =    prod(r.d.space);                  %%total space pointss
-  r.npoints  =  prod(r.points);                   %%space-time points
+  r.s.dk  =     sqrt(1./r.dkv);                   %%k-random factor 
+  r.s.dkt =     r.s.dk*sqrt(r.errorchecks/r.dt);  %%k-noise normalization
   r.d.int =     [1,r.d.space,r.ensembles(1)];     %%integration dimensions
   r.nlattice =  r.ensembles(1)*r.nspace;          %%sample*space dimensions
   r.noisetot =  r.noises(1)+r.noises(2);          %%Total noise
@@ -53,9 +57,13 @@ function r = xlattice(r)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  CHECK USER FUNCTIONS ARE OK
 
-  r.t  = r.origin(1);                             %%Set time at origin
+  r.t  = r.origin(1)-1;                           %%Set time < origin
   w = r.randomgen(r);                             %%Set random noise
-  r.boundinvalue = r.boundin(r);                  %%Set boundaries
+  for dir=2:r.dimension
+       r.boundval{dir} = r.boundfun(w,dir,r);     %%Store boundaries
+  end
+  r.t  = r.origin(1);                             %%Set time = origin
+
   a  = r.initial(w,r);
   if length(a) == 1
             a = a*ones(r.d.a);
