@@ -8,7 +8,7 @@ This has an improved treatment of non-periodic boundary conditions, in stochasti
 
 Version 3.2
 
-This has a different treatment of noise filtering in momentum space, per user request, and adds new three-dimensional graphics output options, including color mapped contours. .
+This has a different treatment of noise filtering in momentum space, per user request, and adds new three-dimensional graphics output options, including color mapped contours.
  
 
 
