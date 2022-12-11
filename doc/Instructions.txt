@@ -1,3 +1,0 @@
-Instructions:
-
-To compile, enter make

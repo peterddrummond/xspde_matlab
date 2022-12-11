@@ -10,6 +10,31 @@ Version 3.2
 
 This has a different treatment of noise filtering in momentum space, per user request, and adds new three-dimensional graphics output options, including color mapped contours.
  
+Version 3.3
 
+This adds a forward-backward stochastic equation package.
 
+Version 3.4
 
+This uses simpler, non-flattened internal arrays. It also adds many new features and special libraries for projected SDEs, including automated graphics storage and an improved printout of integration errors. Full features are explained in the new, expanded user's guide.
+
+Version 3.44
+
+This adds support for derivatives obtained without using finite differences in the case of non-periodic (Neuman, Dirichlet, Robin) boundary conditions, equivalent to obtaining derivatives using Fourier transform methods in the case of periodic boundary conditions.
+It also changes a number of keywords compared to previous versions, namely:
+da             --> deriv
+step           --> method
+dimension      --> dimensions
+fields(1)&(2)  --> fields
+fields(2)      --> backfields
+fields(3)      --> auxfields
+origin         --> origins
+print          --> verbose
+averages       --> [removed, due to being redundant]
+randoms        --> inrandoms
+xd1, xd2, ...  --> D1, D2, ...
+xave           --> Ave
+xint           --> Int
+xMP, xRK4..    --> MP, RK4
+xquadproj..    --> Quadproj
+Backwards compatability is upheld, which means that both the old and new keywords work, though using the new keywords is encouraged. Only the new keywords are listed in the documentation and example projects.

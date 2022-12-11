@@ -1,4 +1,4 @@
-function o  =  xavc(o,varargin)               
+ function o  =  xavc(o,varargin)               
 %   o  =  XAVC(o,varargin) averages and compresses input observables. 
 %   Input: matrix 'o' on a flattened lattice, original dimension r.d.int. 
 %   Forms: xavc(o),xavc(o,r),xavc(o,av,r): switch `av', parameters 'r'.

@@ -1,4 +1,4 @@
-The BSD License 
+The BSD License
 
 Copyright (c) 2016, Peter D. Drummond, Swinburne University of Technology
 All rights reserved.
