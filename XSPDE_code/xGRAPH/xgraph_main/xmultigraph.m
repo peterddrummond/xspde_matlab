@@ -64,7 +64,7 @@ end                                              %%End check if dimension > 1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  PLOT DATA IN 1D
 %            
 if g.parametric{n}(2) == 1 && ~isequal(param,0)
-    tlabel = g.olabels{g.parametric{n}(1)};
+    tlabel = g.olabels{g.parametric{n}};
     tcoord = param ;                             %%Axis data 
 end
 if g.print > 0

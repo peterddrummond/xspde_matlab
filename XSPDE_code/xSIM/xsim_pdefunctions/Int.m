@@ -2,13 +2,13 @@ function o  =  Int(o,varargin)
 %   a  =  INT(o,[dx,][bounds,] r) integrates an input over a lattice. 
 %   Input:  field 'o', lattice 'r'.
 %   Optional inputs:   stepsize 'dx',  integration bounds 'bounds'.
-%   Note 'dx' should have total dimension equal to r.dimension,
-%   'bounds' is an array of size [r.dimension,2],  which specifies 
+%   Note 'dx' should have total dimension equal to r.dimensions,
+%   'bounds' is an array of size [r.dimensions,2],  which specifies 
 %   the lower and upper integration bounds in each direction.
 %   Output: space integral of 'o' returned in reduced lattice points.
 %   Integrates only in directions where `dx(i)' > 0.
 %   If r.indext = 1 can integrate over time, otherwise not
-%   Any dimensions above r.dimension are not integrated.
+%   Any dimensions above r.dimensions are not integrated.
 %   If no dx is present, in.dx is assumed, integrates over all space.
 %   First dimension is the field index or line index
 %   xSPDE functions are licensed by Peter D. Drummond, (2022) - see License
@@ -24,14 +24,14 @@ switch nargin                                %% Check for arguments
     case 3                                   %% Case of three arguments
         dx =varargin{1};                     %% dx is input
         r = varargin{2};                     %% r is the last argument
-        b = zeros(r.dimension,2);            %% bounds is set to zeros
+        b = zeros(r.dimensions,2);           %% bounds are set to zeros
     case 2                                   %% Case of two arguments
         r = varargin{1};                     %% r is the second argument
         dx = r.dx;                           %% dx is the volume element
         dx(1) = 0;                           %% remove time step
-        b = zeros(r.dimension,2);            %% bounds set to zeros
+        b = zeros(r.dimensions,2);            %% bounds set to zeros
     otherwise                                %% Throw an error message
-        error ('xSPDE error: xint requires 2, 3 or 4 input arguments.')
+        error ('xSPDE error: Int requires 2, 3 or 4 input arguments.')
 end                                          %% End checks for arguments
 o = xshape(o,r.indext,r);                    %% Reshape to xspde standards
 maxind = numel(size(o))- r.indext;           %% Get input dimension

@@ -14,6 +14,7 @@ p.auxfields   =  1;
 p.ensembles   =  [100,10];                        %%samples,ensembles,parallel
 p.initial     =  @(w,p)   1+0*w;                  %%Initialisation  handle
 p.steps       =  5;
+p.verbose =1;
 p.define      =  @(a,w,p) exp(5*1i*p.t).*a(1,:);
 p.deriv       =  @(a,w,p) 1i*w.*a(1,:);           %%Derivative  handle
 p.observe{1}  =  @(a,r) real(a(1,:));

@@ -12,12 +12,8 @@ function inlabel = xprefer (in,label,maxl,default,min,max)
 %   xSPDE functions are licensed by Peter D. Drummond, (2021) - see License 
 %  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  SET DEFAULTS IF NO INPUT
-%
-   if label(end) == 's'                    %% If no input data present
-      label = default;                     %% Set to default value
-   else                                      %% Else input data present
-   
-if ~isfield(in,label)                     %% If no input data present
+%   
+   if ~isfield(in,label)                     %% If no input data present
       inlabel = default;                     %% Set to default value
    else                                      %% Else input data present
 %  

@@ -33,7 +33,8 @@ ad = p.define(a,zeros(p.d.noises),p);
 for np = 1:nt                                    %%loop until time tmax
    if np > 1                                     %%If not first step
      for step = 1:p.steps                        %%loop over steps
-       ad = zeros(p.d.d);                        %%initialize the defines
+       %ad = zeros(p.d.d);                       
+       %%initialize the defines
        astore = zeros(p.d.aplus);                %%initialize  stored field
        np1 = np1 + 1;                            %%Count the steps
        for checks = 1:p.errorchecks              %%loop over checks
@@ -66,7 +67,7 @@ for np = 1:nt                                    %%loop until time tmax
   
    for n = 1:p.averages                          %%averages loop
      if p.transforms{n}(1) == 0                  %%if frequency switch off
-        av{n}(:,np,:) = xdata(a,n,p);            %%store time-domain data
+        av{n}(:,np,:) = xdata([a;ad],n,p);       %%store time-domain data
      end                                         %%end if frequency switch
    end                                           %%end averages loop
 end                                              %%end np time loop

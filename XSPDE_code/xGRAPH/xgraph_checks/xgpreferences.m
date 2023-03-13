@@ -85,6 +85,7 @@ for s = 1:sequence                               %%loop over sequence
   in.cutoffs =    xcprefer(in,'cutoffs',dgraphs,{in.cutoff});
   in.graphcutoffs=xcprefer(in,'graphcutoffs',dgraphs,{in.cutoff});
   in.linestyle =  xcprefer(in,'linestyle',dgraphs,{linestyle});
+  in.linewidth =  xcprefer(in,'linewidth',dgraphs,{0.5});
   in.legends =    xcprefer(in,'legends',dgraphs,{''});
   in.limits   =   xcprefer(in,'limits',dgraphs,{{zeros(1,2)}});
   in.esample =    xcprefer(in,'esample',dgraphs,{1});
@@ -140,7 +141,7 @@ for s = 1:sequence                               %%loop over sequence
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  LOOP OVER THE DIMENSION INDEX
 %                          
-    for nd = 1:maxd                   %% Loop over dimension  
+    for nd = 1:maxd                              %% Loop over dimension  
       if isempty(in.glabels{n}{nd}) && nd<=length(xlabels)
            if nd<=in.dimension && in.gtransforms{n}(nd)
               in.glabels{n}{nd}=klabels{nd};

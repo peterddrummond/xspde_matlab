@@ -235,7 +235,7 @@ err(6) = toc();
   if err(5)>0
       xpr(0,p,'Chi-square/points             = %.3g\n',err(5));
   end
-  xpr(0,p,'\nxSIM simulated %d functions, time taken = %.3gs\n',ns,err(6));
+  xpr(0,p,'\nxSIM simulated %d function(s), time = %.3gs\n',ns,err(6));
 if ~strcmp(p.file,'')                            %%if filename exists
     xwrite(err,data,input,raw);                  %%save data in file
 end                                              %%end if file not blank

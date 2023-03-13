@@ -24,12 +24,12 @@ switch nargin                                %% Check for arguments
     case 3                                   %% Case of three arguments
         dx =varargin{1};                     %% dx is input
         r = varargin{2};                     %% r is the last argument
-        b = zeros(r.dimension,2);            %% bounds is set to zeros
+        b = zeros(r.dimensions,2);            %% bounds is set to zeros
     case 2                                   %% Case of two arguments
         r = varargin{1};                     %% r is the second argument
         dx = r.dx;                           %% dx is the volume element
         dx(1) = 0;                           %% remove time step
-        b = zeros(r.dimension,2);            %% bounds set to zeros
+        b = zeros(r.dimensions,2);            %% bounds set to zeros
     otherwise                                %% Throw an error message
         error ('xSPDE error: xint requires 2, 3 or 4 input arguments.')
 end                                          %% End checks for arguments

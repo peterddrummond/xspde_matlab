@@ -20,7 +20,6 @@ sz1 = length(limits);                    %%Get length of plot limits
 lx = length(ax);                         %%Get length of axis vector
 axis = gca;                              %%Get current axis handle
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   FIRST COORDINATE PLOT LIMITS       
 
 if ax(1) > 0                            %%If axis exists      

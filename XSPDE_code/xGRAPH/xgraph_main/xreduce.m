@@ -52,7 +52,7 @@ g.axes{n} =  axes;
 [d,axes]  =  xgcompress(n,d,g);
 d   = reshape(d,nx);
 if ~isequal(param,0)
-    param     =  xgcompress(n,param,g);
+    param =  xgcompress(n,param,g);
     param = reshape(param,nx);                   %%reshape parameters
 end
 head = ' ';

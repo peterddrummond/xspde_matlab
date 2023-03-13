@@ -1,7 +1,7 @@
 function r = xlattice(r)          
 %   latt = XLATTICE(r) sets lattice parameters, dimensions, FFT factors.
 %   Input:  input structure, 'r'.
-%   Output: input with lattices data, 'r'. 
+%   Output: input with lattice data, 'r'. 
 %   First dimension is the field index, last dimension is the ensemble
 %   Note, s.dx = 1/sqrt (dV) = stochastic normalisation in x-space
 %   s.dk = 1/sqrt (dK) = sqrt (V/(2*pi)^d) =  normalisation in k-space
@@ -73,12 +73,13 @@ function r = xlattice(r)
   else 
     a  = r.initial(w,r);
   end
+  a = xshape(a,0,r)+zeros(r.d.a);                %%reshape fields
   if ~isempty(r.transfer)
       a = r.transfer(w,r,a,r);
-      a = xshape(a,0,r);                         %%reshape fields
+      a = xshape(a,0,r)+zeros(r.d.a);            %%reshape fields
   end
   d = r.define(a,zeros(r.d.noises),r);
-  d = xshape(d,0,r);                             %%reshape fields
+  d = xshape(d,0,r)+zeros(r.d.d);                %%reshape fields
   a = [a;d];
   r.t = r.origin(1)-1;
   r.w = 0;

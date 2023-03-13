@@ -9,7 +9,7 @@ function [e]  =  SolitonDerivS()
 %   (6) Using two sequential integrations with increased nonlinearity
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-p.name         =  'NLS soliton using spectral derivatives';
+p.name         =  'NLS soliton using finite differences';
 p.dimensions   =  2;
 p.points       =  [101,51];
 p.steps        =  10;
@@ -20,6 +20,6 @@ p.observe{2}   =  @(a,p)   Int(abs(D1(a,p)).^2,p);
 p.olabels      =  {'|a|^2','\int |da/dx|^2 dx'};
 p1             =  p;
 p1.deriv       =  @(a,w,p) 2.*1i*a.*(conj(a).*a)+0.5*1i*(D2(a,p)-a);
-p1.name        =  'NLS soliton using periodic fin. diff.';
+p1.name        =  'NLS using double nonlinearity';
 e              =  xspde({p,p1});                        %%main program
 end                                                     %%end of function

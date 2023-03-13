@@ -86,14 +86,17 @@ for s =-1:2:1                                 %%Loop over sampling lines
   end
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   GRAPH PLOTTING SECTION
+%g.linewidth{n} =2;               %%Get n-th plot linewidth
 
   if  rel_et > g.minbar{n}  && nd(3) > 1          %%Parametric error bars?
-    errorbar(t1,y,el,eu,et1,et1,lines{j1});       %%Error-bars + sampling
+    plt = errorbar(t1,y,el,eu,et1,et1,lines{j1}); %%Error-bars + sampling
   elseif  rel_err > g.minbar{n}                   %%Print error bars?
-    errorbar(t1,y,el,eu,lines{j1});               %%Error-bars + sampling
+    plt = errorbar(t1,y,el,eu,lines{j1});         %%Error-bars + sampling
   else                                            %%No error bars needed!
-    plot(t1,y,lines{j1});                         %%2D plot
+    plt = plot(t1,y,lines{j1});                   %%2D plot
   end                                             %%End if parametric
+
+set(plt,'linewidth',g.linewidth{n});
   hold on                                         %%Set hold for next line
  end                                              %%End if line not zero
  end                                              %%End loop over data line

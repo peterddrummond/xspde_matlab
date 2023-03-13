@@ -82,15 +82,15 @@ for s = 1:sequence                               %%Loop over sequence
       nc = gpe - errors;                         %%get comparison size
       gp(end) = 3;                               %%set last data dimension
       if nc > 0                                  %%if comparisons exist
-         d(:,4:3+nc) = d(:, errors+1:gpe);      %%add comparisons to 4-6  
+         d(:,4:3+nc) = d(:,errors+1:gpe);        %%add comparisons to 4-6  
          d(:,4+nc:6) = 0;                        %%reset comparison errors 
          d(:,5:6) =  d(:,4)+d(:,5:6);            %%get upper error bound
          gp(end) = 6;                            %%set last data dimension
       end                                        %%end if comparisons exist 
       if  errors < 3                             %%if data size<3
-         d(:,errors+1:3) = 0;                 %%reset data error fields
+         d(:,errors+1:3) = 0;                    %%reset data error fields
       end                                        %%end if data size<3
-      d(:,2:3) =  d(:,1)+d(:,2:3);               %%get upper error bounds
+      d(:,2:3) =  d(:,1) + d(:,2:3);             %%get upper error bounds
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  GET FUNCTIONS OF DATA GRAPHS
 %% 
@@ -140,7 +140,7 @@ for s = 1:sequence                               %%Loop over sequence
            cn=sum(nc);                           %%Chi-square valid points
            chs=sum(dln(:,1).^2);                 %%Chi-square error
            if in.print > 0                       %%if print switch
-             xpr(1,in,'Chi-square errors    = %%.3g\n',chs);%%chi-squ error
+             xpr(1,in,'Chi-square errors    = %.3g\n',chs);%%chi-squ error
              xpr(1,in,'Chi-square points    = %d\n',cn);%%comparison points
            end                                   %%end if print switch
          end                                     %%end check sampling error
@@ -163,22 +163,29 @@ for s = 1:sequence                               %%Loop over sequence
          d = reshape(d,gp);                      %%reshape data for plots      
       else                                       %%else no comparisons
          d =   reshape(d(:,1:3),gp);             %%reshape data for plots
-      end                                        %%end if comparisons exist
-      param = zeros(gp);
-      in.gpoints{n}= gp;
-      if ~isequal(in.parametric{n}(1),0)         %%if parametric plot
-         pdata = in.parametric{n}(1);            %%parametric data number
-         p1 = data{s}{pdata};                    %%parametric data included
-         param(1,:) = p1(1,:);
+      end                                        %%end if comparisons exist 
+      in.gpoints{n} = gp;
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  GET PARAMETRIC AXIS DATA
+%% 
+      if in.parametric{n}(1) > 0                 %%if parametric plot
+         param = data{s}{in.parametric{n}};      %%parametric data included
+         sizepa = size(param);
+         if ~isequal(sizepa(1),gp(1))            %%if line number mismatch
+            error('Graph %d, line mismatch: parametric = %d, data = %d'...
+                  ,n,sizepa(1),gp(1));           %%print error message
+         end                                     %%end if line mismatch
+      else
+         param = zeros(gp);
       end                                        %%end if parametric plot
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  CALL MULTIPLE PLOT FUNCTION
 %% 
-      xmultigraph(n,d,param,in);                  %%multidimensional plot
-      if gpe > 3          %%if compare & difference
+      xmultigraph(n,d,param,in);                 %%multidimensional plot
+      if gpe > 3                                 %%if compare & difference
         if in.diffplot{n} > 0 
-        in.graphcutoffs{n}= -1.e100;             %%remove graph cutoff
-        in.logs{n}{ndata}= 0;                    %%remove log switch
+        in.graphcutoffs{n} = -1.e100;            %%remove graph cutoff
+        in.logs{n}{ndata} = 0;                   %%remove log switch
         switch in.diffplot{n}        
           case 1
           in.olabels{n}=['\Delta',in.olabels{n}];%%delta label
@@ -187,14 +194,14 @@ for s = 1:sequence                               %%Loop over sequence
           otherwise
           in.olabels{n}=['Cf ',in.olabels{n}];   %%pure comparison data
         end                                      %%end if not normalized
-        xmultigraph(n,dl,param,in);               %%comparison plots
+        xmultigraph(n,dl,param,in);              %%comparison plots
         end
       end                                        %%end if difference plot
     end                                          %%end if graph wanted
     gtot = gtot + 1;
  end                                             %%end loop over graphs
 end                                              %%end sequence
-xpr(0,in,'\nxGRAPH plotted %d functions, time taken = %.3gs\n',gtot,toc());
+xpr(0,in,'\nxGRAPH plotted %d function(s), time = %.3gs\n',gtot,toc());
 h=findobj('type','figure');                      %% find figure handles
 for k=1:numel(h)                                 %% loop on handles
     fname=sprintf('Fig%d',k);                    %% Set filename

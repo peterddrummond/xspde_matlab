@@ -1,25 +1,37 @@
 function d2  =  D2(a,varargin) 
-%   d2 = D2(o,dir,r) calculates a second spatial derivative of any field a  
-%   using second order (in dx) central finite difference methods.  
-%   Output: second derivative  d2.
-%   If two inputs, takes derivative in x direction
-%   If three inputs, takes transverse derivative in axis  'dir' = 2,3..
-%   Boundary conditions are in the field, except for periodic case
-%   All boundary types and values can be set individually per field index.
+%   d2 = D2(a[,d,j],p) calculates first spatial derivatives
+%   using central finite differences, for either fields or averages  
+%   Output: d2, the second derivative along the axis dimension d.
+%   (i)  two inputs: returns all derivatives in x:  'd = 2'
+%   (ii) three inputs: returns all derivatives in dimension 'd' = 2,3..
+%   (ii) four inputs: returns a derivative for all components in list 'j'.
+%   Note that if j is a vector, all indices in the list are returned.
+%   In this case, the output derivative may have a different size to a.
+%   Boundary values are used as specified in the parameter struucture p
+%   All boundary types and values can be set individually per component.
 %   They apply to any transverse dimension, and can change dynamically.
-%   Boundary types are defined through r.boundaries{d}(i,b)
-%   per dimension (d = 2,..), field index (i=1,2..) and boundary b=(1,2) 
-%   Here d is the dimension index of the specified boundary type. No
-%   boundary can be set for d=1, as xd2 only sets spatial boundaries. 
-%   (a) r.boundaries{d}(i,j)  = 0 gives the default, periodic 
-%   (b) r.boundaries{d}(i,j)  = -1 gives Neumann, prescribed derivative
-%   (c) r.boundaries{d}(i,j)  = 1 gives Dirichlet, prescribed field
-%   Boundary values are set on field i through boundvalue(i,..,j,..).
-%   This array is dynamically returned by r.boundfun{dir}(a,r)
-%   and are set equal to interior derivatives to give an approximate value
-%   First dimension is the field index, last dimension is the ensemble
-%   If r.indext = 0, there is no time index, otherwise there is one.
-%   xSPDE functions are licensed by Peter D. Drummond, (2017) - see License
+%%%%%%%%%%%%%%%%%%%%
+%   BOUNDARY TYPES %
+%%%%%%%%%%%%%%%%%%%%
+%       These are defined by the input parameter p.boundaries{d}(j,b)
+%   per dimension (d = 2,..), index (j = 1,2..) and boundary b=(1,2).
+%   Here b = 1 is the lower boundary index, b = 2 is the upper index. 
+%   As elsewhere d is the dimension index of the specified boundary type. 
+%   No boundary is set for d = 1, as D1 only sets spatial boundaries. 
+%   (a) p.boundaries{d}(j,b)  = 0  is the default, periodic 
+%   (b) p.boundaries{d}(j,b)  = -1 is Neumann/Robin, prescribed derivative
+%   (c) p.boundaries{d}(j,b)  = 1  is Dirichlet, prescribed field
+%%%%%%%%%%%%%%%%%%%%%
+%   BOUNDARY VALUES %
+%%%%%%%%%%%%%%%%%%%%%
+%   These are set dynamically on field j using an array bval(j,..,b,..).
+%   This array is returned by the user function p.boundfun(a,d,p)
+%   The indices of the returned boundary values matches the field indices,
+%   except that there only two index values are needed in the direction d.
+%   Values are set sequentially by the dimension index d = 2,3,..
+%   If p.indext = 0, there is no time index and boundary values are used.
+%   If p.indext = 1 for observed averages, boundary values are set to zero.
+%   xSPDE functions are licensed by Peter D. Drummond, (2022) - see License 
 
 comp = 0;
 switch nargin
@@ -68,14 +80,14 @@ for i=irange                             %% Loop over field indices
     d2(i1,:,2:e-1,:) = (a(i,:,3:e,:)+a(i,:,1:e-2,:)-2.*a(i,:,2:e-1,:))/dx2;
   if r.boundaries{dir}(i,1) == 1         %% Use Dirichlet at low end?
     d2(i1,:,1,:) = (a(i,:,2,:)-bval(i,:,1,:))/dx2;
-  elseif r.boundaries{dir}(i,1) == -1    %% Use Neuman at low end?
+  elseif r.boundaries{dir}(i,1) == -1    %% Use Neumann at low end?
     d2(i1,:,1,:) = 2*((a(i,:,2,:)-a(i,:,1,:))/dx-bval(i,:,1,:))/dx;
   else                                   %% Derivative is periodic
     d2(i1,:,1,:) = (a(i,:,2,:)-2*a(i,:,1,:)+a(i,:,e,:))/dx2;
   end                                    %% End lower boundary case
   if r.boundaries{dir}(i,2)  == 1        %% Use Dirichlet at high end?
     d2(i1,:,e,:) = (a(i,:,e-1,:)-bval(i,:,2,:))/dx2;
-  elseif  r.boundaries{dir}(i,2)  == -1  %% Use Neuman at high end?
+  elseif  r.boundaries{dir}(i,2)  == -1  %% Use Neumann at high end?
     d2(i1,:,e,:) = 2*(bval(i,:,2,:)-(a(i,:,e,:)-a(i,:,e-1,:))/dx)/dx;
   else                                   %% Derivative is periodic
     d2(i1,:,e,:) = (a(i,:,1,:)-2*a(i,:,e,:)+a(i,:,e-1,:))/dx2;
@@ -83,4 +95,4 @@ for i=irange                             %% Loop over field indices
 i1 = i1+1;                               %% Increment derivative index
 end                                      %% End loop over field indices
 d2 = reshape(d2,sz);                     %% reshape to output matrix size
-end                                      %% end xd2 function
+end                                      %% end D2 function

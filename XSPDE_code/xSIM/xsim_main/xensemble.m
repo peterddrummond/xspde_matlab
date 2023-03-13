@@ -1,8 +1,8 @@
 function [data,raw] = xensemble (npar,l) 
 %   data = XENSEMBLE (npar,latt)  integrates and ensemble averages fields.
-%   Input:  ';' is the ensemble number,'l' is the simulation parameters.
+%   Input:  'npar' is the ensemble number,'l' is the parameter structure.
 %   Output: 'data' is average data generated from stochastic integration.
-%           'raw' is raw data generated from stochastic integration.
+%           'raw' is raw data of stochastic plus auxiliary fields
 %   First dimension is the field index, last dimension is the ensemble
 %   Called by: xsim
 %   Needs: xpathfb,xpath,xpathw
@@ -29,7 +29,7 @@ for ns = 1:serial                                 %%loop over ensembles
   p = l{1};
   for  nc  = 1:p.errorchecks                      %%loop over errorchecks
     if p.octave                                   %%check if octave
-            randn('state',l{1}.seed+nsp)          %%Set unique random seed
+            randn('state',l{1}.seed+nsp)          %#ok<RAND> %%Set the seed
     else                                          %%else matlab
             rng(l{1}.seed+nsp);                   %%Set unique random seed
     end                                           %%End check if octave
@@ -40,7 +40,7 @@ for ns = 1:serial                                 %%loop over ensembles
     
     for seq = 1:sequence                          %%Loop over sequence
       p=l{seq};                                   %%get parameter struct
-      xpr(1,p,'Sequence %d\n',seq);               %%print sequence indices
+      xpr(2,p,'Sequence %d\n',seq);               %%print sequence indices
       p.dtr=p.dt/nc;                              %%reduced step-size
       p.propagator = p.propfactor(nc,p);          %%get propagator
       w = p.randomgen(p);                         %%generate random fields
@@ -57,10 +57,10 @@ for ns = 1:serial                                 %%loop over ensembles
           end                                     %%end initial boundaries
           p.t  = p.origin(1);                     %%Set time = origin
           a = p.initial(w,p);                     %%initialize fields
-          a = xshape(a,0,p);                      %%reshape fields
+          a = xshape(a,0,p)+zeros(p.d.a);         %%reshape fields
         else                                      %%if sequence > 1
           a = p.transfer(w,p,a,l{seq-1});
-          a = xshape(a,0,p);                      %%reshape fields
+          a = xshape(a,0,p)+zeros(p.d.a);         %%reshape fields
         end                                       %%end check sequence =1
         if p.transformw                           %%If spectrum needed
            [a,av,raw{seq,nc,ns}] = xpathw(a,nc,p);%%simulate spectral path
