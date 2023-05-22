@@ -1,5 +1,5 @@
-function a  =  xEtn(a,xi,r)            
-%   a = xEtn(a,xi,r) propagates a projected step using an Euler method.
+function a  =  Enproj(a,xi,r)            
+%   a = Enproj(a,xi,r) propagates a projected step using an Euler method.
 %   Includes a tangential derivative and a final normal step
 %   Input: field a, noise xi, data structure r 
 %   Needs a geometry projection handle, projector r.project(d,a,n,r).

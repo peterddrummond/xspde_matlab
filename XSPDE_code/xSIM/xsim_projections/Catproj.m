@@ -1,5 +1,5 @@
-function a  =  xcatproj(d,a,n,r) 
-%   a = xcatproj(d,a,n,r) computes projections for a catenoid
+function a  =  Catproj(d,a,n,r) 
+%   a = Catproj(d,a,n,r) computes projections for a catenoid
 %   The projection constraint function is:
 %   f = (x_1)^2 + (x_2)^2 - (sinh(x_3))^2 - 1 = 0
 %   n = 0 - returns a tangential vector at location a

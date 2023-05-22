@@ -9,7 +9,7 @@ function [e] = GainTransfer()
 %   (6) Testing the RK4 method for the second sequence
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-p.name          =  'Gain: Tests transfer function';     %name for simulation
+p.name          =  'Gain Transfer I';                     %%name for simulation
 p.ranges        =  4;                                   %%ranges: t,x,y,z
 p.method        =  @RK2;                                %%first integration method
 p.noises        =  [2,0];                               %%xnoises, knoises per point
@@ -22,7 +22,7 @@ p.compare       =  {@(r) 1};                            %%Comparison handle
 p2              =  p;                                   %%Second input
 p2.method       =  @RK4;                                %%Second integration method
 p2.steps        =  2;                                   %%Steps per plotted point
-p2.name         =  'Gain with noise';                   %%name for simulation
+p2.name         =  'Gain Transfer II';                   %%name for simulation
 p2.transfer     =  @transnoise;
 p2.deriv        =  @(a,w,~)  a + w(1,:)+1i*w(2,:);      %%Derivative
 p2.observe{2}   =  @(a,~) real(a);                      %%Observe  handle

@@ -9,7 +9,7 @@ function [e] = GaussianAv2D()
 %   (6) Using transforms, images, transverse, compare, pdimension options
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-p.name        =  'Gaussian diffraction in 2D';
+p.name        =  'GaussianAv2D: diffraction in 2D';
 p.dimensions  =  3;                                   %%dimension: 1-4
 p.initial     =  @(~,p) exp(-0.5*(p.x.^2+p.y.^2));    %%initialisation
 p.deriv       =  @(a,~,~) zeros(size(a));             %%da

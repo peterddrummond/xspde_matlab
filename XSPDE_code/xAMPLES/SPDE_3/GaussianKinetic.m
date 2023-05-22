@@ -15,7 +15,7 @@ function [e] = GaussianKinetic()
 %   (6) Using transforms over part of the spatial grid
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-p.name        =  'KE of a gaussian';
+p.name        =  'GaussianKinetic: gives the kinetic energy';
 p.xlabels     =  {'t', 'z', 'x'};
 p.klabels     =  {'\omega', 'k_z', 'k_x'};
 p.headers     =  {'','',''};

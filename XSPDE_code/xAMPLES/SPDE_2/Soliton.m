@@ -9,7 +9,7 @@ function [e]  =  Soliton()
 %   (6) Default values for transverse range and points in x
 %   xSPDE functions are licensed by Peter D. Drummond, (2021) - see License
 
-p.name         =  'NLS soliton';                        %%Graph title
+p.name         =  'Soliton example';                    %%Graph title
 p.dimensions   =  2;                                    %%Space-time dimn
 p.initial      =  @(v,p)         sech(p.x);             %%Initialisation
 p.deriv        =  @(a,~,~)       1i*a.*(conj(a).*a);    %%Nonlinear deriv

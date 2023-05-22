@@ -1,5 +1,5 @@
-function a  =  xquadproj(d,a,n,r) 
-%   a = xquadproj(d,a,n,r) computes projections for a quadratic.
+function a  =  Quadproj(d,a,n,r) 
+%   a = Quadproj(d,a,n,r) computes projections for a quadratic.
 %   The projection constraint function is:
 %   f = \sum_i,j a_i * qc_{i,j} * (a_j) - 1 = 0
 %   options available:

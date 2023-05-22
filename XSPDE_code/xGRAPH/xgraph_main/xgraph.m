@@ -3,7 +3,7 @@ function  xgraph(data,input)
 %   Input: data cells 'data', input parameter cells 'input'.
 %   Output: graphs.
 %   If no numeric 'data' present, reads data from a file named 'data'.
-%   First data dimension is a line index, last dimension is the error-bars
+%   First data dimension is a line index, last dimension indexes error-bars
 %   Needs:     xread, xmakecell, xgpreferences, xmultigraph
 %   xGRAPH functions are licensed by Peter D. Drummond (2021) - see License
 %

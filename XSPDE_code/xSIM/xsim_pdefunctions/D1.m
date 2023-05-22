@@ -2,10 +2,10 @@
 %   d1 = D1(a[,d,j],p) calculates first spatial derivatives
 %   using central finite differences, for either fields or averages  
 %   Output: d1, the first derivative along the axis dimension d.
-%   (i)  two inputs: returns all derivatives in x:  'd = 2'
+%   (i)  two inputs: returns all component derivatives in x:  'd = 2'
 %   (ii) three inputs: returns all derivatives in dimension 'd' = 2,3..
-%   (ii) four inputs: returns a derivative for all components in list 'j'.
-%   Note that if j is a vector, all indices in the list are returned.
+%   (ii) four inputs: returns a derivative just for components in list 'j'.
+%   If j is a vector, indices in the list are returned sequentially.
 %   In this case, the output derivative may have a different size to a.
 %   Boundary values are used as specified in the parameter struucture p
 %   All boundary types and values can be set individually per component.
@@ -33,7 +33,7 @@
 %   If p.indext = 1 for observed averages, boundary values are set to zero.
 %   xSPDE functions are licensed by Peter D. Drummond, (2022) - see License 
                                                             
-comp = 0;
+irange = 0;
 switch nargin
     case 2
         dir = 2;                                 %% x-derivative
@@ -43,7 +43,7 @@ switch nargin
     	p = varargin{2};                         %% p is the last argument
     case 4
         dir = varargin{1};                       %% direction is input
-	    comp = varargin{2};                      %% component list is input
+	    irange = varargin{2};                    %% component list is input
         p = varargin{3};                         %% p is the last argument
     otherwise
         error('Function D1 takes two to four arguments, not %d', nargin)
@@ -54,23 +54,18 @@ s(1) =  sz(1);
 s(2) =  prod(sz(2:in+dir-1)); 
 s(3) =  sz(in+dir); 
 s(4) =  prod(sz(in+dir+1:end));
-if p.indext == 0 
+if p.indext == 0                                 %%propagating, use b.c.
     bval = p.boundfun(a,dir,p);
     bval = reshape(bval,[s(1:2),2,s(4)]);
-else
+else                                             %%post-processing, no b.c.
     bval = zeros([s(1:2),2,s(4)]);
 end
-a = reshape(a,s);                                %%flatten lattice
-irange = 1:sz(1);
-if ~isequal(comp,0) 
-    bval = bval(comp,:,:,:);
-    irange = comp;
-    if sz(1) > 1 
-       a = a(comp,:,:,:);
-       sz(1) = 1;
-       s(1) = 1;
-    end
+a = reshape(a,s);                                %%reshape lattice
+if isequal(irange,0)                             %%no input component list
+    irange = 1:sz(1);                            %%set range to components
 end
+sz(1) = length(irange);
+s(1)  = length(irange);
 d1 = zeros(s);
 dx = p.dx(dir);
 dx2 = 2*dx;

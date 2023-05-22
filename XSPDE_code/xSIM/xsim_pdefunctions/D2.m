@@ -33,7 +33,7 @@ function d2  =  D2(a,varargin)
 %   If p.indext = 1 for observed averages, boundary values are set to zero.
 %   xSPDE functions are licensed by Peter D. Drummond, (2022) - see License 
 
-comp = 0;
+irange = 0;
 switch nargin
     case 2
     	r = varargin{1};                 %% r is the second argument
@@ -43,7 +43,7 @@ switch nargin
     	r = varargin{2};                 %% r is the last argument
     case 4
         dir =varargin{1};                %% direction is input
-	    comp = varargin{2};              %% component is input
+	    irange = varargin{2};            %% components are input
         r = varargin{3};                 %% r is the last argument
     otherwise
         error('Function D2 takes two to four arguments, not %d', nargin)
@@ -61,16 +61,11 @@ else
     bval = zeros([s(1:2),2,s(4)]);
 end
 a = reshape(a,s);                        %%flatten lattice
-irange = 1:sz(1);
-if comp > 0 
-    bval = bval(comp,:,:,:);
-    irange = comp;
-    if sz(1) > 1 
-       a = a(comp,:,:,:);
-       sz(1) = 1;
-       s(1) = 1;
-    end
+if isequal(irange,0)                     %%no input component list
+    irange = 1:sz(1);                    %%set range to components
 end
+sz(1) = length(irange);
+s(1)  = length(irange);
 d2 = zeros(s);                           %% Initialize derivative to zero
 dx = r.dx(dir);                          %% Set the space step value
 dx2 = dx^2;                              %% Set the space step squared

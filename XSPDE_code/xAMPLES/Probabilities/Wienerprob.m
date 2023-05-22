@@ -9,7 +9,7 @@ function e = Wienerprob()
 %   (6) Defining an external comparison probability function
 %   xSPDE is licensed by Peter D. Drummond, (2022) - see License
 
-p.name           =  'Wiener SDE distribution';       %%name of simulation
+p.name           =  'Wienerprob: SDE distribution';  %%name of simulation
 p.noises         =  1;                               %%noises set to one
 p.points         =  10;                              %%number of time points
 p.ensembles      =  [10000,10];                      %%ensembles for averaging

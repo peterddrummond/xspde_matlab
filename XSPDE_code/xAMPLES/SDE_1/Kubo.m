@@ -10,7 +10,7 @@ function [e] = Kubo()
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
 p.name      =  'Kubo oscillator';              %%Name of simulation
-p.ensembles =  [1000,8,1];                     %%samples,ensembles,parallel
+p.ensembles =  [1000,8,1];                    %%samples,ensembles,parallel
 p.fields    =  [1,0];
 p.method    =  @RK4;                           %%Use RK4 integrator
 p.initial   =  @(w,p)     1+0*w ;              %%Initialisation  handle

@@ -1,5 +1,5 @@
-function a  =  xpolproj(d,a,n,r) 
-%   a = polproj(d,a,n,r) computes projections for a polynomial
+function a  =  Polproj(d,a,n,r) 
+%   a = Polproj(d,a,n,r) computes projections for a polynomial
 %   The projection constraint function is:
 %   f = \sum_j vc_j * (a_j)^orderpol - 1 = 0
 %   options available:

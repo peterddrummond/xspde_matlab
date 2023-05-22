@@ -22,9 +22,9 @@ p.initial       =  @(w, p) p.X0 + 0.*w;
 p.observe{2}    =  @(a, p) sum((p.X0-a).^2,1);
 p.diffplot{2}   =  1;
 p.function{1}   =  @(o, p) o{2}.^2;
-p.olabels       =  {'\langle R^2 \rangle^2','\langle R^2 \rangle'};
+p.olabels       =  {'< R^2 >','< R^2 >'};
 p.project       =  @Catproj;
-p.name          =  '3D catenoid diffusion';
+p.name          =  'Catenoid diffusion in 3D';
 p.method        =  @MPnproj;
 e               =  xspde(p);
 end

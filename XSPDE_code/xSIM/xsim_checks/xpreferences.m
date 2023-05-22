@@ -141,10 +141,10 @@ for s = 1:sequence                               %%loop over sequence
     end                                      %%end if input has no averages
     in.averages = min(in.averages,max(1,length(in.observe)));
     in.observe = xmakecell(in.observe);      %%make observe into a cell
-    in.olabels = xmakecell(in.olabels);      %%make olabels into a cell
     if ~isfield(in,'olabels')                %%if input has no olabels?
-        in.olabels{in.averages} = [];        %%set empty olabels
+       in.olabels{in.averages} = [];         %%set empty olabels
     end                                      %%end if input has no olabels
+    in.olabels = xmakecell(in.olabels);      %%make olabels into a cell   
     for n = 1:in.averages                    %%loop over averages
       if  isempty (in.observe{n})            %%if empty observe       
          in.observe{n} =  @(a,~) real(a);    %%set default observe function

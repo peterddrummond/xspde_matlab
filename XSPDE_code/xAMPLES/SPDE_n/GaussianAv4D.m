@@ -9,7 +9,7 @@ function [e] = GaussianAv4D()
 %   (6) Using transforms, images, transverse, compare, pdimension in 4+1 D
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-p.name         =  '4+1D Schroedinger equation';
+p.name         =  'GaussianAv4D: 4+1D Schroedinger equation';
 p.dimensions   =  5;
 p.noises       =  2;
 p.points       =  [7,15,15,15,15];

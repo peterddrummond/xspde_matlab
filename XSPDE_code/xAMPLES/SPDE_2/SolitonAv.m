@@ -9,7 +9,7 @@ function [e] = SolitonAv()
 %   (6) Default values for transverse range and points in x
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-p.name         =  'NLS soliton with integration';
+p.name         =  'SolitonAv: averages and integration';
 p.dimensions   =  2;                               %%dimension: 1-4
 p.observe{1}   =  @(a,p)      Ave(real(a),p.dx,p);
 p.observe{2}   =  @(a,p)      Int(real(a),p.dx,p);

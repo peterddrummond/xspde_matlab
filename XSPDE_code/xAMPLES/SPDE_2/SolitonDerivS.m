@@ -9,7 +9,7 @@ function [e]  =  SolitonDerivS()
 %   (6) Using two sequential integrations with increased nonlinearity
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-p.name         =  'NLS soliton using finite differences';
+p.name         =  'SolitonDerivS: uses finite differences in a sequence';
 p.dimensions   =  2;
 p.points       =  [101,51];
 p.steps        =  10;

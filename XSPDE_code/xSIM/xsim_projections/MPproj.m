@@ -1,5 +1,5 @@
-function a  =  xMPt(a,xi,r)            
-%   a = xMPt(a,xi,r) propagates a step using a midpoint method.
+function a  =  MPproj(a,xi,r)            
+%   a = MPproj(a,xi,r) propagates a step using a midpoint method.
 %   Includes a tangential derivative
 %   Input: field a, noise xi, data structure r 
 %   Needs a geometry projection handle, r.project(d,a,n,r).

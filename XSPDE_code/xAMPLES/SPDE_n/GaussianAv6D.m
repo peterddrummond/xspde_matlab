@@ -8,7 +8,7 @@ function [e]  =  GaussianAv6D()
 %   (6) Using transforms over part of the spatial grid
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-p.name          =  '6+1D Schroedinger equation';
+p.name          =  'GaussianAv6D: 6+1D equation';
 p.dimensions    =  7;
 p.points        =  [2,9,9,9,9,9,9];                           %%dimension: 1-4
 p.ranges        =  [10,7,7,7,7,7,7];

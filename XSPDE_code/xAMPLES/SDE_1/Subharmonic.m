@@ -6,7 +6,7 @@ function [e] = Subharmonic()
 %   Mean particle number is about 0.4
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
-p.name         =  'Timecrystal';
+p.name         =  'Subharmonic';
 p.ensembles    =  [10,1];                       %%samples,ensembles,parallel
 p.initial      =  @(w,~)    0+0*w ;             %%Initialisation  handle
 p.steps        =  200;

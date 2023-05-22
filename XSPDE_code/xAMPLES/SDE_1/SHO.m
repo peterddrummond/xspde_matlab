@@ -9,7 +9,7 @@ function [e]        =  SHO()
 %   (6) Comparisons, scatters,parametric plots, sequential plots
 %   xSPDE functions are licensed by Peter D. Drummond, (2015) - see License
 
- p.name             =  'Simple harmonic oscillator';        %%Name
+ p.name             =  'SHO: Simple harmonic oscillator';   %%Name
  p.initial          =  @(w,~) [1;0];                        %%Initialisation
  p.fields           =  2;
  p.steps            =  20;
