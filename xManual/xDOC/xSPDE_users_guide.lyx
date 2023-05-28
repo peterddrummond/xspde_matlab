@@ -146,6 +146,13 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Chapter
 Introduction
 \end_layout
@@ -203,7 +210,7 @@ literal "false"
 Previous applications are in physics and quantum technology 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Opanchuk2013Quantum,Ng2019Phase,ramesh2022arcsine,peters2022limit,teh2017simulation,teh2018quantum,kiesewetter2022phase,teh2018creation,dechoum2016critical,drummond2017truncated,opanchuk2017one,drummond2017higher,ng2021fate,joseph2021hybrid,drummond2021time,drummond2020initial,ng2019nonlocal,busink2021stochastic,peters2021extremely,peters2022exceptional"
+key "Opanchuk2013Quantum,Ng2019Phase,ramesh2022arcsine,peters2022limit,teh2017simulation,teh2018quantum,kiesewetter2022phase,teh2018creation,dechoum2016critical,drummond2017truncated,opanchuk2017one,drummond2017higher,ng2021fate,joseph2023hybrid,drummond2021time,drummond2020initial,ng2019nonlocal,busink2021stochastic,peters2021extremely,peters2022exceptional"
 literal "false"
 
 \end_inset
@@ -1668,7 +1675,8 @@ When taking Fourier transforms in the time-domain, xSPDE does a time-averaging
  of all fields over the current time-step, using the available coarse and
  fine time-samples.
  This is done by averaging the field before and after the stochastic time-step.
- The methods used for this are described in greater detail in Section (
+ The methods used for this are described in greater detail in subsection
+ (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Time-domain-spectra"
@@ -2563,7 +2571,7 @@ Steady-state result
 \end_layout
 
 \begin_layout Standard
-Consider the example of Section (
+Consider the example of subsection (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Damped-harmonic-oscillator"
@@ -4026,7 +4034,7 @@ output
 \begin_layout Standard
 However, the internal momentum grid spacing used can differ from this, depending
  on the transforms used in the interaction picture.
- As explained above in Section (
+ As explained above in subsection (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Spectral-transforms-and"
@@ -5772,7 +5780,7 @@ ranges
 
 \begin_layout Standard
 A more detailed explanation of these parameters is found below, and a complete
- table is given in section 
+ table is given in subsection 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Simulation-parameters"
@@ -6395,7 +6403,7 @@ rawdata By setting
 \emph on
 p.rawdata=1
 \emph default
- (see section 
+ (see subsection 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:xSIM-parameters"
@@ -7142,7 +7150,7 @@ average
 \end_layout
 
 \begin_layout Standard
-More details on this are given in Section (
+More details on this are given in subsection (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Time-domain-spectra"
@@ -7812,7 +7820,7 @@ Simulate over a range of
 
 \series bold
 Change the equation to the laser noise equations introduced in the next
- section (Laser quantum noise).
+ subsection (Laser quantum noise).
  Why is the spectrum much narrower?
 \series default
  
@@ -9927,7 +9935,7 @@ For storing space coordinates like
 \end_layout
 
 \begin_layout Standard
-As explained in section 
+As explained in subsection 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:IP-implementation"
@@ -15479,7 +15487,7 @@ backfields is used for forward-backward stochastic equations, describing
 \emph on
 Forward-backward
 \emph default
- section.
+ subsection.
  Note that 
 \series bold
 fields
@@ -15878,7 +15886,7 @@ Projection library
 It is sometimes necessary to constrain an equation to a sub-manifold 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "rushin2021midpoint"
+key "joseph2023midpoint"
 literal "false"
 
 \end_inset
@@ -21351,7 +21359,7 @@ Internal function table
 \end_layout
 
 \begin_layout Standard
-For details of the internal functions, see section 
+For details of the internal functions, see subsection 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:xSIM-internal-functions"
@@ -32300,7 +32308,7 @@ Batchtest.m
 \end_inset
 
 , and runs 
-\begin_inset Formula $34$
+\begin_inset Formula $35$
 \end_inset
 
  different case studies.
@@ -32315,7 +32323,7 @@ The batch testing code will run each different example sequentially.
  error, as well as the total RMS error combining all three, the chi-square
  error normalised by the number of points, and the timing.
  The geometric mean of  the 
-\begin_inset Formula $34$
+\begin_inset Formula $35$
 \end_inset
 
  RMS total errors is computed as a benchmark.
@@ -36839,6 +36847,13 @@ Differences between the computed time evolution of the catenoid squared
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
