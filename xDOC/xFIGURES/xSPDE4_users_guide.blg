@@ -1,0 +1,65 @@
+This is BibTeX, Version 0.99d (TeX Live 2023)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: xSPDE4_users_guide.aux
+The style file: SciPost_bibstyle.bst
+Database file #1: xspde3.bib
+Warning--entry type for "Karatzas1991brownian" isn't style-file defined
+--line 77 of file xspde3.bib
+Warning--I didn't find a database entry for "gisin1992quantum"
+Warning--I didn't find a database entry for "pearle1979toward"
+Warning--I didn't find a database entry for "Ghirardi1986PhysRevD.34.470"
+Warning--I didn't find a database entry for "rigo1997continuous"
+Warning--I didn't find a database entry for "Diosi1998PhysRevA.58.1699"
+Warning--I didn't find a database entry for "mollow1975pure"
+Warning--I didn't find a database entry for "Zoller1987"
+Warning--I didn't find a database entry for "Gardiner1992PhysRevA.46.4363"
+Warning--I didn't find a database entry for "molmer1993monte"
+Warning--I didn't find a database entry for "Carmichael:1993"
+Warning--I didn't find a database entry for "marian1992higher"
+Warning--I didn't find a database entry for "Drummond_generalizedP1980"
+Warning--I didn't find a database entry for "DeuarGaugeP"
+Warning--I didn't find a database entry for "Titulaer1966density"
+Warning--I didn't find a database entry for "Reid1986"
+Warning--can't use both volume and number fields in crank1947practical
+You've used 96 entries,
+            2474 wiz_defined-function locations,
+            1290 strings with 24175 characters,
+and the built_in function-call counts, 36284 in all, are:
+= -- 2551
+> -- 1024
+< -- 5
++ -- 832
+- -- 256
+* -- 2283
+:= -- 4160
+add.period$ -- 98
+call.type$ -- 96
+change.case$ -- 91
+chr.to.int$ -- 0
+cite$ -- 97
+duplicate$ -- 3774
+empty$ -- 3673
+format.name$ -- 315
+if$ -- 8166
+int.to.chr$ -- 0
+int.to.str$ -- 96
+missing$ -- 906
+newline$ -- 581
+num.names$ -- 96
+pop$ -- 1387
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 1008
+stack$ -- 0
+substring$ -- 955
+swap$ -- 2320
+text.length$ -- 5
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 1
+while$ -- 169
+width$ -- 98
+write$ -- 1240
+(There were 17 warnings)

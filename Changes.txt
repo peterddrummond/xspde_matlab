@@ -1,60 +1,10 @@
+Version 4.0
 
-Version 3.0
+This is an improved and updated version of xspde version 3.44. Main changes are:
 
-This is an improved and updated version of xspde version 2. The most significant change is a re-ordering of array indices. In version 3,  array indices for ensembles and error-bars are the last index. This is largely invisible to the user, unless additional software is written to read and write files. 
-
-Version 3.1
-
-This has an improved treatment of non-periodic boundary conditions, in stochastic differential equations, including Neuman, Dirichlet, Robin and nonlinear boundaries. 
-
-Version 3.2
-
-This has a different treatment of noise filtering in momentum space, per user request, and adds new three-dimensional graphics output options, including color mapped contours.
-
-Version 3.3
-
-This adds a forward-backward stochastic equation package.
- 
-Version 3.4
-
-This uses simpler, non-flattened internal arrays. It also adds many new features and special libraries for projected SDEs, including automated graphics storage and an improved printout of integration errors. Full features are explained in the new, expanded user's guide.
-
-Version 3.41
-
-Adds multiple observational axes for probability output graphs
-
-Version 3.42
-
-Multidimensional comparisons and chi-square tests.
-
-Version 3.43
-
-This corrects a labeling bug in probability graphs
-
-Version 3.44
-
-This adds support for derivatives obtained without using finite differences in the case of non-periodic (Neuman, Dirichlet, Robin) boundary conditions, equivalent to obtaining derivatives using Fourier transform methods in the case of periodic boundary conditions.
-
-There are a number of minor improvements documented in the user guide. It also changes a number of keywords compared to previous versions, namely:
-
-da             --> deriv
-step           --> method
-dimension      --> dimensions
-fields(1)&(2)  --> fields
-fields(2)      --> backfields
-fields(3)      --> auxfields
-origin         --> origins
-print          --> verbose
-averages       --> [removed, due to being redundant]
-randoms        --> inrandoms
-xd1, xd2, ...  --> D1, D2, ...
-xave           --> Ave
-xint           --> Int
-xMP, xRK4..    --> MP, RK4
-xquadproj..    --> Quadproj
-
-Backwards compatibility is upheld, so that both the old and new keywords work, though using the new keywords is encouraged. Only the new keywords are listed in the documentation and example projects.
-
-Version 3.44a
-
-Fixed minor bug in differentiation code with index lists
+1. Cell arrays for multiple variables with differing spatial grids
+2. Error-checking outputs with both maximum and RMS error estimates 
+3. Quantum stochastic Schrodinger equations
+4. Integration of master equations
+5. Jump algorithms, in addition to Gaussian noise methods
+6. DST and DCT spectral methods for SPDEs with non-zero boundaries

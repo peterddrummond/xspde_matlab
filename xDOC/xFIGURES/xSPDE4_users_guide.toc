@@ -1,0 +1,368 @@
+\babel@toc {english}{}\relax 
+\contentsline {chapter}{\numberline {1}Introduction}{7}{chapter.1}%
+\contentsline {section}{\numberline {1.1}The xSPDE distribution}{7}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Structure of the user's guide}{8}{section.1.2}%
+\contentsline {part}{\numberline {I}Fundamental Theory}{10}{part.1}%
+\contentsline {chapter}{\numberline {2}SDE theory}{11}{chapter.2}%
+\contentsline {section}{\numberline {2.1}General form}{11}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Observables}{11}{subsection.2.1.1}%
+\contentsline {section}{\numberline {2.2}Stochastic calculus}{12}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Types of stochastic calculus}{12}{subsection.2.2.1}%
+\contentsline {section}{\numberline {2.3}Interaction picture}{13}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Linear propagator}{13}{subsection.2.3.1}%
+\contentsline {section}{\numberline {2.4}Probability distributions}{14}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Distribution averages}{14}{subsection.2.4.1}%
+\contentsline {section}{\numberline {2.5}Example: random walk}{14}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Variance solution}{15}{subsection.2.5.1}%
+\contentsline {section}{\numberline {2.6}Probability densities}{15}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Distributions of functions}{16}{subsection.2.6.1}%
+\contentsline {section}{\numberline {2.7}Fourier transforms}{16}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Discrete Fourier transforms}{17}{subsection.2.7.1}%
+\contentsline {section}{\numberline {2.8}Quantum phase-space}{17}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Positive-P representation}{18}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Master equations}{18}{subsection.2.8.2}%
+\contentsline {section}{\numberline {2.9}Damped harmonic oscillator}{19}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Wigner representation}{20}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Internal spectrum}{20}{subsection.2.9.2}%
+\contentsline {section}{\numberline {2.10}Input-output spectra}{21}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Steady-state result}{21}{subsection.2.10.1}%
+\contentsline {chapter}{\numberline {3}Quantum theory}{23}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Master Equation}{23}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Stochastic Schrödinger equation}{24}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Normalized Ito SSE}{24}{subsection.3.2.1}%
+\contentsline {section}{\numberline {3.3}Stratonovich Equations}{25}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Real noise Stratonovich equation}{27}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Stochastic master equation}{28}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Monte Carlo wave-function method}{28}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Integer noise}{29}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Integer noise properties}{29}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}MCWF method}{29}{subsection.3.4.3}%
+\contentsline {subsection}{\numberline {3.4.4}Monte-Carlo master equations}{30}{subsection.3.4.4}%
+\contentsline {section}{\numberline {3.5}Linear absorber example}{31}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Master equation}{31}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Linear stochastic equation}{32}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Normalized, nonlinear stochastic equation}{32}{subsection.3.5.3}%
+\contentsline {section}{\numberline {3.6}Nonlinear absorber}{32}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Master equation}{33}{subsection.3.6.1}%
+\contentsline {section}{\numberline {3.7}Linear photonic networks}{33}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Quantum input states}{34}{section.3.8}%
+\contentsline {subsubsection}{\numberline {3.8.0.1}Pure squeezed states}{35}{subsubsection.3.8.0.1}%
+\contentsline {subsubsection}{\numberline {3.8.0.2}Squeezed thermal states}{36}{subsubsection.3.8.0.2}%
+\contentsline {section}{\numberline {3.9}Photon counting}{37}{section.3.9}%
+\contentsline {subsubsection}{\numberline {3.9.0.1}Exact outputs}{39}{subsubsection.3.9.0.1}%
+\contentsline {section}{\numberline {3.10}Intensity correlations}{39}{section.3.10}%
+\contentsline {subsection}{\numberline {3.10.1}Grouped correlations}{40}{subsection.3.10.1}%
+\contentsline {chapter}{\numberline {4}Quantum phase-space}{42}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Phase-space sampling}{43}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Glauber P-representation}{43}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Positive P-representation}{43}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Wigner representation}{44}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}Q-function}{45}{subsection.4.1.4}%
+\contentsline {subsection}{\numberline {4.1.5}$\sigma $-ordering}{45}{subsection.4.1.5}%
+\contentsline {section}{\numberline {4.2}Operator mappings}{46}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Damped harmonic oscillator}{46}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Wigner representation}{47}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Internal spectrum}{47}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Stochastic gauge +P expansion}{48}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}MCPS}{49}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Sampled trajectory equations}{50}{subsection.4.4.2}%
+\contentsline {section}{\numberline {4.5}Input-output spectra}{51}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Steady-state result}{51}{subsection.4.5.1}%
+\contentsline {section}{\numberline {4.6}Sampling methods in phase-space}{52}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Input-output samples}{52}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Grouped correlations computation}{53}{subsection.4.6.2}%
+\contentsline {chapter}{\numberline {5}SPDE theory}{54}{chapter.5}%
+\contentsline {section}{\numberline {5.1}SPDE definitions}{54}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Boundary conditions}{55}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Spatial grid and boundaries}{56}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Periodic boundary}{56}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Dirichlet/Robin boundary}{56}{subsection.5.3.2}%
+\contentsline {section}{\numberline {5.4}Multidimensional walk}{56}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Variance solution}{57}{subsection.5.4.1}%
+\contentsline {section}{\numberline {5.5}Interaction picture}{58}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Linear propagator}{58}{subsection.5.5.1}%
+\contentsline {section}{\numberline {5.6}Fourier transforms}{59}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Normalization}{59}{subsection.5.6.1}%
+\contentsline {section}{\numberline {5.7}Trigonometric transforms}{60}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}Propagator solution}{60}{subsection.5.7.1}%
+\contentsline {section}{\numberline {5.8}Transforms and boundaries}{61}{section.5.8}%
+\contentsline {subsection}{\numberline {5.8.1}D-D case: Discrete map (DST-I)}{62}{subsection.5.8.1}%
+\contentsline {subsection}{\numberline {5.8.2}R-R case: Discrete map (DCT-I)}{62}{subsection.5.8.2}%
+\contentsline {subsection}{\numberline {5.8.3}D-R case: Discrete map (DST-II)}{63}{subsection.5.8.3}%
+\contentsline {subsection}{\numberline {5.8.4}R-D case Discrete map (DCT-II)}{63}{subsection.5.8.4}%
+\contentsline {section}{\numberline {5.9}Frequency or momentum grid }{63}{section.5.9}%
+\contentsline {section}{\numberline {5.10}Derivatives}{64}{section.5.10}%
+\contentsline {subsection}{\numberline {5.10.1}Spectral derivatives}{64}{subsection.5.10.1}%
+\contentsline {subsection}{\numberline {5.10.2}Finite difference derivatives}{65}{subsection.5.10.2}%
+\contentsline {paragraph}{\nonumberline Periodic:~$a\left (x_{0}\right )=a\left (x_{N}\right )$}{65}{paragraph*.3}%
+\contentsline {paragraph}{\nonumberline Dirichlet: $\tilde {a}\left (x_{1}\right )$ specified: ~$a\left (x_{0}\right )=\tilde {a}\left (x_{1}\right )$}{65}{paragraph*.5}%
+\contentsline {paragraph}{\nonumberline Robin/Neumann: $\tilde {a}'\left (x_{1}\right )$ specified: ~$a\left (x_{0}\right )=a\left (x_{2}\right )-2\tilde {a}'\left (x_{1}\right )\Delta x$}{66}{paragraph*.7}%
+\contentsline {part}{\numberline {II}Numerical Toolboxes}{67}{part.2}%
+\contentsline {chapter}{\numberline {6}SDE toolbox}{68}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Using xSPDE}{68}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Wiener process}{69}{subsection.6.1.1}%
+\contentsline {subsection}{\numberline {6.1.2}General derivatives}{70}{subsection.6.1.2}%
+\contentsline {section}{\numberline {6.2}Input parameters}{71}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Simulation parameters table}{71}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Graphics parameters}{72}{subsection.6.2.2}%
+\contentsline {section}{\numberline {6.3}Fields and noises}{72}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Initial values, points and ranges}{73}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Observables$ $}{73}{subsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.3.3}Using the dot}{74}{subsection.6.3.3}%
+\contentsline {section}{\numberline {6.4}Advanced random walk}{74}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Simple xSPDE example}{75}{subsection.6.4.1}%
+\contentsline {section}{\numberline {6.5}Probability binning}{76}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Multivariate probabilities}{76}{subsection.6.5.1}%
+\contentsline {section}{\numberline {6.6}Auxiliary fields and noises}{77}{section.6.6}%
+\contentsline {subsection}{\numberline {6.6.1}Outputting the noise}{77}{subsection.6.6.1}%
+\contentsline {section}{\numberline {6.7}Time-domain spectra}{78}{section.6.7}%
+\contentsline {subsection}{\numberline {6.7.1}Error-checking}{79}{subsection.6.7.1}%
+\contentsline {section}{\numberline {6.8}Examples}{79}{section.6.8}%
+\contentsline {subsection}{\numberline {6.8.1}Complex damped spectrum}{79}{subsection.6.8.1}%
+\contentsline {subsection}{\numberline {6.8.2}Laser amplification noise}{80}{subsection.6.8.2}%
+\contentsline {subsection}{\numberline {6.8.3}Saturated laser noise}{81}{subsection.6.8.3}%
+\contentsline {subsection}{\numberline {6.8.4}Financial calculus}{81}{subsection.6.8.4}%
+\contentsline {subsection}{\numberline {6.8.5}Nonlinear quantum simulation}{82}{subsection.6.8.5}%
+\contentsline {section}{\numberline {6.9}Hints}{84}{section.6.9}%
+\contentsline {chapter}{\numberline {7}Quantum toolbox }{85}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Wave-functions and density matrices}{85}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Number-state methods}{86}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Independent cells}{86}{subsection.7.1.2}%
+\contentsline {section}{\numberline {7.2}Input parameters}{86}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Common parameters}{87}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Quantum parameters}{87}{subsection.7.2.2}%
+\contentsline {section}{\numberline {7.3}Dissipative parameters}{88}{section.7.3}%
+\contentsline {section}{\numberline {7.4}Functional operators}{89}{section.7.4}%
+\contentsline {subsection}{\numberline {7.4.1}Bosonic operators({*}PARTLY IMPLEMENTED)}{89}{subsection.7.4.1}%
+\contentsline {subsection}{\numberline {7.4.2}Qubit and Pauli spin operators({*}PARTLY IMPLEMENTED)}{89}{subsection.7.4.2}%
+\contentsline {subsection}{\numberline {7.4.3}Qubit gate operators({*}PARTLY IMPLEMENTED)}{90}{subsection.7.4.3}%
+\contentsline {section}{\numberline {7.5}Sparse operators}{90}{section.7.5}%
+\contentsline {subsection}{\numberline {7.5.1}Sparse bosonic operators: \emph {mkbose.}}{90}{subsection.7.5.1}%
+\contentsline {subsection}{\numberline {7.5.2}Sparse Pauli spin operators: \emph {mkpauli.}}{90}{subsection.7.5.2}%
+\contentsline {subsection}{\numberline {7.5.3}Sparse logic operators({*}NOT IMPLEMENTED)}{91}{subsection.7.5.3}%
+\contentsline {section}{\numberline {7.6}\emph {Observe}, \emph {expect, output }and\emph { compare}}{91}{section.7.6}%
+\contentsline {section}{\numberline {7.7}SSE derivative}{92}{section.7.7}%
+\contentsline {section}{\numberline {7.8}Solving with the MCWF method }{92}{section.7.8}%
+\contentsline {chapter}{\numberline {8}Phase-space toolbox }{94}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Phase-spaces}{94}{section.8.1}%
+\contentsline {subsection}{\numberline {8.1.1}Phase-space methods}{94}{subsection.8.1.1}%
+\contentsline {section}{\numberline {8.2}Input parameters}{94}{section.8.2}%
+\contentsline {subsection}{\numberline {8.2.1}Common parameters}{95}{subsection.8.2.1}%
+\contentsline {subsection}{\numberline {8.2.2}Phase-space parameters}{95}{subsection.8.2.2}%
+\contentsline {section}{\numberline {8.3}Network simulations}{96}{section.8.3}%
+\contentsline {subsection}{\numberline {8.3.1}Network parameters}{96}{subsection.8.3.1}%
+\contentsline {subsection}{\numberline {8.3.2}Simulation notes}{98}{subsection.8.3.2}%
+\contentsline {subsubsection}{\numberline {8.3.2.1}General}{98}{subsubsection.8.3.2.1}%
+\contentsline {chapter}{\numberline {9}SPDE toolbox }{99}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Multidimensional Wiener process}{99}{section.9.1}%
+\contentsline {section}{\numberline {9.2}SPDE parameters}{100}{section.9.2}%
+\contentsline {subsection}{\numberline {9.2.1}SPDE spatial lattice}{100}{subsection.9.2.1}%
+\contentsline {subsection}{\numberline {9.2.2}Initial conditions}{101}{subsection.9.2.2}%
+\contentsline {section}{\numberline {9.3}Next example}{101}{section.9.3}%
+\contentsline {section}{\numberline {9.4}Transverse lattice}{102}{section.9.4}%
+\contentsline {subsection}{\numberline {9.4.1}Linear operator}{103}{subsection.9.4.1}%
+\contentsline {subsection}{\numberline {9.4.2}Integrals and averages}{104}{subsection.9.4.2}%
+\contentsline {subsection}{\numberline {9.4.3}One space-dimensional example}{104}{subsection.9.4.3}%
+\contentsline {subsection}{\numberline {9.4.4}Two space-dimensional example}{105}{subsection.9.4.4}%
+\contentsline {section}{\numberline {9.5}Finite differences}{105}{section.9.5}%
+\contentsline {subsection}{\numberline {9.5.1}Finite difference first derivatives}{106}{subsection.9.5.1}%
+\contentsline {subsection}{\numberline {9.5.2}Finite difference second derivatives}{106}{subsection.9.5.2}%
+\contentsline {section}{\numberline {9.6}Boundary conditions}{107}{section.9.6}%
+\contentsline {subsection}{\numberline {9.6.1}Transverse boundaries}{107}{subsection.9.6.1}%
+\contentsline {paragraph}{\nonumberline Example: boundary types in a 2-dimensional PDE}{108}{paragraph*.9}%
+\contentsline {subsection}{\numberline {9.6.2}Transverse boundary values}{108}{subsection.9.6.2}%
+\contentsline {subsection}{\numberline {9.6.3}Example: boundaries in a 2-dimensional PDE}{109}{subsection.9.6.3}%
+\contentsline {subsection}{\numberline {9.6.4}Transverse plots}{109}{subsection.9.6.4}%
+\contentsline {section}{\numberline {9.7}Output transforms}{109}{section.9.7}%
+\contentsline {section}{\numberline {9.8}Initial random fields}{110}{section.9.8}%
+\contentsline {section}{\numberline {9.9}Scanned parameter plots}{112}{section.9.9}%
+\contentsline {subsection}{\numberline {9.9.1}Example: Scanned diffusion}{112}{subsection.9.9.1}%
+\contentsline {section}{\numberline {9.10}Project examples}{113}{section.9.10}%
+\contentsline {subsection}{\numberline {9.10.1}Kubo project}{113}{subsection.9.10.1}%
+\contentsline {subsection}{\numberline {9.10.2}Gaussian diffraction}{114}{subsection.9.10.2}%
+\contentsline {section}{\numberline {9.11}Examples}{115}{section.9.11}%
+\contentsline {subsection}{\numberline {9.11.1}Stochastic Ginzburg-Landau}{115}{subsection.9.11.1}%
+\contentsline {subsection}{\numberline {9.11.2}NLS soliton}{116}{subsection.9.11.2}%
+\contentsline {subsection}{\numberline {9.11.3}Planar noise}{118}{subsection.9.11.3}%
+\contentsline {subsection}{\numberline {9.11.4}Gross-Pitaevskii equation}{120}{subsection.9.11.4}%
+\contentsline {subsection}{\numberline {9.11.5}Characteristic equation}{122}{subsection.9.11.5}%
+\contentsline {subsection}{\numberline {9.11.6}Nonlinear Anderson localization}{122}{subsection.9.11.6}%
+\contentsline {part}{\numberline {III}Methods, API and Examples}{124}{part.3}%
+\contentsline {chapter}{\numberline {10}Stochastic methods and errors}{125}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Introduction to algorithms}{125}{section.10.1}%
+\contentsline {subsection}{\numberline {10.1.1}Standard methods}{125}{subsection.10.1.1}%
+\contentsline {subsection}{\numberline {10.1.2}Advanced methods}{126}{subsection.10.1.2}%
+\contentsline {section}{\numberline {10.2}General differential form}{126}{section.10.2}%
+\contentsline {subsection}{\numberline {10.2.1}Linear propagator}{127}{subsection.10.2.1}%
+\contentsline {section}{\numberline {10.3}Standard methods}{127}{section.10.3}%
+\contentsline {subsection}{\numberline {10.3.1}\emph {Euler}: Ito-Euler}{127}{subsection.10.3.1}%
+\contentsline {subsection}{\numberline {10.3.2}\emph {Implicit}: implicit Ito-Euler}{127}{subsection.10.3.2}%
+\contentsline {subsection}{\numberline {10.3.3}\emph {MP}: Midpoint}{128}{subsection.10.3.3}%
+\contentsline {subsection}{\numberline {10.3.4}\emph {MPadap}t: adaptive midpoint}{128}{subsection.10.3.4}%
+\contentsline {subsection}{\numberline {10.3.5}\emph {RK2}: second order Runge-Kutta}{129}{subsection.10.3.5}%
+\contentsline {subsection}{\numberline {10.3.6}\emph {RK4}: fourth order Runge-Kutta}{129}{subsection.10.3.6}%
+\contentsline {section}{\numberline {10.4}Weighted library}{130}{section.10.4}%
+\contentsline {subsection}{\numberline {10.4.1}Example}{131}{subsection.10.4.1}%
+\contentsline {section}{\numberline {10.5}Projection library}{131}{section.10.5}%
+\contentsline {subsection}{\numberline {10.5.1}Calling the \emph {project} function}{132}{subsection.10.5.1}%
+\contentsline {subsection}{\numberline {10.5.2}The predefined manifold geometries}{133}{subsection.10.5.2}%
+\contentsline {section}{\numberline {10.6}Forward-backward library}{133}{section.10.6}%
+\contentsline {subsection}{\numberline {10.6.1}Example:}{135}{subsection.10.6.1}%
+\contentsline {section}{\numberline {10.7}Discretization errors}{136}{section.10.7}%
+\contentsline {subsection}{\numberline {10.7.1}Discretization error outputs}{136}{subsection.10.7.1}%
+\contentsline {section}{\numberline {10.8}Higher order convergence}{137}{section.10.8}%
+\contentsline {subsection}{\numberline {10.8.1}Extrapolation}{137}{subsection.10.8.1}%
+\contentsline {subsection}{\numberline {10.8.2}Extrapolated error-bars}{138}{subsection.10.8.2}%
+\contentsline {section}{\numberline {10.9}Statistical errors}{138}{section.10.9}%
+\contentsline {subsection}{\numberline {10.9.1}Sampling error}{139}{subsection.10.9.1}%
+\contentsline {section}{\numberline {10.10}Convergence tests}{140}{section.10.10}%
+\contentsline {subsection}{\numberline {10.10.1}Comparisons: \emph {compare}}{140}{subsection.10.10.1}%
+\contentsline {subsection}{\numberline {10.10.2}Convergence: \emph {xcheck}}{141}{subsection.10.10.2}%
+\contentsline {section}{\numberline {10.11}Chi-squared estimates}{141}{section.10.11}%
+\contentsline {subsection}{\numberline {10.11.1}Probability comparisons}{142}{subsection.10.11.1}%
+\contentsline {subsection}{\numberline {10.11.2}Scaling of \textrm {\textmd {\normalsize {}{}{}{}$\chi ^{2}$}}{\normalsize {}{}{} errors}}{143}{subsection.10.11.2}%
+\contentsline {section}{\numberline {10.12}Error outputs}{144}{section.10.12}%
+\contentsline {subsection}{\numberline {10.12.1}Numerical error outputs}{144}{subsection.10.12.1}%
+\contentsline {subsection}{\numberline {10.12.2}Graphical error outputs}{144}{subsection.10.12.2}%
+\contentsline {subsection}{\numberline {10.12.3}Printed error outputs}{145}{subsection.10.12.3}%
+\contentsline {subsection}{\numberline {10.12.4}Goodness of fit ($\chi ^{2}$)}{145}{subsection.10.12.4}%
+\contentsline {subsection}{\numberline {10.12.5}Error vector output}{145}{subsection.10.12.5}%
+\contentsline {subsection}{\numberline {10.12.6}Error summaries}{146}{subsection.10.12.6}%
+\contentsline {chapter}{\numberline {11}API reference and extensibility }{147}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Overview}{147}{section.11.1}%
+\contentsline {subsection}{\numberline {11.1.1}Output data storage and batch jobs}{147}{subsection.11.1.1}%
+\contentsline {subsection}{\numberline {11.1.2}Batch input template}{147}{subsection.11.1.2}%
+\contentsline {section}{\numberline {11.2}Input and data structures}{148}{section.11.2}%
+\contentsline {subsection}{\numberline {11.2.1}Applications}{149}{subsection.11.2.1}%
+\contentsline {subsection}{\numberline {11.2.2}User functions and parameters table}{149}{subsection.11.2.2}%
+\contentsline {section}{\numberline {11.3}xSIM parameters and functions}{150}{section.11.3}%
+\contentsline {subsection}{\numberline {11.3.1}Parameter table}{150}{subsection.11.3.1}%
+\contentsline {subsection}{\numberline {11.3.2}User-defined functions.}{151}{subsection.11.3.2}%
+\contentsline {subsection}{\numberline {11.3.3}Integrals and derivatives}{152}{subsection.11.3.3}%
+\contentsline {subsection}{\numberline {11.3.4}Extensible functions}{153}{subsection.11.3.4}%
+\contentsline {subsection}{\numberline {11.3.5}SDE methods table}{153}{subsection.11.3.5}%
+\contentsline {subsection}{\numberline {11.3.6}Projection and forward-backwards methods}{154}{subsection.11.3.6}%
+\contentsline {section}{\numberline {11.4}QUANTUM parameters and functions}{154}{section.11.4}%
+\contentsline {subsection}{\numberline {11.4.1}Bosonic operator table}{154}{subsection.11.4.1}%
+\contentsline {subsection}{\numberline {11.4.2}Qubit and Pauli spin operators}{155}{subsection.11.4.2}%
+\contentsline {subsection}{\numberline {11.4.3}SSE methods table}{155}{subsection.11.4.3}%
+\contentsline {section}{\numberline {11.5}Function reference }{155}{section.11.5}%
+\contentsline {subsection}{\numberline {11.5.1}User function reference }{155}{subsection.11.5.1}%
+\contentsline {subsection}{\numberline {11.5.2}\emph {boundfun(a, d, p)}}{155}{subsection.11.5.2}%
+\contentsline {subsection}{\numberline {11.5.3}\emph {compare(p)}}{156}{subsection.11.5.3}%
+\contentsline {subsection}{\numberline {11.5.4}\emph {define(a, w, p)}}{156}{subsection.11.5.4}%
+\contentsline {subsection}{\numberline {11.5.5}\emph {deriv(a,w,p)}}{156}{subsection.11.5.5}%
+\contentsline {subsection}{\numberline {11.5.6}\emph {firstfb(a0,nc,p)}}{156}{subsection.11.5.6}%
+\contentsline {subsection}{\numberline {11.5.7}grid}{157}{subsection.11.5.7}%
+\contentsline {subsection}{\numberline {11.5.8}\emph {initial(rv, p)}}{157}{subsection.11.5.8}%
+\contentsline {subsection}{\numberline {11.5.9}\emph {linear(p)}}{157}{subsection.11.5.9}%
+\contentsline {subsection}{\numberline {11.5.10}\emph {nfilter (w,p)}}{157}{subsection.11.5.10}%
+\contentsline {subsection}{\numberline {11.5.11}\emph {noisegen(p)}}{157}{subsection.11.5.11}%
+\contentsline {subsection}{\numberline {11.5.12}\emph {observe(a..., p)}}{158}{subsection.11.5.12}%
+\contentsline {subsection}{\numberline {11.5.13}\emph {output(o,p)}}{158}{subsection.11.5.13}%
+\contentsline {subsection}{\numberline {11.5.14}\emph {prop(a, p)}}{158}{subsection.11.5.14}%
+\contentsline {subsection}{\numberline {11.5.15}\emph {propfactor(nc, p)}}{158}{subsection.11.5.15}%
+\contentsline {subsection}{\numberline {11.5.16}\emph {randomgen(xp)}}{158}{subsection.11.5.16}%
+\contentsline {subsection}{\numberline {11.5.17}\emph {rfilter(w, p)}}{159}{subsection.11.5.17}%
+\contentsline {subsection}{\numberline {11.5.18}\emph {method(a..., w..., p)}}{159}{subsection.11.5.18}%
+\contentsline {subsection}{\numberline {11.5.19}\emph {transfer(v, p, a0, p0)}}{159}{subsection.11.5.19}%
+\contentsline {section}{\numberline {11.6}Internal function reference}{159}{section.11.6}%
+\contentsline {subsection}{\numberline {11.6.1}\emph {Ave(o{[}, av {]}, p)}}{159}{subsection.11.6.1}%
+\contentsline {subsection}{\numberline {11.6.2}\emph {Bin(o{[}, dx {]}, p)}}{160}{subsection.11.6.2}%
+\contentsline {subsection}{\numberline {11.6.3}\emph {D1(a{[}, dir,ind{]}, p)}}{160}{subsection.11.6.3}%
+\contentsline {subsection}{\numberline {11.6.4}\emph {D2(a{[}, dir,ind{]}, p)}}{160}{subsection.11.6.4}%
+\contentsline {subsection}{\numberline {11.6.5}\emph {Int(o{[}, dx, bounds{]}, p)}}{160}{subsection.11.6.5}%
+\contentsline {section}{\numberline {11.7}Internal parameters}{161}{section.11.7}%
+\contentsline {subsection}{\numberline {11.7.1}Array tables}{161}{subsection.11.7.1}%
+\contentsline {subsection}{\numberline {11.7.2}Simulation data in xSIM}{162}{subsection.11.7.2}%
+\contentsline {subsection}{\numberline {11.7.3}Internal parameter table}{163}{subsection.11.7.3}%
+\contentsline {section}{\numberline {11.8}xSIM structure}{165}{section.11.8}%
+\contentsline {subsection}{\numberline {11.8.1}xSPDE}{165}{subsection.11.8.1}%
+\contentsline {subsection}{\numberline {11.8.2}xSIM}{165}{subsection.11.8.2}%
+\contentsline {section}{\numberline {11.9}xGRAPH overview}{166}{section.11.9}%
+\contentsline {subsection}{\numberline {11.9.1}Parameter and data structures}{166}{subsection.11.9.1}%
+\contentsline {section}{\numberline {11.10}Graphical data}{167}{section.11.10}%
+\contentsline {subsection}{\numberline {11.10.1}Check index uses}{167}{subsection.11.10.1}%
+\contentsline {subsection}{\numberline {11.10.2}Comparisons}{168}{subsection.11.10.2}%
+\contentsline {subsection}{\numberline {11.10.3}Parameter table}{168}{subsection.11.10.3}%
+\contentsline {subsection}{\numberline {11.10.4}Example}{171}{subsection.11.10.4}%
+\contentsline {subsection}{\numberline {11.10.5}xGRAPH data arrays}{172}{subsection.11.10.5}%
+\contentsline {subsection}{\numberline {11.10.6}Input parameters and defaults}{173}{subsection.11.10.6}%
+\contentsline {subsection}{\numberline {11.10.7}Cascaded plots}{174}{subsection.11.10.7}%
+\contentsline {subsection}{\numberline {11.10.8}Plot dimensions}{174}{subsection.11.10.8}%
+\contentsline {subsection}{\numberline {11.10.9}Plot axes}{175}{subsection.11.10.9}%
+\contentsline {subsection}{\numberline {11.10.10}Probabilities and parametric plots}{176}{subsection.11.10.10}%
+\contentsline {subsection}{\numberline {11.10.11}Chi-squared plots}{176}{subsection.11.10.11}%
+\contentsline {subsection}{\numberline {11.10.12}Comparisons with variances}{177}{subsection.11.10.12}%
+\contentsline {subsection}{\numberline {11.10.13}Maximum likelihood}{177}{subsection.11.10.13}%
+\contentsline {subsection}{\numberline {11.10.14}Parametric plots}{178}{subsection.11.10.14}%
+\contentsline {section}{\numberline {11.11}Parameter reference}{178}{section.11.11}%
+\contentsline {subsection}{\numberline {11.11.1}\emph {axes\{n\}}}{178}{subsection.11.11.1}%
+\contentsline {subsection}{\numberline {11.11.2}\emph {diffplot\{n\}}}{178}{subsection.11.11.2}%
+\contentsline {subsection}{\numberline {11.11.3}\emph {errors}}{179}{subsection.11.11.3}%
+\contentsline {subsection}{\numberline {11.11.4}\emph {esample\{n\}}}{179}{subsection.11.11.4}%
+\contentsline {subsection}{\numberline {11.11.5}\emph {font\{n\}}}{179}{subsection.11.11.5}%
+\contentsline {subsection}{\numberline {11.11.6}\emph {functions}}{180}{subsection.11.11.6}%
+\contentsline {subsection}{\numberline {11.11.7}\emph {glabels\{n\}}}{180}{subsection.11.11.7}%
+\contentsline {subsection}{\numberline {11.11.8}\emph {graphs}}{180}{subsection.11.11.8}%
+\contentsline {subsection}{\numberline {11.11.9}\emph {gtransforms\{n\}}}{180}{subsection.11.11.9}%
+\contentsline {subsection}{\numberline {11.11.10}\emph {headers\{n\}}}{181}{subsection.11.11.10}%
+\contentsline {subsection}{\numberline {11.11.11}\emph {images\{n\}}}{181}{subsection.11.11.11}%
+\contentsline {subsection}{\numberline {11.11.12}\emph {imagetype\{n\}}}{181}{subsection.11.11.12}%
+\contentsline {subsection}{\numberline {11.11.13}\emph {klabels}}{181}{subsection.11.11.13}%
+\contentsline {subsection}{\numberline {11.11.14}\emph {legends\{n\}}}{182}{subsection.11.11.14}%
+\contentsline {subsection}{\numberline {11.11.15}\emph {limits\{n\}}}{182}{subsection.11.11.15}%
+\contentsline {subsection}{\numberline {11.11.16}\emph {linestyle\{n\}}}{182}{subsection.11.11.16}%
+\contentsline {subsection}{\numberline {11.11.17}\emph {linewidth\{n\}}}{182}{subsection.11.11.17}%
+\contentsline {subsection}{\numberline {11.11.18}\emph {minbar\{n\}}}{183}{subsection.11.11.18}%
+\contentsline {subsection}{\numberline {11.11.19}\emph {name}}{183}{subsection.11.11.19}%
+\contentsline {subsection}{\numberline {11.11.20}\emph {olabels\{n\}}}{183}{subsection.11.11.20}%
+\contentsline {subsection}{\numberline {11.11.21}\emph {parametric\{n\}}}{183}{subsection.11.11.21}%
+\contentsline {subsection}{\numberline {11.11.22}\emph {pdimension\{n\}}}{184}{subsection.11.11.22}%
+\contentsline {subsection}{\numberline {11.11.23}\emph {saveeps}}{184}{subsection.11.11.23}%
+\contentsline {subsection}{\numberline {11.11.24}\emph {savefig}}{184}{subsection.11.11.24}%
+\contentsline {subsection}{\numberline {11.11.25}\emph {transverse\{n\}}}{184}{subsection.11.11.25}%
+\contentsline {subsection}{\numberline {11.11.26}\emph {verbose}}{185}{subsection.11.11.26}%
+\contentsline {subsection}{\numberline {11.11.27}\emph {xlabels}}{185}{subsection.11.11.27}%
+\contentsline {subsection}{\numberline {11.11.28}\emph {gfunction\{n\} (d,p)}}{185}{subsection.11.11.28}%
+\contentsline {subsection}{\numberline {11.11.29}\emph {xfunctions\{n\} \{nd\} (ax,p)}}{186}{subsection.11.11.29}%
+\contentsline {section}{\numberline {11.12}xGRAPH structure}{186}{section.11.12}%
+\contentsline {subsection}{\numberline {11.12.1}\emph {xgraph(data,input)}}{186}{subsection.11.12.1}%
+\contentsline {subsection}{\numberline {11.12.2}\emph {input = xgpreferences (input,oldinput)}}{186}{subsection.11.12.2}%
+\contentsline {chapter}{\numberline {12}Examples and batch testing}{188}{chapter.12}%
+\contentsline {section}{\numberline {12.1}SDE examples}{188}{section.12.1}%
+\contentsline {subsection}{\numberline {12.1.1}Kubo}{188}{subsection.12.1.1}%
+\contentsline {paragraph}{\nonumberline Notes}{189}{paragraph*.20}%
+\contentsline {subsection}{\numberline {12.1.2}Loss/Gain with noise}{191}{subsection.12.1.2}%
+\contentsline {paragraph}{\nonumberline Notes}{191}{paragraph*.22}%
+\contentsline {section}{\numberline {12.2}Spectral examples}{193}{section.12.2}%
+\contentsline {subsection}{\numberline {12.2.1}Equilibrium}{193}{subsection.12.2.1}%
+\contentsline {paragraph}{\nonumberline Notes}{193}{paragraph*.24}%
+\contentsline {subsection}{\numberline {12.2.2}Quantum}{195}{subsection.12.2.2}%
+\contentsline {paragraph}{\nonumberline Notes}{195}{paragraph*.26}%
+\contentsline {section}{\numberline {12.3}Probability examples}{198}{section.12.3}%
+\contentsline {subsection}{\numberline {12.3.1}Probability density, Wiener process}{198}{subsection.12.3.1}%
+\contentsline {paragraph}{\nonumberline Notes}{198}{paragraph*.28}%
+\contentsline {section}{\numberline {12.4}SPDE examples}{201}{section.12.4}%
+\contentsline {subsection}{\numberline {12.4.1}Nonlinear Schrodinger equation with Neumann boundary conditions}{201}{subsection.12.4.1}%
+\contentsline {paragraph}{\nonumberline Notes}{201}{paragraph*.30}%
+\contentsline {subsection}{\numberline {12.4.2}Planar noise growth}{203}{subsection.12.4.2}%
+\contentsline {paragraph}{\nonumberline Notes}{203}{paragraph*.32}%
+\contentsline {subsection}{\numberline {12.4.3}Gross-Pitaevskii equation with vortex formation}{207}{subsection.12.4.3}%
+\contentsline {paragraph}{\nonumberline Notes}{207}{paragraph*.34}%
+\contentsline {subsection}{\numberline {12.4.4}Heat equation with finite-difference and propagators }{211}{subsection.12.4.4}%
+\contentsline {paragraph}{\nonumberline Notes}{212}{paragraph*.41}%
+\contentsline {section}{\numberline {12.5}Projection examples}{215}{section.12.5}%
+\contentsline {subsection}{\numberline {12.5.1}SDE with catenoid projection}{215}{subsection.12.5.1}%
+\contentsline {paragraph}{\nonumberline Notes}{215}{paragraph*.43}%
+\contentsline {section}{\numberline {12.6}Quantum examples}{218}{section.12.6}%
+\contentsline {subsection}{\numberline {12.6.1}Linear decay, complex SSE}{218}{subsection.12.6.1}%
+\contentsline {paragraph}{\nonumberline Sparse operator method}{218}{paragraph*.45}%
+\contentsline {paragraph}{\nonumberline Function operator method}{219}{paragraph*.47}%
+\contentsline {subsection}{\numberline {12.6.2}Time-dependent decay, real SSE}{221}{subsection.12.6.2}%
+\contentsline {paragraph}{\nonumberline Sparse operator method}{221}{paragraph*.49}%
+\contentsline {paragraph}{\nonumberline Function operator method}{222}{paragraph*.51}%
+\contentsline {subsection}{\numberline {12.6.3}Nonlinear decay, real SSE}{224}{subsection.12.6.3}%
+\contentsline {paragraph}{\nonumberline Sparse operator method}{224}{paragraph*.53}%
+\contentsline {paragraph}{\nonumberline Function operator method}{224}{paragraph*.55}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

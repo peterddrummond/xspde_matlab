@@ -1,0 +1,10 @@
+xSPDE4 standards:
+
+Methods
+
+(1) Cell input parameters are not needed if the cell has one component
+(2) Methods import and export cell arrays, and are self-describing
+(3) User functions import multiple field and noise arrays, export one array 
+(4) The parameter structure is always passed as the last variable
+(5) Parameters have default values, so not all are required
+(6) Methods may use separate derivA, derivB, derivC, derivD functions
