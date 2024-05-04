@@ -1,5 +1,5 @@
-function a  =  Quadproj(d,a,n,r) 
-%   a = Quadproj(d,a,n,r) computes projections for a quadratic.
+function a  =  Quadproj(d,ac,n,varargin) 
+%   a = Quadproj(d,ac,n,(c,)p) computes projections for a quadratic.
 %   The projection constraint function is:
 %   f = \sum_i,j a_i * qc_{i,j} * (a_j) - 1 = 0
 %   options available:
@@ -7,10 +7,19 @@ function a  =  Quadproj(d,a,n,r)
 %   n = 1 - returns a tangential projection of d at location a
 %   n = 2 - returns a normal projection of a to the constraint manifold
 %   n = 3 - returns the constraint function
-%   needs: r.qc as a constraint matrix, 
-%          r.iterations defines how many normal iterations used
+%   Here c is optional: if present, ac is a cell array and c the cell index
+%   needs: p.qc as a constraint matrix, 
+%          p.iterations defines how many normal iterations used
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-g  =  r.qc;                                   %%Quadratic constraint matrix
+if nargin == 4 
+    a = ac;
+    p = varargin{1};
+else
+    c = varargin{1};
+    p = varargin{2};
+    a = ac{c};
+end
+g  =  p.qc;                                   %%Quadratic constraint matrix
 switch n
 case 0
   a = 2.*g*a;                                 %%Calculate gradient vector 
@@ -18,18 +27,18 @@ case 1
   gr =  2.*g*a;                               %%Calculate gradient vector
   a  = d-gr.*sum(d.*gr,1)./sum(gr.*gr,1);     %%Get projected derivative
 case 2
-  for i = 1:r.iterations
+  for i = 1:p.iterations
       gr =  2.*g*a;                           %%Calculate gradient vector
-      l = -constr(a,r)./sum(gr.*gr,1);        %%Get Lagrange multiplier
+      l = -constr(a,p)./sum(gr.*gr,1);        %%Get Lagrange multiplier
       a = a+l.*gr;                            %%Project the field again
   end  
   case 3
-  a =  constr(a,r);
+  a =  constr(a,p);
 otherwise
   error('expects n = 0,1,2 or 3, not %d',n);
 end
 end
 
-function f  =  constr(a,r)
-    f = sum(a.*(r.qc*a),1)-1;                 %%Calculate constraint
+function f  =  constr(a,p)
+    f = sum(a.*(p.qc*a),1)-1;                 %%Calculate constraint
 end           

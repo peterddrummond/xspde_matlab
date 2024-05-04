@@ -1,11 +1,11 @@
 function [a,av,raw] = xpath(a,nc,p)
 %   [a,av,raw] = XPATH (a,nc,p)  integrates stochastic paths
-%   Input:  'a' is a cell array of initial parallel trajectory arrays
-%           'nc' is the check index: nc = 1 for coarse, nc = 2 for fine
-%           'p' is the structure of parameters used
-%   Output: 'a' is a cell array of final trajectory arrays
-%           'av' is the average data generated during integration
-%           'raw' is the raw data of all fields, if required
+%   Input:  a is a cell array of initial parallel trajectory field arrays
+%           nc is the check index: nc = 1 for coarse, nc = 2 for fine
+%           p is the structure of parameters used
+%   Output: a is a cell array of final trajectory field arrays
+%           av is the average data generated during integration
+%           raw is the raw data of all fields, if required
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Called by xensemble
 %   Calls method, define, xdata, breed, creshape, czeros

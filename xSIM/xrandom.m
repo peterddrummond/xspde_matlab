@@ -15,12 +15,12 @@ function w = xrandom(p)
 %   Licensed by Peter D. Drummond, (2024) - see License
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-w = cell(1,p.randomcells);
+w = cell(1,p.randomcells);                       %% Create cell array
+w{1} = 0;                                        %% Initialize to zero
 for n = 1:p.randomcells                          %% Loop on gaussian cells
-  %if p.dimensions > 1 
   w{n} = randn(p.d.randoms{n});                  %% Gaussian randoms
   w{n} = w{n}*sqrt(p.noisefactor{n});            %% Scale Gaussian noise
-  if p.inrandoms{n}(2) > 0                           %% Test for k randoms
+  if p.inrandoms{n}(2) > 0                       %% Test for k randoms
     kv = randn(p.d.krandoms{n});                 %% Get k-randoms
     kv = p.rfilter{n}(kv,p);                     %% Filter k-randoms
     kv = sqrt(p.knoisefactor{n})*xift(kv,p);     %% Inverse FF transform 

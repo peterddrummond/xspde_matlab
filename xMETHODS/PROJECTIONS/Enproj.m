@@ -11,16 +11,19 @@ function [a,varargout]  =  Enproj(a,xi,p)
 
 
 
-dt  = p.dtr;                                     %%Time-step 
+dt  = p.dtr;                                     % Time-step
+d = a;
 for c = 1:p.fieldcells
-    d = reshape(p.deriv{c}(a{:},xi{:},p)*dt,p.d.ca{c});
-    a{c} = a{c} + p.project(d,a{c},1,p);         %%Tangential derivative;
-end                                              %%End iteration loop
-p.t = p.t + dt;                                  %%get time
-a = p.prop(a,p);                                 %%Propagate the fields
+    d{c} = reshape(p.deriv{c}(a{:},xi{:},p)*dt,p.d.ca{c});
+end                                              % End iteration loop
 for c = 1:p.fieldcells
-  a{c} = p.project(0, a{c} ,2,p);                %%Project normally
+    a{c} = a{c} + p.project(d{c},a,1,c,p);       % Tangential derivative;
+end                                              % End iteration loop
+p.t = p.t + dt;                                  % get time
+a = p.prop(a,p);                                 % Propagate the fields
+for c = 1:p.fieldcells
+  a{c} = p.project(0,a,2,c,p);                   % Project normally
 end
 varargout = {1,1,1,1,1};
 %% Stoch. order = 1, det. order = 1, ipsteps = 1, vector = Y, cell  = Y
-end                                              %%End function call    
+end                                              % End function call    

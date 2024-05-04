@@ -9,17 +9,18 @@ function [e]  =  Gaussian3D()
 %   (6) Graphing results with movie images
 %   xSPDE functions are licensed by Peter D. Drummond, (2021) - see License
 
-p.name         =  'Gaussian3D: 3D diffraction with loss';
-p.dimensions   =  4;                                            %%dimension: 1-4
-p.initial      =  @(w,p) exp(-(p.x.^2+p.y.^2+p.z.^2)/2);        %%initialisation
-p.observe{1}   =  @(a,~) a.*conj(a);                            %%x-observable
-p.linear       =  @(p) -0.5+1i*0.05*(p.Dx.^2+p.Dy.^2+p.Dz.^2);  %%laplacian
-p.images       =  {2,2};                                        %%number of images
-p.transverse   =  {2,2};                                        %%transverse plots
-p.olabels      =  {'|a(r)|^2'};                                 %%labels
-p.compare{1}   =  @gaussian3d;                                  %%comparison
-e              =  xspde(p);                                     %%simulation
-end                                                             %%end of main
+p.name         =  'Gaussian3D: diffraction + loss';
+p.noises       =  [0,0];
+p.dimensions   =  4;                                       % dimension: 1-4
+p.initial      =  @(w,p) exp(-(p.x.^2+p.y.^2+p.z.^2)/2);   % initialisation
+p.observe{1}   =  @(a,~) a.*conj(a);                       % x-observable
+p.linear       =  @(p) -0.5+1i*0.05*(p.Dx.^2+p.Dy.^2+p.Dz.^2);  % laplacian
+p.images       =  {2,2};                                   % total images
+p.transverse   =  {2,2};                                   % transv. plots
+p.olabels      =  {'|a(r)|^2'};                            % labels
+p.compare{1}   =  @gaussian3d;                             % comparison
+e              =  xspde(p);                                % simulation
+end                                                        % end of main
 
 function c  =  gaussian3d(p)
 sig         =  (1+(p.t/10).^2);
