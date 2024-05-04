@@ -101,10 +101,6 @@
 The Quantum and Stochastic Toolbox: xSPDE4
 \end_layout
 
-\begin_layout Standard
-PRELIMINARY DOCUMENTATION 
-\end_layout
-
 \begin_layout Address
 
 \series bold
@@ -1699,6 +1695,81 @@ noprefix "false"
 \end_inset
 
 ).
+\end_layout
+
+\begin_layout Section
+Stochastic projections
+\end_layout
+
+\begin_layout Standard
+It is sometimes necessary to constrain an equation to a sub-manifold 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Joseph2023midpoint"
+literal "false"
+
+\end_inset
+
+, with an equation of form: 
+\begin_inset Formula 
+\begin{equation}
+\mathbf{f}\left(\mathbf{a}\right)=0,
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathbf{f}\left(\mathbf{a}\right)$
+\end_inset
+
+ is a scalar or vector function that defines the relevant manifold in Euclidean
+ space.
+ The projected SDE then has the form of a Stratonovich SDE, where: 
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\mathbf{a}}{\partial t}=\mathcal{P}_{\mathbf{a}}^{\parallel}\left[\mathbf{A}\left[\mathbf{a}\right]+\underline{\mathbf{B}}\left[\mathbf{a}\right]\cdot\mathbf{w}(t)\right]\,,
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathcal{P}_{\mathbf{a}}^{\parallel}$
+\end_inset
+
+ is a tangential projection operator at location 
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+ on the sub-manifold, and as usual, 
+\begin_inset Formula $\mathbf{A}$
+\end_inset
+
+ is a vector, 
+\begin_inset Formula $\underline{\mathbf{B}}$
+\end_inset
+
+ a matrix and 
+\begin_inset Formula $\mathbf{w}$
+\end_inset
+
+ is a real Gaussian noise vector, delta-correlated in time.
+ 
+\end_layout
+
+\begin_layout Standard
+Similarly, the general stochastic partial differential equation can be written
+ in projected form as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\mathbf{a}}{\partial t}=\mathcal{P}_{\mathbf{a}}^{\parallel}\left[\mathbf{A}\left[\mathbf{a}\right]+\underline{\mathbf{B}}\left[\mathbf{a}\right]\cdot\mathbf{w}(t,\mathbf{x})+\underline{\mathbf{L}}\left[\mathbf{\nabla},\mathbf{a}\right]\,\right].
+\end{equation}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -22928,75 +22999,8 @@ Projection library
 \end_layout
 
 \begin_layout Standard
-It is sometimes necessary to constrain an equation to a sub-manifold 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Joseph2023midpoint"
-literal "false"
-
-\end_inset
-
-, with an equation of form: 
-\begin_inset Formula 
-\begin{equation}
-\mathbf{f}\left(\mathbf{a}\right)=0,
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $\mathbf{f}\left(\mathbf{a}\right)$
-\end_inset
-
- is a scalar or vector function that defines the relevant manifold in Euclidean
- space.
- The projected SDE then has the form of a Stratonovich SDE, where: 
-\begin_inset Formula 
-\begin{equation}
-\frac{\partial\mathbf{a}}{\partial t}=\mathcal{P}_{\mathbf{a}}^{\parallel}\left[\mathbf{A}\left[\mathbf{a}\right]+\underline{\mathbf{B}}\left[\mathbf{a}\right]\cdot\mathbf{w}(t)\right]\,,
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $\mathcal{P}_{\mathbf{a}}^{\parallel}$
-\end_inset
-
- is a tangential projection operator at location 
-\begin_inset Formula $\mathbf{a}$
-\end_inset
-
- on the sub-manifold, and as usual, 
-\begin_inset Formula $\mathbf{A}$
-\end_inset
-
- is a vector, 
-\begin_inset Formula $\underline{\mathbf{B}}$
-\end_inset
-
- a matrix and 
-\begin_inset Formula $\mathbf{w}$
-\end_inset
-
- is a real Gaussian noise vector, delta-correlated in time.
- Similarly, the general stochastic partial differential equation can be
- written in projected form as
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\frac{\partial\mathbf{a}}{\partial t}=\mathcal{P}_{\mathbf{a}}^{\parallel}\left[\mathbf{A}\left[\mathbf{a}\right]+\underline{\mathbf{B}}\left[\mathbf{a}\right]\cdot\mathbf{w}(t,\mathbf{x})+\underline{\mathbf{L}}\left[\mathbf{\nabla},\mathbf{a}\right]\,\right].
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-When numerically integrating these, it is also useful to have a normal projectio
-n 
+When numerically integrating projected SDEs or SPDEs, it is also useful
+ to have a normal projection 
 \begin_inset Formula $\mathcal{P}^{\perp}$
 \end_inset
 
@@ -23092,11 +23096,13 @@ project
 \emph default
  function are: 
 \emph on
-(d,a,n,p)
+(d,a,n,(c,)p)
 \emph default
 , where d is a vector to be tangentially projected at location a, a is the
- current (near)-manifold location, n is an option switch, and p is the parameter
- structure.
+ current (near)-manifold field or cell array, n is an option switch, and
+ p is the parameter structure.
+ This can be used for a field a, without the cell index c, or for a cell
+ array of fields, including the cell index c.
 \end_layout
 
 \begin_layout Standard
@@ -23169,9 +23175,7 @@ project
  Currently in the examples, dimensionality is reduced by 1, and normal projectio
 ns use fixed point iterations, defined by 
 \emph on
-iterproj
-\emph default
-.
+iterations.
 \end_layout
 
 \begin_layout Subsection
@@ -25525,9 +25529,9 @@ There are two types of functions:
 \emph on
 User
 \emph default
- functions define the equations, and have default values.
+ functions define equations, and have default values.
  The defaults are usually obtained by adding 'x' in front of the name.
- In the special case of 
+ In the case of 
 \emph on
 method
 \emph default
@@ -25546,8 +25550,7 @@ Helper
 \emph default
 .
  In some cases these are defaults for user functions.
- In all cases they have well-defined roles, like the reserved functions
- in C, Python, Matlab or Julia.
+ They are like the reserved functions in C, Python, Matlab or Julia.
  
 \end_layout
 
@@ -28564,7 +28567,7 @@ These functions define the stochastic problem.
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="15" columns="3">
+<lyxtabular version="3" rows="14" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -29097,7 +29100,7 @@ Boundary function
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -29110,11 +29113,11 @@ project
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(d,a,n,p)$
+\begin_inset Formula $(d,a,n,(c,)p)$
 \end_inset
 
  
@@ -29122,47 +29125,11 @@ project
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Defines projections
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\emph on
-firstfb
-\emph default
- 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $(a0,nc,p)$
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-First forward-backward path
 \end_layout
 
 \end_inset
@@ -30305,7 +30272,7 @@ Catproj
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(d,a,n,p)$
+\begin_inset Formula $(d,a,n,(c,)p)$
 \end_inset
 
  
@@ -30341,7 +30308,7 @@ Quadproj
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(d,a,n,p)$
+\begin_inset Formula $(d,a,n,(c,)p)$
 \end_inset
 
  
@@ -30377,7 +30344,7 @@ Polproj
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $(d,a,n,p)$
+\begin_inset Formula $(d,a,n,(c,)p)$
 \end_inset
 
  
@@ -30536,7 +30503,12 @@ functions take cell inputs and outputs.
 \end_layout
 
 \begin_layout Itemize
-The projectors take individual arrays as inputs and outputs.
+The projectors with 4 arguments take individual arrays as inputs and outputs.
+\end_layout
+
+\begin_layout Itemize
+If the cell index c is added, the projector field input a must be a cell
+ array
 \end_layout
 
 \begin_layout Standard
