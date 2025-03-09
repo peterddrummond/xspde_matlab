@@ -1,0 +1,5 @@
+Instructions:
+
+To compile to latex, enter make latex from the doc directory
+
+To make a pdf file, type make latexpdf

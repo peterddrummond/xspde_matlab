@@ -24,12 +24,12 @@ p.part{8}    = p.modes/2*[1,1];                  %Two-fold partititon
 p.part{9}    = p.modes/4*[1,1,1,1];              %Four-fold partition
 p.ensembles  = [100,10,12];                      %repeats for errors
 p.cutoff     = 1.e-7;
-p.observe    = {@pn,@x2,@p2,@nm,@k,@km,@k1,@kn,@kn};
-p.compare    = {@nc,@x2c,@p2c,@nmc,@kc,@kmc,@k1c,@knc,@knc};
+p.observe    = {@Np,@X2,@Y2,@Nm,@K,@Km,@K1,@Kn,@Kn};
+p.compare    = {@Npc,@X2c,@Y2c,@Nmc,@Kc,@Kmc,@K1c,@Knc,@Knc};
 p.glabels    = {{{},'Mode j'},{{},'Mode j'},{{},'Mode j'},{{},'Order'},...
                {{},'Mode j'},{{},'Clicks m'},{{},'Clicks m_1','Clicks m_2'},...
                {{},'Clicks m_1','Clicks m_2','Clicks m_3','Clicks m_4'}};
-p.olabels    = {'<n>','<x^2>','<p^2>','<n_1...n_j>','<G^{(1)}>',...
+p.olabels    = {'<n>','<x^2>','<y^2>','<n_1...n_j>','<G^{(1)}>',...
                '<G^{(n)}>','G_1(m)','G_2(m)','G_4(m)'};
 p.diffplot   = {2,2,2,2,2,2,2,2,2};
 p.xk{4}      = p.correl(4);
@@ -39,7 +39,7 @@ p.xk{8}      = {0:p.modes/2,0:p.modes/2};
 p.xk{9}      = {0:p.modes/4,0:p.modes/4,0:p.modes/4,0:p.modes/4};
 p0 = p;
 
-p.transfer   = @initialphase;
+p.transfer   = @Initialgaussian;
 p1           = p;
 p1.thermal   = 0.5*ones(1,p.modes);                  %decoherence factor
 p1.name      = sprintf('+P GBS thermalized, M=%d',p.modes); %test name

@@ -15,6 +15,7 @@ p.dimensions =  2;                                      %%Space-time dimn
 p.ensembles  =  [6,6];                                 %%Ensembles
 p.points     =  [31,31];                                %%Points
 p.ranges     =  [5,15];                                 %%Ranges
+p.verbose = 1;
 p.steps      =  5;
 p.initial    =  @(w,p)   2*sech(p.x);                   %%Initialisation
 p.transfer   =  @(~,w,p) 2*sech(p.x);                   %%Initialisation

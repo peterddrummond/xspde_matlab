@@ -57,7 +57,6 @@ for n = 1:p.points{1}(1)                         % loop over time points
         p.t = p.t + p.dtr;                       % Update current time
       end                                        % end if high res or last     
     end                                          % end check loop
-    %a(f+1:end) = ax;                            % Store auxiliary 
     if p.thresholdw > 0                          % Check if renormalizing
       [a{1:f},p.breedw] = p.breed(a{1:f},p);     % Renormalize and breed
     end                                          % End check for threshold
@@ -71,7 +70,7 @@ for n = 1:p.points{1}(1)                         % loop over time points
   
 %     STORE RAW FIELDS, SPECTRAL FIELDS, TIME-DOMAIN OBSERVE DATA
 
-  if step == 1                                   % loop on total cells  
+  if step == 1                                   % check if the first step 
   for l = 1:p.totcells                           % loop on total cells  
     if p.rawdata                                 % check if raw data
       raw{l}(p.ind{1:p.nfields},n,p.ind{:}) = reshape(a{l},p.d.a1{l});% raw 
@@ -82,7 +81,7 @@ for n = 1:p.points{1}(1)                         % loop over time points
       av{o}(:,n,:) = xdata(a,o,p);               % average observables
     end                                          % End check if not
   end                                            % end loop on averages
-  end
+  end                                            % end check if first 
  end                                             % end step loop
 end                                              % end time loop
  

@@ -23,9 +23,9 @@ else                                             %%End if data is character
         input.name = '';
     end
 end
-input = xmakecell(input);                        %%change input to cell
-fileinput = xmakecell(fileinput);                %%make file input to cell
-data = xmakecell(data);                          %%change data to cell
+input = xmcell(input);                           %%change input to cell
+fileinput = xmcell(fileinput);                   %%make file input to cell
+data = xmcell(data);                             %%change data to cell
 if ~iscell(data{1})                              %%check if data is nested
     data = {data};                               %%create nested cell
 end                                              %%end check if nested
@@ -205,13 +205,14 @@ for s = 1:sequence                               %%Loop over sequence
 end                                              %%end sequence
 xpr(0,in,'\nxGRAPH plotted %d input(s), time = %.3gs\n',gtot,toc());
 h=findobj('type','figure');                      %% find figure handles
-for k=1:numel(h)                                 %% loop on handles
-    fname=sprintf('Fig%d',k);                    %% Set filename
-    if in.savefig                                %% If figure save = Y
-         savefig(h(k),[fname,'.fig']);           %% Save fig k
-    end                                          %% End if figure save = Y
-    if in.saveeps                                %% If EPS save = Y
-          saveas(h(k),[fname,'.eps'],'epsc');    %% Save EPS k
-    end                                          %% End if EPS save = Y
+ng = numel(h);                                   %% total number of graphs
+for k=1:ng                                       %% loop on handles
+  fname=sprintf('Fig%d',ng+1-k);                 %% Set filename
+  if in.savefig                                  %% If figure save = Y
+      savefig(h(k),[fname,in.savefig]);          %% Save fig k
+  end                                            %% End if figure save = Y
+  if in.savegraph                                %% If EPS save = Y
+      exportgraphics(h(k),[fname,in.savegraph]); %% Save EPS k
+  end                                            %% End if EPS save = Y
 end                                              %% End loop on handles
 end                                              %%end graphics function

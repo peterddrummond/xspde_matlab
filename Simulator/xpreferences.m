@@ -16,7 +16,7 @@ for s = 1:sequence                               % loop over sequence
 
   p = inputs{s};                                 % get parameters for s
   p.octave  =     exist('OCTAVE_VERSION', 'builtin') ~= 0;
-  p.version =    xprefer(p,'version',0,'xSPDE4.2');
+  p.version =    xprefer(p,'version',0,'xSPDE4.21');
   if ~p.octave
     p.date  =    xprefer(p,'date',0,datetime);   % set the  date in Matlab
   else
@@ -31,21 +31,24 @@ for s = 1:sequence                               % loop over sequence
   else                                           % end if first
     p.checks = inputs{1}.checks;                 % ensure matched checks
   end                                            % end if first
-  if isfield(p,'quantum')                        % if quantum switch?
+  if isfield(p,'quantum') && p.quantum > 0       % if quantum switch?
     p = qpreferences(p);                         % get quantum parameters
   else                                           % or else 
     p.quantum = 0;                               % set p.quantum = 0
   end                                            % end if quantum?
-  if isfield(p,'phase')                          % if phase-space?
+  if isfield(p,'phase') && p.phase > 0           % if phase-space?
     p = phasepreferences(p);                     % phase-space parameters
   end                                            % end if phase-space
   p.dimensions = xprefer(p,'dimensions',1,1);    % partial diff. switch
-  nd = max(1,p.dimensions);
-  p.fields =     xprefer(p,'fields',0,{1});      % number of fields
-  p.auxfields =  xprefer(p,'auxfields',0,[]);    % auxiliary fields
-  p.fieldcells = length(p.fields);               % number of field cells
+  nd = max(1,p.dimensions);                      % space-time dimensions
+  p.fields =     xprefer(p,'fields',0,{1});      % integrated fields
+  p.fieldsb =    xprefer(p,'fieldsb',0,[]);      % backfields
+  p.auxfields =  xprefer(p,'auxfields',0,[]);    % auxiliary fields  
   p.auxcells   = length(p.auxfields);            % number of auxil. cells
-  p.totcells   = p.fieldcells+p.auxcells;        % number of total cells
+  p.fieldcells = length(p.fields);               % number of forward cells
+  p.fbcells    = length(p.fieldsb)+p.fieldcells; % number of total cells
+  p.fields     = [p.fields,p.fieldsb];           % total fields
+  p.totcells   = p.fbcells+p.auxcells;           % total cells
   if p.dimensions == 0                           % if no space-time  
     p.points   = xprefer(p,'points',1,{1});      % only one time point
     p.checks   = xprefer(p,'checks',0,0);        % no error checking
@@ -54,8 +57,10 @@ for s = 1:sequence                               % loop over sequence
     p.checks   = xprefer(p,'checks',0,[1,zeros(1,nd-1)]);% error checks
   end                                            % end if no space-time
   p.iterations = xprefer(p,'iterations',1,4);    % number of iterations
-  p.breed  =     xprefer(p,'breed',1,@Breed);    % default breeding
+  p.iterfb     = xprefer(p,'iterfb',1,1);        % forward-backward iters
+  p.breed  =     xprefer(p,'breed',1,@Breed);    % default breeding method
   p.path   =     xprefer(p,'path',1,@xpath);     % default SDE path
+  p.pathfb   =   xprefer(p,'pathfb',1,@xpathfb); % default FBSDE path
   p.deriv      = xprefer(p,'deriv',0,{@(a,~,~) 0*a});
   p.noises     = xprefer(p,'noises',0,{[]});     % gauss noises
   p.unoises    = xprefer(p,'unoises',0,{[]});    % uniform noises
@@ -68,14 +73,17 @@ for s = 1:sequence                               % loop over sequence
   p.krandoms   = xprefer(p,'krandoms',0,{[]});   % filtered randoms
   if isequal({p.inrandoms,p.krandoms,p.urandoms},{{[]},{[]},{[]}})%if 0
     p.inrandoms = p.noises;                      % use default inrandoms
-  end                                            % end if null 
-  p.fields     = [p.fields,p.auxfields];         % field + auxil. vector
+  end                                            % end if null
+  p.vc         = xprefer(p,'vc',0,{[]});         % polynomial vector coeff.
+  p.orderpol   = xprefer(p,'orderpol',0,{[]});   % polynomial order
+  p.qc         = xprefer(p,'qc',0,{[]});         % quadratic matrix coeff.
+  p.fields     = [p.fields,p.auxfields];         % total fields + auxfields
   p.ranges     = xprefer(p,'ranges',1,10*ones(1,nd));
   p.steps =      xprefer(p,'steps',nd,ones(1,nd));
   p.origins =    xprefer(p,'origins',1,[origin,-p.ranges(2:nd)/2]);   
   p.jump   =     xprefer(p,'jump',p.fieldcells,{0});
   p.rawdata =    xprefer(p,'rawdata',0,0);       % switch for raw data
-  p.linear   =   xprefer(p,'linear',p.fieldcells,{0});% linear prop.
+  p.linear   =   xprefer(p,'linear',p.fbcells,{0});% linear prop.
   p.adapt   =    xprefer(p,'adapt',1,1);
   p.seed =       xprefer(p,'seed',1,0);
   p.rng =        xprefer(p,'rng',0,'Threefry');
@@ -95,6 +103,10 @@ for s = 1:sequence                               % loop over sequence
     else 
       p.method = xprefer(p,'method',1,@MP);      % preferred stochastic
   end
+  if p.iterfb > 0
+      p.method = xprefer(p,'method',1,@MPfb);  % preferred fb method
+  end
+  p.firstfb =  xprefer(p,'firstfb',p.fbcells,{@(p) 0});     % preferred first fb
   p.prop     =   xprefer(p,'prop',1,@xprop);     % preferred propagator
   
                                         
@@ -168,6 +180,7 @@ for s = 1:sequence                               % loop over sequence
   p.checkd(1) = 0;
   p.spacechecks = sum(p.checks(2:nd));
   p.nchk = 1+sum(p.checks);
+  p.fbsw = abs(p.iterfb)>1;
   for n = 1:nd
     if p.checks(n)
       nc = nc+1;
@@ -197,25 +210,15 @@ for s = 1:sequence                               % loop over sequence
   end
   p.dtr = 0; 
   p.t = p.origins(1);
-  p.ipsteps =  1;
-  zs = xnoise(0,1,1,p);
-  [~,s_ord,det_ord,ip,dovect,docell] = p.method(a(1:p.fieldcells),zs,p);
+  if isequal (p.method, @Euler) || isequal (p.method, @Implicit)...
+      || isequal (p.method, @RK2)    
+      p.ipsteps = xprefer(p,'ipsteps',1,1);
+  else 
+      p.ipsteps = xprefer(p,'ipsteps',1,2);
+  end
   p.order = xprefer(p,'order',1,0);
-  if p.order == -1
-    if prod(p.ensembles)>1 
-      p.order = s_ord;
-    else
-      p.order = det_ord;
-    end
-  end
-  p.ipsteps = ip;
-  if ~isequal(p.totcells,1) && isequal(docell,0)
-      error('Cell method needed, total cells = %d\n',p.methodcells);
-  end
-  if ~isequal(p.fields,1) && isequal(dovect,0)
-      error('Vector method needed, total fields = %d\n',p.fields);
-  end
  
+  
 % GET PARAMETERS FOR THE OUTPUT AVERAGES
 
   if ~isfield(p,'observe')
@@ -374,7 +377,7 @@ for s = 1:sequence                               % loop over sequence
     p.spectrum = p.spectrum || p.ftransforms{n}(1);
     p.gpoints{n} = size(p.output{n}(O,p));
     p.d.data{n}  = prod(p.gpoints{n});
-    p.gpoints{n}(1+end) = max(3,1+p.nchk);
+    p.gpoints{n}(1+end) = max(3,1+p.nchk+p.fbsw);
     p.xk{n}{1}  = p.xc{1};
     p.plotpts = ((0:p.points{1}(1)-1)-floor((p.points{1}(1))/2));
     if ~isfield(p,'axes') || numel(p.axes) < n 

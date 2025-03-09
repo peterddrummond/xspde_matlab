@@ -3,14 +3,19 @@ function [error,data,input,raw] = xsim(varargin)
 %  Solves stochastic differential and partial differential equations.
 %  It returns averages as defined by the 'input' cell array. 
 %  XSIM also calls parallel loops, estimates errors, writes files.
-%  The 'error' is a six dimensional vector:
+%  Error summaries include n > 0 step/iteration errors, where:
+%  
 %   error(1) is the overall RMS (relative) error including differences
-%   error(2) is the overall RMS (relative) step error
-%   error(3) is the overall RMS (relative) sampling error
-%   error(4) is the overall RMS (relative) difference error
-%   error(5) is the overall maximum chi-squared error
-%   error(6) is the elapsed time
+%   error(2:1+n) is the RMS (relative) step/iteration error
+%   error(2+n) is the overall RMS (relative) sampling error
+%   error(3+n) is the overall RMS (relative) difference error
+%   error(4+n) is the overall maximum chi-squared error
+%   error(5+n) is the overall run-time
 %
+%  Note that 'error' is a vector of at least 6 dimensions
+%  
+%  Error(2) is zero if there is no error checking or iterations
+%  Error(1+n) stores forward-backward iteration errors, where n > 1
 %  The 'data' cell array   gives the averages, errors, and comparisons.
 %  The 'input' cell array  gives input data including all default values.
 %  The 'raw'  cell array   gives raw trajectories if required.
@@ -31,13 +36,14 @@ data   = cell(seq);                              % initialize data cells
 ne     = p.ensembles(2)*p.ensembles(3);          % total higher ensembles
 ens    = prod(p.ensembles);                      % initialize ensembles
 n1     = ne - 1;
-sx     = max(3,1+p.nchk);                        % sampling error index
+nc1    = p.nchk+p.fbsw;
+sx     = max(3,1+nc1);                           % sampling error index
 error  = zeros(1,6);                             % initialize errors
 raw    = cell(seq,p.nchk,p.ensembles(2),p.ensembles(3));
 totout = 0;
 for s = 1:seq                                    % loop over sequence
   for n = input{s}.outputs                       % loop over outputs
-    data{s}{n} = zeros([input{s}.d.data{n},3]);  % initialize output data
+    data{s}{n} = zeros([input{s}.d.data{n},sx]); % initialize output data
   end                                            % end loop over outputs
   totout = totout+max(input{s}.outputs);
 end                                              % end loop over sequence
@@ -55,9 +61,9 @@ end                                              % end if parallels
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%    Calculate final mean and variance for sampling errors            % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-er = zeros(totout,max(6,p.nchk+4));              % initialize rms errors
+er = zeros(totout,max(6,nc1+4));                 % initialize rms errors
 o = 0;                                           % initialize total observe
-em = zeros(totout,max(6,p.nchk+4));              % initialize max errors
+em = zeros(totout,max(6,nc1+4));                 % initialize max errors
 for s = 1:seq                                    % loop over sequence
  p   = input{s};                                 % get input structure
  p.t =  p.origins(1)+(0:p.points{1}(1)-1)*p.dt;  % define time vector
@@ -65,7 +71,7 @@ for s = 1:seq                                    % loop over sequence
  for n = p.outputs                               % loop over outputs
   if p.d.data{n}(1) > 0                          % check if data present
     d  = real(data{s}{n});                       % take real part of data
-    o = o+1;                                     % increment total count
+    o = o+1;                                     % increment output count
     d = reshape(d,p.gpoints{n});                 % output: full indexing
     m = min(p.dimensions,length(p.gpoints{n})-2);% Fourier dimensions
     for nd=2:m                                   % loop over dimensions
@@ -78,8 +84,8 @@ for s = 1:seq                                    % loop over sequence
     p.d.data{n} = prod(p.gpoints{n}(1:end-1));
     gptlen = length(p.gpoints{n});
     d = reshape(d,[p.d.data{n},sx]);
-    if p.relerr                                  % If relative errors                      
-        mx  = (max(abs(d(:,1))))^2 + 1.e-20;     % max. size for scaling
+    mx  = (max(abs(d(:,1))))^2;                  % max. size for scaling
+    if p.relerr && mx > p.tol                    % If relative errors                      
         rl = 'Relative';                         % rel. normalisation
     else                                         % else absolute errors
         mx = 1;                                  % then don't scale
@@ -95,18 +101,16 @@ for s = 1:seq                                    % loop over sequence
        d(:,sx) = sqrt(d(:,1)/p.scale{n});        % Poissonian sd
        p.cutoffs{n} = max(p.cutoffs{n},p.mincount/p.scale{n});
     end                                          % end if probabilities
-    for nc = 2:p.nchk
-      d(:,nc) = abs(d(:,nc) - d(:,1));           % step errors
+    for nc = 2:(p.nchk+p.fbsw)
+      d(:,nc)  = abs(d(:,nc) - d(:,1));          % step or iteration errors
       er(o,nc) = mean(d(:,nc).^2);
       em(o,nc) = sqrt(max(d(:,nc).^2));
     end
-    d(:,2) = sqrt(sum(d(:,2:p.nchk).^2,2));      % RMS sum step errors
-    d(:,3) = d(:,sx);
-    d      = d(:,1:3);
-    esum = (d(:,3).^2+d(:,2).^2)+1.e-20;         % calculate error sum
+    esum = sum(d(:,2:sx).^2,2)+1.e-20;           % calculate error sum
     ept = (esum > p.tol)&(abs(d(:,1))>p.cutoffs{n});% nonzero errors
     p = p.grid(n,p);                             % get graphics x,o,grid
     p.compares{n} = 0;                           % initialize compares
+    ds = 0;
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%    Calculate comparison data points if present                      % 
@@ -119,17 +123,17 @@ for s = 1:seq                                    % loop over sequence
       [dif,~,~] = xcompress(n,dif,p);            % Compress data to axes
       ds = size(dif,gptlen);
       dif = reshape(dif,[p.d.data{n},1:ds]);     % get the comparisons
-      d(:,4:3+ds) = dif; 
-      ept = ept&(abs(d(:,4))>p.cutoffs{n});      % Nonzero error points
-      mx  = max(abs(d(:,4)).^2); 
+      d(:,sx+1:sx+ds) = dif; 
+      ept = ept&(abs(d(:,sx+1))>p.cutoffs{n});   % Nonzero error points
+      mx  = max(abs(d(:,sx+1)).^2); 
       if p.relerr  &&  mx > p.tol                % If relative errors                      
         rl = 'Relative';                         % rel. normalisation
       else                                       % else absolute errors
         mx = 1;
         rl = 'Absolute';                         % abs. normalisation
       end
-      p.gpoints{n}(end) = 3+ds;                  % Increase  points
-      dif = (d(:,1)-d(:,4)).^2;                  % Get difference square
+      p.gpoints{n}(end) = sx+ds;                 % Increase  points
+      dif = (d(:,1)-d(:,sx+1)).^2;               % Get difference square
       em(o,sx+1) = sqrt(max(dif)/mx);            % max mod dif scaled
       er(o,sx+1) = mean(dif)/mx;                 % scale mean dif square
       if ne > 1  
@@ -139,16 +143,28 @@ for s = 1:seq                                    % loop over sequence
     end                                          % End check comparisons
     er(o,2:p.nchk) = er(o,2:p.nchk)/mx;
     p.axes{n}  = axes;                           % Compressed axes
-    er(o,sx)   = mean(d(:,3).^2)/mx;             % Squared sampling errs
-    em(o,sx)   = sqrt(max(d(:,3).^2)/mx);        % Max sampling errors
+    er(o,sx)   = mean(d(:,sx).^2)/mx;             % Squared sampling errs
+    em(o,sx)   = sqrt(max(d(:,sx).^2)/mx);        % Max sampling errors
     er(o,1)    = sum(er(o,2:sx+1))/(1.e-99+sum(er(o,2:sx+1)>0));
     er(o,1:sx+1) = sqrt(er(o,1:sx+1));           % RMS errors
-    data{s}{n} = reshape(d,p.gpoints{n});        % Reshape output data
+    d(:,2) = sqrt(sum(d(:,2:nc1).^2,2));         % RMS sum step errors
+    d(:,3) = d(:,sx);
+    p.gpoints{n}(end) = 3;                       % Increase  points
+    if ~isequal(p.compare{n},[])
+      d(:,4:3+ds) = d(:,sx+1:sx+ds);
+      p.gpoints{n}(end) = 3+ds;
+    end
+    data{s}{n}=reshape(d(:,1:3+ds),p.gpoints{n});% Reshape output data
     xpr(1,p,'\n%s errors in output (%d.%d): %s\n',rl, s,n,p.olabels{n});
     for c = 2:p.nchk
-      xpr(1,p,'RMS [max] time-step  = %.3g [%.3g]\n',er(o,c),em(o,c));
+      e = c-1;
+      xpr(1,p,'RMS[max] step (D%d)  = %.3g [%.3g]\n',e,er(o,c),em(o,c));
     end
-    xpr(1,p,'RMS [max] sampling   = %.3g [%.3g]\n',er(o,sx),em(o,sx));    
+    if p.fbsw
+      c = p.nchk+1;
+      xpr(1,p,'RMS[max] iteration  = %.3g [%.3g]\n',er(o,c),em(o,c));
+    end
+    xpr(1,p,'RMS[max] sampling   = %.3g [%.3g]\n',er(o,sx),em(o,sx));    
     if ~isequal(p.compare{n},[])
       s1 = sx+1;
       xpr(1,p,'RMS [max] comparison = %.3g [%.3g]\n',er(o,s1),em(o,s1));
@@ -156,35 +172,38 @@ for s = 1:seq                                    % loop over sequence
       xpr(1,p,'Chi-square, points  [ratio]  = %.3g, %.3g [%.3g]\n',...
           er(o,sx+2), sumpts, er(o,sx+2)/sumpts);     
     end
-    xpr(1,p,'Normalised with max [cutoff] = %.3g [%.3g]\n',sqrt(mx),p.cutoffs{n});
+    xpr(1,p,'Normalised by %.3g [cutoff = %.3g]\n',sqrt(mx),p.cutoffs{n});
   end                                            % end check if data 
  end                                             % end loop on outputs: n
- if p.dimensions > 1
-    p = rmfield(p,{'r','k','x','y','z','kx','ky','kz','t','w'});
- end
+ p = rmfield(p,{'r','k','x','y','z','kx','ky','kz','t','w','dv'});
  input{s} = p;                                   % store new parameters
 end                                              % end loop over sequence
-pts = 1.e-99+sum(sum(er(:,2:p.nchk)>p.tol));     % count nonzero datapoints
-error(2) = sqrt(sum(sum(er(:,2:p.nchk).^2.))/pts);% average error
-error(3) = sqrt(sum(er(:,sx).^2)/(1.e-99+sum(er(:,sx)>p.tol)));
-error(4) = sqrt(sum(er(:,sx+1).^2.)/(1.e-99+sum(er(:,sx+1)>p.tol))); 
-error(1) = sqrt(sum(error(2:4).^2.)/(1.e-99+sum(error(2:4)>p.tol)));%%store 
-error(5:6) = sum(er(:,sx+2:sx+3),1);
-error(5)   = error(5)/(1.e-20+error(6));
-error(6)   = toc();
+for c = 2:sx+1
+  pts = 1.e-99+sum(er(:,c)>p.tol);               % nonzero datapoints
+  error(c) = sqrt(sum(er(:,c).^2.)/pts);         % average error
+end
+error(1) = sqrt(sum(error(2:sx+1).^2.)/(1.e-99+sum(error(2:sx+1)>p.tol)));
+error(sx+2:sx+3) = sum(er(:,sx+2:sx+3),1);
+error(sx+2)   = error(sx+2)/(1.e-20+error(sx+3));
+error(sx+3)   = toc();
 pm = functions(p.method);
-
 fprintf('\nRMS Error summary of all outputs\n');
 fprintf('\nMethod = %s, Order = %d, Checks = %d',...
           pm.function,p.order,p.checks(1));
-fprintf('\nRMS Step+samp+diff error = %.3g\n', error(1));
-fprintf('Errors: Step=%.3g Samp=%.3g Diff=%.3g Chisq/k=%.3g\n',error(2:5));
+fprintf('\nRMS average of errors + differences = %.3g\n', error(1));
+for c = 2:p.nchk
+  fprintf('Step errors (Dimension % d) = %.3g\n',c-1, error(c));
+end
+if p.fbsw
+  fprintf('Iteration errors = %.3g\n',error(nc1));
+end
+fprintf('Sampling errors=%.3g Diffs =%.3g Chisq/k=%.3g\n',error(sx:sx+2));
 if p.relerr
   fprintf('Errors normalised except for comparisons with zero\n');
 else
   fprintf('Using absolute errors\n');
 end
-fprintf('Computed %d outputs, elapsed time = %.4gs\n',o,error(6));
+fprintf('Computed %d outputs, elapsed time = %.4gs\n',o,error(sx+3));
 filename = input{1}.file;
 if ~strcmp(filename,' ')
   save (filename,'error','data','input','raw'); % save  Matlab file
